@@ -8,7 +8,7 @@ module CiteProc
     end
     
     describe 'subclasses' do
-      let(:subject) { Class.new(Engine).new(mock(:processor)) }
+      let(:subject) { Class.new(Engine).new }
 
       it 'subclasses can be instantiate' do
         subject.should_not be nil

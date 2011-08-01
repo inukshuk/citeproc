@@ -2,8 +2,6 @@
 module CiteProc
   class Processor
 
-    include Abbreviate    
-    
     @defaults ||= {
       :locale => 'en-US',
       :style  => 'chicago-author-date',
@@ -16,10 +14,11 @@ module CiteProc
     end
 
     attr_reader :options, :engine
-        
+     
     def initialize(options = {})
       @options = Processor.defaults.merge(options)
       @engine = Engine.detect(options)
+      @abbreviations = { :default => {} }
     end
     
   end

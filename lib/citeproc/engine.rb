@@ -6,7 +6,7 @@ module CiteProc
     @subclasses ||= []
 
     class << self
-      attr_reader :subclasses, :type
+      attr_reader :subclasses, :type, :version
       
       def inherited(subclass)
         subclasses << subclass
@@ -45,17 +45,17 @@ module CiteProc
       private :new
     end
 
-    attr_reader :processor
+    include Abbreviate
     
-    def initialize(processor)
-      @processor = processor
-      @name = self.class.engine_name
+    attr_accessor :style, :locale
+    
+    def initialize(options = {})
+      @options = options.deep_copy
     end
-    
-    # Forward to engine class
+
     [:name, :type, :version].each do |method_id|
       define_method(method_id) do
-        self.class.engine_name
+        self.class.send(method_id)
       end
     end
     

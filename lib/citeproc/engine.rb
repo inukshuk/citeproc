@@ -6,24 +6,40 @@ module CiteProc
     @subclasses ||= []
 
     class << self
+      
       attr_reader :subclasses, :type, :version
+   
+      private :new
       
       def inherited(subclass)
-        subclasses << subclass
         subclass.public_class_method :new
+        @subclasses << subclass
+        @subclasses = subclasses.sort_by { |engine| -1 * engine.priority }
       end
 
       # Returns the engine class for the given name or nil. If no suitable
       # class is found and a block is given, executes the block and returns
-      # the result.
+      # the result. The list of available engines will be passed to the block.
       def detect(name)
-        subclasses.detect(block_given? ? Proc.new : nil) { |e| e.name == name }
+        subclasses.detect { |e| e.name == name } ||
+          block_given? ? yield(subclasses) : nil
       end
       
       # Loads the engine with the given name and returns the engine class.
       def detect!(name)
         load(name)
         block_given? ? detect(name, &Proc.new) : detect(name)
+      end
+      
+      # Returns the best available engine class or nil.
+      def autodetect(options = {})
+        return nil if subclasses.empty?
+        
+        klass = subclasses.detect { |e|
+          !options.has_key?(:engine) || e.name == options[:engine] and
+          !options.has_key?(:name) || e.name == options[:name]
+        }
+        (klass || subclasses.first).new(options)
       end
       
       # Loads the engine by requiring the engine name.
@@ -39,23 +55,28 @@ module CiteProc
       end
       
       def engine_name
-        @name || name # returns class name as fallback
+        @name || name.gsub(/::/, '-').downcase # returns class name as fallback
       end
-      
-      private :new
+
+      def priority
+        @priority ||= 0
+      end      
     end
 
     include Abbreviate
     
-    attr_accessor :style, :locale
+    attr_reader :options
+    
+    attr_accessor :style, :locales
     
     def initialize(options = {})
       @options = options.deep_copy
+      @abbreviations = { :default => {} }
     end
 
-    [:name, :type, :version].each do |method_id|
+    [[:name, :engine_name], :type, :version].each do |method_id, target|
       define_method(method_id) do
-        self.class.send(method_id)
+        self.class.send(target || method_id)
       end
     end
     
@@ -86,5 +107,5 @@ module CiteProc
     end
             
   end
-  
+
 end

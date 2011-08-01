@@ -2,12 +2,11 @@ require 'spec_helper'
 
 module CiteProc
   describe 'Processor' do
+    before { Class.new(Engine) }
     
     let(:subject) { Processor.new }
     
-    describe '#new' do
-      it { should_not be nil }
-    end
+    it { should_not be nil }
     
   end
 end

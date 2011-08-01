@@ -17,8 +17,7 @@ module CiteProc
      
     def initialize(options = {})
       @options = Processor.defaults.merge(options)
-      @engine = Engine.detect(options)
-      @abbreviations = { :default => {} }
+      @engine = Engine.autodetect(@options)
     end
     
   end

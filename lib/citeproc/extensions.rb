@@ -39,6 +39,6 @@ class Hash
   include CiteProc::Extensions::DeepFetch
 end
 
-module Kernel
-  include CiteProc::Extensions::AliasMethods
-end
+# module Kernel
+#   include CiteProc::Extensions::AliasMethods
+# end

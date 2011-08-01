@@ -13,12 +13,14 @@ Gem::Specification.new do |s|
   s.homepage    = 'http://inukshuk.github.com/citeproc'
   s.summary     = 'A cite processor interface.'
   s.description = 'A a cite processor for Citation Style Language (CSL) styles.'
-  s.license     = 'Ruby'
+  s.license     = 'FreeBSD'
   s.date        = Time.now.strftime('%Y-%m-%d')
 
-  s.add_development_dependency('cucumber', ['>= 1.0.2'])
-  s.add_development_dependency('rspec', ['>= 2.6.0'])
-  s.add_development_dependency('watchr', ['>= 0.7'])
+  s.add_runtime_dependency('multi_json', '~>1.0')
+  
+  s.add_development_dependency('cucumber', ['>=1.0.2'])
+  s.add_development_dependency('rspec', ['>=2.6.0'])
+  s.add_development_dependency('watchr', ['>=0.7'])
 
   s.files        = `git ls-files`.split("\n")
   s.test_files   = `git ls-files -- {test,spec,features}/*`.split("\n")

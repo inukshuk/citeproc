@@ -1,3 +1,5 @@
+require 'rubygems'
+
 require 'citeproc/version'
 require 'citeproc/extensions'
 require 'citeproc/abbreviate'

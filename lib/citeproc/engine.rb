@@ -1,8 +1,12 @@
+require 'forwardable'
 
 module CiteProc
   
   class Engine
-
+    
+    extend Forwardable
+    include Abbreviate
+    
     @subclasses ||= []
 
     class << self
@@ -33,14 +37,10 @@ module CiteProc
       
       # Returns the best available engine class or nil.
       def autodetect(options = {})
-        return nil if subclasses.empty?
-        
         klass = subclasses.detect { |e|
           !options.has_key?(:engine) || e.name == options[:engine] and
           !options.has_key?(:name) || e.name == options[:name]
-        } || subclasses.first
-        
-        block_given? ? klass.new(&Proc.new) : klass.new
+        } || subclasses.first        
       end
       
       # Loads the engine by requiring the engine name.
@@ -65,18 +65,24 @@ module CiteProc
     end
 
     attr_accessor :processor, :locales, :style
+
+    def_delegators :@processor, :items, :options
+    
     
     def initialize(attributes = {})
       @processor = attributes[:processor]
+      @abbreviations = attributes[:abbreviations] || { :default => {} }
       yield self if block_given?
     end
 
     def start
       @started = true
+      self
     end
     
     def stop
       @started = false
+      self
     end
     
     def started?; !!@started; end

@@ -4,6 +4,7 @@ module CiteProc
   module Abbreviate
     
     attr_reader :abbreviations
+    attr_accessor :default_namespace
     
     def abbreviations=(abbreviations)
       @abbreviations = case abbreviations
@@ -19,7 +20,7 @@ module CiteProc
     # abbreviate(namespace = :default, context, word)
     def abbreviate(*arguments)
       raise ArgumentError, "wrong number of arguments (#{arguments.length} for 2..3)" unless (2..3).include?(arguments.length)
-      arguments.unshift(:default) if arguments.length < 3
+      arguments.unshift(default_namespace || :default) if arguments.length < 3
       @abbreviations.deep_fetch(*arguments)
     end
     

@@ -38,8 +38,9 @@ module CiteProc
         klass = subclasses.detect { |e|
           !options.has_key?(:engine) || e.name == options[:engine] and
           !options.has_key?(:name) || e.name == options[:name]
-        }
-        (klass || subclasses.first).new(options)
+        } || subclasses.first
+        
+        block_given? ? klass.new(&Proc.new) : klass.new
       end
       
       # Loads the engine by requiring the engine name.
@@ -55,7 +56,7 @@ module CiteProc
       end
       
       def engine_name
-        @name || name.gsub(/::/, '-').downcase # returns class name as fallback
+        @name ||= name.gsub(/::/, '-').downcase # returns class name as fallback
       end
 
       def priority
@@ -63,17 +64,25 @@ module CiteProc
       end      
     end
 
-    include Abbreviate
+    attr_accessor :processor, :locales, :style
     
-    attr_reader :options
-    
-    attr_accessor :style, :locales
-    
-    def initialize(options = {})
-      @options = options.deep_copy
-      @abbreviations = { :default => {} }
+    def initialize(attributes = {})
+      @processor = attributes[:processor]
+      yield self if block_given?
     end
 
+    def start
+      @started = true
+    end
+    
+    def stop
+      @started = false
+    end
+    
+    def started?; !!@started; end
+    
+    alias running? started?
+    
     [[:name, :engine_name], :type, :version].each do |method_id, target|
       define_method(method_id) do
         self.class.send(target || method_id)

@@ -4,8 +4,7 @@ module CiteProc
     attr_reader :original
 
     def initialize(message, original = nil)
-      @original = original
-      super
+      @original = original ? super([message, original.message].join(': ')) : super(message)
     end    
   end
   

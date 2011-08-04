@@ -7,7 +7,7 @@ module CiteProc
         Hash[*map { |k,v| [
           k.is_a?(Symbol) ? k : k.respond_to?(:deep_copy) ? k.deep_copy : k.clone,
           v.is_a?(Symbol) ? v : v.respond_to?(:deep_copy) ? v.deep_copy : v.clone
-        ]}.flatten]
+        ]}.flatten(1)]
       end
     end
    
@@ -21,6 +21,20 @@ module CiteProc
         deep_fetch(*arguments)
       end
       
+    end
+    
+    # shamelessly copied from active_support
+    module SymbolizeKeys
+      def symbolize_keys
+        inject({}) do |options, (key, value)|
+          options[(key.to_sym rescue key) || key] = value
+          options
+        end
+      end
+      
+      def symbolize_keys!
+        replace(symbolize_keys)
+      end
     end
     
     module AliasMethods
@@ -37,6 +51,7 @@ end
 class Hash
   include CiteProc::Extensions::DeepCopy
   include CiteProc::Extensions::DeepFetch
+  include CiteProc::Extensions::SymbolizeKeys unless Hash.instance_methods.include?(:symbolize_keys)
 end
 
 # module Kernel

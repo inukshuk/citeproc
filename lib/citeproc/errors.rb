@@ -8,10 +8,10 @@ module CiteProc
     end    
   end
   
-  class EngineError < Error
-  end
+  class EngineError < Error; end
   
-  class NotImplementedByEngine < EngineError
-  end
+  class NotImplementedByEngine < EngineError; end
+  
+  class ArgumentError < Error; end
   
 end

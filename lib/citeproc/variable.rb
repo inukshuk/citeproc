@@ -72,7 +72,7 @@ module CiteProc
           send(writer, attributes[key]) if respond_to?(writer)
         end
       when attributes.respond_to?(:to_s)
-        @value = attributes.to_s
+        @value = attributes.to_s.dup
       end
     end
     

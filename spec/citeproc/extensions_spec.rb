@@ -22,6 +22,15 @@ describe Hash do
       hash.deep_copy[:a][:b].should_not equal(hash[:a][:b])
       hash.deep_copy[:a][:b][:c].should == hash[:a][:b][:c]
     end
+
+    context 'when given nested arrays' do
+      let(:hash) {{:a => [[1,2]]}}
+      it 'it returns a deep copy' do
+        hash.deep_copy[:a].should == hash[:a]
+        hash.deep_copy[:a].should_not equal(hash[:a])
+      end
+      
+    end
   end
   
   describe '#deep_fetch' do

@@ -2,21 +2,20 @@ require 'spec_helper'
 
 module CiteProc
   describe Variable do
-    let(:variable) { Variable.new }
     
     describe '#new' do
-      it { variable.should be_an_instance_of(Variable) }
+      it { should be_an_instance_of(Variable) }
       
       it 'is empty by default' do
-        variable.should be_empty
+        Variable.new.should be_empty
       end
       
       it 'equals an empty string (==) by default' do
-        variable.should == ''
+        Variable.new.should == ''
       end
       
       it 'matches an empty pattern by default' do
-        variable.should =~ /^$/
+        Variable.new.should =~ /^$/
       end
       
       it 'accepts a string value' do
@@ -135,6 +134,34 @@ module CiteProc
           Variable.new('test').should_not be_numeric
         end
       end
+    end
+    
+    describe '#strip_markup' do
+      let(:greeting) { '<h1>hello<b> world</b></h1>' }
+      it 'returns a string stripped of html tags' do
+        Variable.new(greeting).strip_markup.should == 'hello world'
+      end
+      it 'does not alter the value itself' do
+        v = Variable.new(greeting)
+        v.strip_markup
+        v.should == greeting
+      end
+    end
+
+    describe '#strip_markup!' do
+      let(:greeting) { '<h1>hello<b> world</b></h1>' }
+      it 'strips of html tags' do
+        v = Variable.new(greeting)
+        v.strip_markup!
+        v.should == 'hello world'
+      end
+    end
+    
+    
+    describe 'sorting' do
+    end
+    
+    describe '#to_json' do
     end
     
   end

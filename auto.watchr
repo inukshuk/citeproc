@@ -11,7 +11,7 @@ Signal.trap('INT' ) { abort("\n") } # Ctrl-C
 
 def rspec (*paths)
 	paths = paths.reject { |p| !File.exists?(p) }
-	run "bundle exec rspec #{ paths.empty? ? 'spec' : paths.join(' ') }"
+	run "bundle exec rspec --tty -c #{ paths.empty? ? 'spec' : paths.join(' ') }"
 end
 
 def run (cmd)

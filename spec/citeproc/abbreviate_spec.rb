@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module CiteProc
-  describe 'Abbreviate' do
+  describe Abbreviate do
     before { Object.class_eval { include Abbreviate } }
 
     let(:subject) { Object.new }

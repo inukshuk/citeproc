@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module CiteProc
-  describe 'Engine' do
+  describe Engine do
 
     it 'cannot be instantiated' do
       lambda { Engine.new }.should raise_error(NoMethodError)

@@ -10,8 +10,10 @@ module CiteProc
     @subclasses ||= []
 
     class << self
-      
+            
       attr_reader :subclasses, :type, :version
+   
+      attr_writer :default
    
       private :new
       
@@ -21,6 +23,10 @@ module CiteProc
         @subclasses = subclasses.sort_by { |engine| -1 * engine.priority }
       end
 
+      def default
+        @default ||= autodetect or warn 'no citeproc engine found'
+      end
+      
       # Returns the engine class for the given name or nil. If no suitable
       # class is found and a block is given, executes the block and returns
       # the result. The list of available engines will be passed to the block.
@@ -99,19 +105,25 @@ module CiteProc
       raise NotImplementedByEngine
     end
     
+    alias process_citation_cluster process
+
     def append
       raise NotImplementedByEngine
     end
     
     alias append_citation_cluster append
+
+    def preview
+      raise NotImplementedByEngine
+    end
     
-    def process_citation_cluster
+    alias preview_citation_cluster preview
+    
+    def bibliography
       raise NotImplementedByEngine
     end
-        
-    def make_bibliography
-      raise NotImplementedByEngine
-    end
+    
+    alias make_bibliography bibliography
     
     def update_items
       raise NotImplementedByEngine

@@ -65,11 +65,14 @@ module CiteProc
 			'linespacing' => :line_spacing,
 			'hangingindent' => :indent,
 			'second-field-align' => :align
-		}.freeze
+		}
+		
+		@rb2cp = @cp2rb.invert.freeze
+		@cp2rb.freeze
 		
 		class << self
 			
-			attr_reader :defaults
+			attr_reader :defaults, :cp2rb, :rb2cp
 			
 			# Create a new Bibliography from the passed-in string or array.
 			def parse(input)
@@ -88,8 +91,8 @@ module CiteProc
 						
 						b.preamble, b.postamble = options['bibstart'], options['bibend']
 						
-						(options.keys & @cp2rb.keys).each do |k|
-							b.options[@cp2rb[k]] = options[k]
+						(options.keys & cp2rb.keys).each do |k|
+							b.options[cp2rb[k]] = options[k]
 						end
 					end
 				
@@ -140,20 +143,19 @@ module CiteProc
 			references <=> other.references
 		end
 
+		def citeproc_options
+			Hash[*options.map { |k,v|
+					[Bibliography.rb2cp[k] || k.to_s, v]
+				}.flatten]
+		end
+		
 		def to_citeproc
 			[
-				{
-					'maxoffset'          => options[:offset],
-		      'entryspacing'       => options[:entry_spacing],
-		      'linespacing'        => options[:line_spacing],
-		      'hangingindent'      => options[:indent],
-		      'second-field-align' => options[:align],
-		
+				citeproc_options.merge({		
 		      'bibstart' => preamble,
 		      'bibend' => postamble,
-		
 		      'bibliography_errors' => errors
-				},
+				}),
 				
 				references
 				

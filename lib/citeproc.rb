@@ -14,6 +14,7 @@ require 'citeproc/abbreviate'
 require 'citeproc/attributes'
 require 'citeproc/variable'
 require 'citeproc/date'
+require 'citeproc/bibliography'
 
 require 'citeproc/engine'
 require 'citeproc/processor'

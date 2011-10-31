@@ -3,7 +3,7 @@ unless Symbol.is_a?(Comparable)
     include Comparable
     
     def <=>(other)
-      return nil unless other.respond_to?(:to_s)
+      return nil unless other.is_a?(Symbol)
       to_s <=> other.to_s
     end
   end

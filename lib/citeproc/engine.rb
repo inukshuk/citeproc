@@ -70,14 +70,15 @@ module CiteProc
       end      
     end
 
-    attr_accessor :processor, :locales, :style
-
-    def_delegators :@processor, :items, :options
-    
+    attr_accessor :processor, :locales, :style, :items    
     
     def initialize(attributes = {})
+      
       @processor = attributes[:processor]
+      
+      @items = attributes[:items] || {}
       @abbreviations = attributes[:abbreviations] || { :default => {} }
+      
       yield self if block_given?
     end
 

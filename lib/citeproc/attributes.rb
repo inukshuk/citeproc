@@ -17,11 +17,16 @@ module CiteProc
       
       case other
       when String, /^\s*\{/
-        other = MulitJson.encode(other, :symbolize_keys => true)
+        other = MulitJson.decode(other, :symbolize_keys => true)
+
       when Hash
         other = other.deep_copy
-      else
+
+      when Attributes
         other = other.to_hash
+
+			else
+				raise ParseError, "failed to merge attributes and #{other.inspect}"
       end
 
       other.each_pair { |k,v| attributes[k.to_sym] = v }

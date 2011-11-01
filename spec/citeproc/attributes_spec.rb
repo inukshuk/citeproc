@@ -3,36 +3,49 @@ require 'spec_helper'
 module CiteProc
   describe Attributes do
   
-    before(:each) { Object.instance_eval { include Attributes } }
+    before(:all) do
+			A = Class.new { include Attributes }
+		end
   
-    let(:instance) { o = Object.new }
-    let(:other) { o = Object.new; o.attributes[:foo] = 'bar'; o }
+    let(:instance) do
+			o = A.new
+			o.attributes[:bar] = 'foo'
+			o
+		end
+
+    let(:other) do
+	 		o = A.new
+			o.attributes[:foo] = 'bar'
+			o
+		end
   
     it { should_not be_nil }
   
     describe '.attr_fields' do
     
-      # before(:all) { class Object; attr_fields :value, %w[ is-numeric punctuation-mode ]; end }
+			#       before(:all) do
+			# 	A.instance_eval { attr_fields :value, %w[ is-numeric punctuation-mode ] }
+			# end
 
       it 'generates setters for attr_field values' do
         # pending
-        # lambda { Object.new.is_numeric }.should_not raise_error
+        # lambda { A.new.is_numeric }.should_not raise_error
       end
     
       it 'generates no other setters' do
-        lambda { Object.new.some_other_value }.should raise_error
+        lambda { A.new.some_other_value }.should raise_error
       end
     end
   
     describe '#merge' do    
     
       it 'merges non-existent values from other object' do
-        Object.new.merge(other).attributes[:foo].should == 'bar'
+        A.new.merge(other).attributes[:foo].should == 'bar'
       end
     
-      # it 'does not overwrite existing values when merging other object' do
-      #   instance.merge(other)['foo'].should == 'bar'
-      # end
+      it 'does not overwrite existing values when merging other object' do
+        instance.merge(other).attributes[:bar].should == 'foo'
+      end
     
     end
   

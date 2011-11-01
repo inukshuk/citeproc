@@ -35,7 +35,21 @@ module CiteProc
       def symbolize_keys!
         replace(symbolize_keys)
       end
+
     end
+
+		module StringifyKeys
+	    def stringify_keys
+	      inject({}) do |options, (key, value)|
+	        options[(key.to_s rescue key) || key] = value
+	        options
+	      end
+	    end
+    
+	    def stringify_keys!
+	      replace(symbolize_keys)
+	    end
+		end
     
     module AliasMethods
       private
@@ -52,6 +66,7 @@ class Hash
   include CiteProc::Extensions::DeepCopy
   include CiteProc::Extensions::DeepFetch
   include CiteProc::Extensions::SymbolizeKeys unless Hash.instance_methods.include?(:symbolize_keys)
+  include CiteProc::Extensions::StringifyKeys unless Hash.instance_methods.include?(:stringify_keys)
 end
 
 # module Kernel

@@ -50,6 +50,11 @@ module CiteProc
       it 'contains :text fields' do
         Variable.fields[:text].should_not be_empty
       end
+
+      it 'contains :number fields' do
+        Variable.fields[:numbers].should_not be_empty
+        Variable.fields[:number].should_not be_empty
+      end
       
       it 'accepts either string or symbol input' do
         Variable.fields[:names].should equal Variable.fields['names']
@@ -61,6 +66,7 @@ module CiteProc
         Variable.types[:author].should == :names
         Variable.types[:issued].should == :date
         Variable.types[:abstract].should == :text
+        Variable.types[:issue].should == :number
       end
       
       it 'accepts either string or symbol input' do

@@ -15,6 +15,4 @@ module CiteProc
   
   class NotImplementedByEngine < EngineError; end
   
-  class ArgumentError < Error; end
-  
 end

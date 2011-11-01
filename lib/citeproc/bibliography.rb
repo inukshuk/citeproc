@@ -82,9 +82,7 @@ module CiteProc
 					
 				when input.is_a?(Array) && input.length == 2
 					options, references = input
-					
-					template = options.delete('bibstart'), options.delete('bibend')
-					
+
 					new do |b|
 						b.concat(references)
 						b.errors.concat(options.fetch('bibliography_errors', []))
@@ -124,10 +122,17 @@ module CiteProc
 			
 			yield self if block_given?
 		end
+		
+		def initialize_copy(other)
+			@options = other.options.dup
+			@errors, @references = other.errors.dup, other.references.dup
+		end
 
 		def has_errors?
 			!errors.empty?
 		end
+		
+		alias errors? has_errors?
 		
 		def each
 			if block_given?

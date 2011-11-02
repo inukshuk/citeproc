@@ -38,7 +38,7 @@ module CiteProc
 		}
 
 		let(:frank) { Name.new(
-			"family" => "Bennet",
+			"family" => "Bennett",
 			"given" => "Frank G.",
 			"suffix" => "Jr.",
 			"comma-suffix" => "true")
@@ -82,6 +82,34 @@ module CiteProc
 				
 			it 'is literal even if other name parts are set' do
 				Name.new(:family => 'Tux', :literal => 'GNU/Linux').should be_literal
+			end
+			
+		end
+		
+		describe 'in-place manipulation (bang! methods)' do
+			
+			it 'delegates to string for family name' do
+				plato.swapcase!.to_s.should == 'pLATO'
+			end
+			
+			it 'delegates to string for given name' do
+				humboldt.gsub!(/^Alex\w*/, 'Wilhelm').to_s.should == 'Wilhelm von Humboldt'
+			end
+			
+			it 'delegates to string for dropping particle' do
+				humboldt.upcase!.dropping_particle.should == 'VON'
+			end
+			
+			it 'delegates to string for non dropping particle' do
+				van_gogh.upcase!.non_dropping_particle.should == 'VAN'
+			end
+				
+			it 'delegates to string for suffix' do
+				frank.sub!(/jr./i, 'Sr.').to_s.should == 'Frank G. Bennett, Sr.'
+			end
+			
+			it 'returns the name object' do
+				poe.upcase!.should be_a(Name)
 			end
 			
 		end
@@ -131,7 +159,7 @@ module CiteProc
 				end
 
 				it 'uses the comma suffix option' do
-					frank.to_s.should == 'Frank G. Bennet, Jr.'
+					frank.to_s.should == 'Frank G. Bennett, Jr.'
 				end
 				
 				it 'prints unicode characters' do

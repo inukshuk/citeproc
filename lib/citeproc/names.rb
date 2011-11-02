@@ -9,10 +9,46 @@ module CiteProc
 		
 		# Based on the regular expression in Frank G. Bennett's citeproc-js
 		# https://bitbucket.org/fbennett/citeproc-js/overview
-    ROMANESQUE = /^[a-zA-Z\u0080-\u017f\u0400-\u052f\u0386-\u03fb\u1f00-\u1ffe\.,\s\u0027\u02bc\u2019-]*$/
+    ROMANESQUE =
+			/^[a-zA-Z\u0080-\u017f\u0400-\u052f\u0386-\u03fb\u1f00-\u1ffe\.,\s\u0027\u02bc\u2019-]*$/
+
+
+    # Class instance variables
+
+		# Default formatting options
+		@defaults = {
+			:form => 'long',
+			:'name-as-sort-order' => false,
+			:'demote-non-dropping-particle' => 'display-and-sort',
+			:'sort-separator' => ', ',
+			:'initialize-with' => nil
+		}.freeze
     
-		attr_predicates :family, :given, :'comma-suffix', :'static-ordering',
-			:literal, :suffix, :'dropping-particle', :'non-dropping-particle'
+		@parts = [:family, :given,:literal, :suffix, :'dropping-particle',
+			:'non-dropping-particle'].freeze
+			
+		class << self
+			
+			attr_reader :defaults, :parts
+			
+			def parse(name_string)
+				parse!(name_string)
+			rescue ParseError
+				nil
+			end
+			
+			def parse!(name_string)
+			end
+			
+		end
+
+
+
+		# Method generators
+		
+		attr_reader :options
+		
+		attr_predicates :'comma-suffix', :'static-ordering', *@parts
 		
 		# Aliases
 		[[:last, :family], [:first, :given], [:particle, :'non_dropping_particle']].each do |a, m|
@@ -26,45 +62,26 @@ module CiteProc
 
 			pa, pm = "has_#{a}?", "has_#{m}?"
       alias_method(pa, pm) if method_defined?(pm)
-
     end
-    
-		# Default formatting options
-		@defaults = {
-			:form => 'long',
-			:'name-as-sort-order' => false,
-			:'demote-non-dropping-particle' => 'display-and-sort',
-			:'sort-separator' => ', ',
-			:'initialize-with' => nil
-		}.freeze
-    
-		class << self
-			
-			attr_reader :defaults
-			
-			def parse(name_string)
-				parse!(name_string)
-			rescue ParseError
-				nil
-			end
-			
-			def parse!(name_string)
-			end
-			
-		end
-		
-		attr_reader :options
-		
+	
 		# Names quack sorta like a String
 		def_delegators :to_s, :=~, :===,
 			*String.instance_methods(false).reject { |m| m =~ /^\W|!$|to_s|replace|first|last/ }
 		
-		# Delegate bang methods to each field's value
+		# Delegate bang! methods to each field's value
 		String.instance_methods(false).each do |m|
 			if m.to_s.end_with?('!')
-				define_method(m) { attributes.values.each(&m.to_sym) }
+				define_method(m) do |*arguments, &block|
+					Name.parts.each do |part|
+						attributes.fetch(part, '').send(m, *arguments, &block)
+					end
+					self
+				end
 			end
 		end
+		
+		
+		# Instance methods
 		
 		def initialize(attributes = {}, options = {})
 			@options = Name.defaults.merge(options)			
@@ -75,6 +92,7 @@ module CiteProc
 			@attributes = other.attributes.deep_copy
 			@options = other.options.dup
 		end
+		
 		
 		# Returns true if the Name looks like it belongs to a person.
 		def personal?
@@ -165,13 +183,16 @@ module CiteProc
 			when !short_form?
 				case
 				when !sort_order?
-					[[given, dropping_particle, non_dropping_particle, family].compact_join(' '), suffix].compact_join(comma_suffix? ? comma : ' ')
+					[[given, dropping_particle, non_dropping_particle, family].compact_join(' '),
+						suffix].compact_join(comma_suffix? ? comma : ' ')
 					
 				when !demote_non_dropping_particle
-					[[non-dropping-particle, family].compact_join(' '), [given, dropping-particle].compact_join(' '), suffix].compact_join(comma)
+					[[non-dropping-particle, family].compact_join(' '), [given,
+							dropping_particle].compact_join(' '), suffix].compact_join(comma)
 					
 				else
-					[family, [given, dropping_particle, non_dropping_particle].compact.join(' '), suffix].compact_join(comma)
+					[family, [given, dropping_particle, non_dropping_particle].compact.join(' '),
+						suffix].compact_join(comma)
 				end
 				
 			else

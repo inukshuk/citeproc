@@ -12,7 +12,7 @@ module CiteProc
 		# Load date parsers
 		
 		@parsers = []
-		
+
 		require 'date'
 		@parsers << ::Date
 		

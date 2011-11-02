@@ -8,7 +8,6 @@ module CiteProc
   class Variable
 
     extend Forwardable
-    
     include Comparable
     
     @fields = Hash.new { |h,k| h.fetch(k.to_sym, nil) }.merge({

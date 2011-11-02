@@ -55,7 +55,7 @@ module CiteProc
         end
       end
 
-      def attr_fields
+      def attr_fields(*arguments)
         arguments.flatten.each do |field|
           attr_field(*(field.is_a?(Hash) ? field.to_a.flatten : [field]).map(&:to_s))
         end

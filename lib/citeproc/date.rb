@@ -66,7 +66,7 @@ module CiteProc
 			*::Date.instance_methods(false).reject { |m| m.to_s =~ /^to_s$|^inspect$|start$|^\W/ }
 
 
-		def initialize(attributes = ::Date.today)
+		def initialize(value = ::Date.today)
 			super
 		end
 
@@ -74,37 +74,37 @@ module CiteProc
 			@value = other.value.deep_copy
 		end
 
-		def update(attributes)
+		def replace(value)
 			case
-			when attributes.is_a?(Date)
-				@value = attributes.dup
+			when value.is_a?(CiteProc::Date)
+				@value = value.dup
 
-			when attributes.is_a?(Numeric)
-				@value = { :'date-parts' => [[attributes.to_i]] }
+			when value.is_a?(Numeric)
+				@value = { :'date-parts' => [[value.to_i]] }
 
-			when attributes.is_a?(Hash)
-				attributes.symbolize_keys!
+			when value.is_a?(Hash)
+				attributes = value.symbolize_keys
 
 				if attributes.has_key?(:raw)
 					@value = Date.parse(attributes.delete(:raw)).value
 					@value.merge!(attributes)
 				else
-					@value = attributes.deep_copy
+					@value = value.deep_copy
 				end
 				to_i!
 
-			when attributes.respond_to?(:strftime)
-				@value = { :'date-parts' => [attributes.strftime('%Y-%m-%d').split(/-/).map(&:to_i)] }
+			when value.respond_to?(:strftime)
+				@value = { :'date-parts' => [value.strftime('%Y-%m-%d').split(/-/).map(&:to_i)] }
 
-			when attributes.is_a?(Array)
-				@value = { :'date-parts' => attributes[0].is_a?(Array) ? attributes : [attributes] }
+			when value.is_a?(Array)
+				@value = { :'date-parts' => value[0].is_a?(Array) ? value : [value] }
 				to_i!
 
-			when attributes.respond_to?(:to_s)
-				@value = Date.parse(attributes.to_s).value
+			when value.respond_to?(:to_s)
+				@value = Date.parse(value.to_s).value
 
 			else
-				raise ParseError, "failed to parse date from #{attributes.inspect}"
+				raise TypeError, "failed to create date from #{value.inspect}"
 			end
 
 			self

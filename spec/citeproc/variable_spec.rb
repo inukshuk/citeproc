@@ -27,8 +27,8 @@ module CiteProc
         Variable.new(23.1).should == '23.1'
       end
       
-      it 'accepts an attributes hash' do
-        Variable.new(:value => 'test').should == 'test'
+      it 'raises type error when initialized with a hash' do
+        lambda { Variable.new(:value => 'test') }.should raise_error(TypeError)
       end
       
       it 'supports self yielding block' do

@@ -55,8 +55,10 @@ module CiteProc
     class << self
       attr_reader :fields, :types
       
-      def parse(*args)
+      def create(value)
+				new(value)
       end
+
     end
     
     attr_accessor :value
@@ -67,8 +69,8 @@ module CiteProc
     def_delegators :to_s, :=~, :===,
 			*::String.instance_methods(false).reject {|m| m.to_s =~ /^\W|!$|to_s/ }
 
-    def initialize(attributes = nil)
-      update(attributes)
+    def initialize(value = nil)
+      replace(value)
       yield self if block_given?
     end
     
@@ -77,33 +79,24 @@ module CiteProc
     end
     
 
-		# The udpate method is typically called by the Variable's constructor. It
+		# The replace method is typically called by the Variable's constructor. It
 		# will try to set the Variable to the passed in value and should accept
 		# a wide range of argument types; subclasses (especially Date and Names)
 		# override this method.
-    def update(attributes)
-      case
-      when attributes.respond_to?(:each_key)
-        attributes.each_key do |key|
-					if respond_to?(writer = "#{key}=")
-						send(writer, attributes[key])
-					end
-				end
-				
-      when attributes.respond_to?(:to_s)
-        @value = attributes.to_s.dup
+		def replace(value)
+			case value
+			when NilClass, FalseClass, TrueClass, String, Symbol, Numeric, Variable
+				@value = value.to_s
+				self
+			else
+				raise TypeError, "failed to set date variable to #{value.inspect}"
+			end
+		end
 
-      else
-        raise ParseError, "failed to parse date from #{attributes.inspect}"
-      end
+		def type
+			@type ||= self.class.name.split(/::/)[-1].downcase.to_sym
+		end
 
-			self
-    end
-    
-    def type
-      @type ||= self.class.name.split(/::/)[-1].downcase.to_sym
-    end
-    
 		# Returns true if the Variable can be (safely) cast to a numeric value.
     def numeric?
       match(/\d/) ? to_i : false
@@ -150,6 +143,7 @@ module CiteProc
 		end
 		
   end
+
 
 	class Text < Variable
 	end

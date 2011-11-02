@@ -69,7 +69,7 @@ module CiteProc
 			*::String.instance_methods(false).reject {|m| m.to_s =~ /^\W|!$|to_s/ }
 
     def initialize(attributes = nil)
-      set(attributes)
+      update(attributes)
       yield self if block_given?
     end
     
@@ -78,11 +78,11 @@ module CiteProc
     end
     
 
-		# The set method is typically called by the Variable's constructor. It
+		# The udpate method is typically called by the Variable's constructor. It
 		# will try to set the Variable to the passed in value and should accept
 		# a wide range of argument types; subclasses (especially Date and Names)
 		# override this method.
-    def set(attributes)
+    def update(attributes)
       case
       when attributes.respond_to?(:each_key)
         attributes.each_key do |key|
@@ -149,6 +149,7 @@ module CiteProc
 		def inspect
 			"#<#{self.class.name}: #{to_s.inspect}>"
 		end
+		
   end
 
 	class Text < Variable

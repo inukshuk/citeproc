@@ -4,7 +4,7 @@ module CiteProc
 
     extend Forwardable
     
-    @defaults ||= {
+    @defaults = {
       :locale => 'en-US',
       :style  => 'chicago-author-date',
       :engine => 'citeproc-js',
@@ -25,5 +25,12 @@ module CiteProc
       @items = {}
     end
     
+		
+		private
+		
+		def extract_citation_data(items, options = {})
+			
+		end
+		
   end
 end

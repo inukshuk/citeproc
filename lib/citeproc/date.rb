@@ -1,12 +1,4 @@
 
-require 'date'
-
-begin
-	require 'chronic'
-rescue LoadError => e
-	# warn 'failed to load chronic gem'
-end
-
 module CiteProc
 
 	class Date < Variable
@@ -16,14 +8,36 @@ module CiteProc
 		alias attributes value
 		alias to_hash value
 
-		@parser = Object.const_defined?(:Chronic) ? ::Chronic : ::Date
 
+		# Load date parsers
+		
+		@parsers = []
+		
+		require 'date'
+		@parsers << ::Date
+		
+		begin
+			require 'chronic'
+			@parsers << Chronic
+		rescue LoadError
+			# warn 'failed to load chronic gem'
+		end
+		
+		
 		class << self
 
+			attr_reader :parsers
+			
+			# Parses the passed-in string with all available date parsers. Creates
+			# a new CiteProc Date from the first valid date returned by a parser;
+			# returns nil if no parser was able to parse the string successfully.
 			def parse(date_string)
-				new(@parser.parse(date_string))
-			rescue
-				raise ParseError, "failed to parse date from #{date_string.inspect}"
+				@parsers.each do |p|
+					d = p.parse(date_string) rescue nil
+					return new(d) unless d.nil?
+				end
+				
+				nil
 			end
 
 			def today
@@ -48,7 +62,7 @@ module CiteProc
 			@value = other.value.deep_copy
 		end
 
-		def set(attributes)
+		def update(attributes)
 			case
 			when attributes.is_a?(Date)
 				@value = attributes.dup
@@ -177,7 +191,7 @@ module CiteProc
 		end
 		
 		def to_s
-			literal? ? literal : @value.inspect
+			literal? ? literal : to_ruby.to_s
 		end
 
 		def sort_order

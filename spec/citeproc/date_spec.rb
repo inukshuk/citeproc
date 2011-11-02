@@ -11,6 +11,18 @@ module CiteProc
       
     end
     
+		describe '.parse' do
+			
+			it 'returns nil by default' do
+				Date.parse('').should be nil
+				Date.parse(nil).should be nil
+			end
+			
+			it 'parses date strings' do
+				Date.parse('2004-10-26').year.should == 2004
+			end
+		end
+		
     describe '.create' do
       it 'should accept parameters and return a new instance' do
         Date.create('date-parts' => [[2001, 1]]).year.should == 2001

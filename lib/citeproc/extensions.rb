@@ -51,6 +51,12 @@ module CiteProc
 	    end
 		end
     
+		module CompactJoin
+			def compact_join(delimiter = ' ')
+				reject { |t| t.nil? || (t.respond_to?(:empty) && t.empty?) }.join(delimiter)
+			end
+		end
+		
     module AliasMethods
       private
       def alias_methods(*arguments)
@@ -67,6 +73,10 @@ class Hash
   include CiteProc::Extensions::DeepFetch
   include CiteProc::Extensions::SymbolizeKeys unless Hash.instance_methods.include?(:symbolize_keys)
   include CiteProc::Extensions::StringifyKeys unless Hash.instance_methods.include?(:stringify_keys)
+end
+
+class Array
+	include CiteProc::Extensions::CompactJoin
 end
 
 # module Kernel

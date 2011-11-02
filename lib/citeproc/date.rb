@@ -9,8 +9,7 @@ module CiteProc
 		alias to_hash value
 
 
-		# Load date parsers
-		
+		# Date parsers (must respond to :parse)
 		@parsers = []
 
 		require 'date'
@@ -23,21 +22,34 @@ module CiteProc
 			# warn 'failed to load chronic gem'
 		end
 		
+		# Format string used for sorting dates
+		@sort_order = "%04d%02d%02d-%04d%02d%02d".freeze
 		
 		class << self
 
-			attr_reader :parsers
+			attr_reader :parsers, :sort_order
 			
 			# Parses the passed-in string with all available date parsers. Creates
 			# a new CiteProc Date from the first valid date returned by a parser;
 			# returns nil if no parser was able to parse the string successfully.
+			#
+			# For an equivalent method that raises an error on invalid input
+			# @see #parse!
 			def parse(date_string)
+				parse!(date_string)
+			rescue ParseError
+				nil
+			end
+			
+			# Like #parse but raises a ParseError if the input failed to be parsed.
+			def parse!(date_string)
 				@parsers.each do |p|
 					d = p.parse(date_string) rescue nil
 					return new(d) unless d.nil?
 				end
 				
-				nil
+				# if we get here, all parsers failed
+				raise ParseError, "failed to parse #{date_string.inspect}"
 			end
 
 			def today
@@ -98,6 +110,8 @@ module CiteProc
 			self
 		end
 
+		# TODO replace the date parts by two proper dates or structs
+		
 		def date_parts
 			@value[:'date-parts'] ||= [[]]
 		end
@@ -195,7 +209,7 @@ module CiteProc
 		end
 
 		def sort_order
-			"%04d%02d%02d-%04d%02d%02d" % ((parts[0] + [0,0,0])[0,3] + ((parts[1] || []) + [0,0,0])[0,3])
+			Date.sort_order % ((parts[0] + [0,0,0])[0,3] + ((parts[1] || []) + [0,0,0])[0,3])
 		end
 
 		def <=>(other)

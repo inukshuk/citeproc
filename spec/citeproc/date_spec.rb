@@ -3,6 +3,15 @@ require 'spec_helper'
 module CiteProc
   describe Date do
     
+    let(:ad2k) { Date.create('date-parts' => [[2000]])}
+    let(:may) { Date.create('date-parts' => [[2000, 5]])}
+    let(:first_of_may) { Date.create('date-parts' => [[2000, 5, 1]])}
+    
+    let(:bc100) { Date.create('date-parts' => [[-100]]) }
+    let(:bc50) { Date.create('date-parts' => [[-50]]) }
+    let(:ad50) { Date.create('date-parts' => [[50]]) }
+    let(:ad100) { Date.create('date-parts' => [[100]]) }
+
     it { should_not be nil }
     
     it { should_not be_numeric }
@@ -52,15 +61,6 @@ module CiteProc
     
     describe 'sorting' do
       
-      let(:ad2k) { Date.create('date-parts' => [[2000]])}
-      let(:may) { Date.create('date-parts' => [[2000, 5]])}
-      let(:first_of_may) { Date.create('date-parts' => [[2000, 5, 1]])}
-      
-      let(:bc100) { Date.create('date-parts' => [[-100]]) }
-      let(:bc50) { Date.create('date-parts' => [[-50]]) }
-      let(:ad50) { Date.create('date-parts' => [[50]]) }
-      let(:ad100) { Date.create('date-parts' => [[100]]) }
-
       it 'dates with more date-parts will come after those with fewer parts' do
         (ad2k < may  && may < first_of_may).should be true
       end
@@ -77,6 +77,50 @@ module CiteProc
       end
     end
 
+		describe 'b.c. and a.d.' do
+			
+			it 'the year 993 is a.d.' do
+				Date.new(993).should be_ad
+			end
+
+			it 'the year 1000 is not a.d.' do
+				Date.new(1000).should_not be_ad
+			end
+
+			it 'the year 993 is not b.c.' do
+				Date.new(993).should_not be_bc
+			end
+
+			it 'the year 0 is a.d.' do
+				Date.new(0).should be_ad
+			end
+
+			it 'the year 0 is not b.c.' do
+				Date.new(0).should_not be_bc
+			end
+
+			it 'the year -33 is not a.d.' do
+				Date.new(-33).should_not be_ad
+			end
+
+			it 'the year -33 is b.c.' do
+				Date.new(-33).should be_bc
+			end
+			
+			it 'today is not a.d.' do
+				Date.today.should_not be_ad
+			end
+			
+			it 'today is not b.c.' do
+				Date.today.should_not be_bc
+			end
+			
+			it 'the year 2000 is not a.d.' do
+				ad2k.should_not be_ad
+			end
+			
+		end
+		
     describe '#to_json' do    
       it 'supports simple parts' do
         Date.new(%w{2000 1 15}).to_json.should == '{"date-parts":[[2000,1,15]]}'

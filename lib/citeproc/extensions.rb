@@ -53,7 +53,7 @@ module CiteProc
     
 		module CompactJoin
 			def compact_join(delimiter = ' ')
-				reject { |t| t.nil? || (t.respond_to?(:empty) && t.empty?) }.join(delimiter)
+				reject { |t| t.nil? || (t.respond_to?(:empty?) && t.empty?) }.join(delimiter)
 			end
 		end
 		

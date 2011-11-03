@@ -71,6 +71,7 @@ module CiteProc
 			end
 			
 			def parse!(name_string)
+				fail 'not implemented yet'
 			end
 			
 		end
@@ -335,22 +336,16 @@ module CiteProc
 			end
 			
 			def parse!(names_string)
-				
+				fail 'not implemented yet'
 			end
 			
 		end
 		
 		
 		include Enumerable
-				
-		def initialize_copy(other)
-			@value = other.value.map(&:dup)
-		end
+
+		attr_reader :options
 		
-		def value
-			@value ||= []
-		end
-				
 		alias names value
 		
 		# Don't expose value/names writer
@@ -379,7 +374,36 @@ module CiteProc
 			end
 		end
 		
-		def replace(names)
+				
+		def initialize(*arguments)
+			@options = Names.defaults.dup
+			super(arguments.flatten(1))
+		end
+		
+		def initialize_copy(other)
+			@options, @value = other.options.dup, other.value.map(&:dup)
+		end
+		
+		def replace(values)
+			@value = []
+			
+			values.each do |value|
+				case
+				when value.is_a?(Name)
+					@value << value
+				
+				when value.is_a?(Hash)
+					@value << Name.new(value)
+					
+				when value.respond_to?(:to_s)
+					@value << Name.parse!(value.to_s)
+					
+				else
+					raise TypeError, "failed to create names from #{value.inspect}"				
+				end
+			end
+			
+			self
 		end
 		
 		def numeric?

@@ -62,6 +62,7 @@ module CiteProc
 
 		attr_predicates :circa, :season, :literal, :'date-parts'
 
+		# Make Date behave like a regular Ruby Date
 		def_delegators :to_ruby,
 			*::Date.instance_methods(false).reject { |m| m.to_s =~ /^to_s$|^inspect$|start$|^\W/ }
 
@@ -77,7 +78,7 @@ module CiteProc
 		def replace(value)
 			case
 			when value.is_a?(CiteProc::Date)
-				@value = value.dup
+				initialize_copy(value)
 
 			when value.is_a?(Numeric)
 				@value = { :'date-parts' => [[value.to_i]] }

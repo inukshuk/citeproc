@@ -15,6 +15,7 @@ require 'citeproc/attributes'
 require 'citeproc/variable'
 require 'citeproc/date'
 require 'citeproc/names'
+require 'citeproc/selector'
 require 'citeproc/bibliography'
 
 require 'citeproc/engine'

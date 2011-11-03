@@ -89,7 +89,7 @@ module CiteProc
 					@value = Date.parse(attributes.delete(:raw)).value
 					@value.merge!(attributes)
 				else
-					@value = value.deep_copy
+					@value = attributes.deep_copy
 				end
 				to_i!
 

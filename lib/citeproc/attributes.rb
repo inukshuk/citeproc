@@ -4,6 +4,9 @@ module CiteProc
   module Attributes
     extend Forwardable
     
+
+		FALSE_VALUES = [nil, false, '', [], 'false', 'no', 'never'].freeze
+		
     def self.included(base)
       base.extend(ClassMethods)
     end
@@ -86,7 +89,7 @@ module CiteProc
         predicate_id = [method_id, '?'].join  
         if predicate && !instance_methods.include?(predicate_id)
           define_method(predicate_id) do
-            ![nil, false, '', [], 'false', 'no', 'never'].include?(attributes[field.to_sym])
+            !FALSE_VALUES.include?(attributes[field.to_sym])
           end
           
           has_predicate = ['has_', predicate_id].join

@@ -52,8 +52,11 @@ module CiteProc
 
     @fields.freeze
 
+		@markup = /<[^>]*>/.freeze
+		
+		
     class << self
-      attr_reader :fields, :types
+      attr_reader :fields, :types, :markup
       
       def create(value)
 				new(value)
@@ -112,11 +115,11 @@ module CiteProc
     end
     
     def strip_markup
-      gsub(/<[^>]*>/, '')
+      gsub(Variable.markup, '')
     end
     
     def strip_markup!
-      gsub!(/<[^>]*>/, '')
+      gsub!(Variable.markup, '')
     end 
     
     def <=>(other)

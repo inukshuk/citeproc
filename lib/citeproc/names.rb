@@ -300,8 +300,17 @@ module CiteProc
 			end
 		end
 		
+		def strip_markup
+			gsub(Variable.markup, '')
+		end
+		
+		def strip_markup!
+			gsub!(Variable.markup, '')
+		end
+		
+		# Returns the sort order array stripped off markup and downcased.
 		def sort_order_downcase
-			sort_order.map(&:downcase)
+			sort_order.map { |s| s.downcase.gsub(Variable.markup, '') }
 		end
 		
 		def inspect
@@ -316,13 +325,50 @@ module CiteProc
 	
 	
 	
-	#
+
 	# Names are a CiteProc Variable containing an ordered list of Name objects.
+	#
+	# Names can be formatted using CSL formatting options. The available options
+	# and their default values are described below.
+	#
+	# * and: specifies the delimiter between the penultimate and the last name.
+	#   Defaults to '&'.
+	#
+	# * delimiter: Soecifies the text string to seaparate the individual names.
+	#   The default value is ', '.
+	#
+	# * delimiter-precedes-last: determines in which cases the delimiter used
+	#   to delimit names is also used to separate the second to last and the
+	#   last name in name lists. The possible values are: 'contextual' (default,
+	#   the delimiter is only included for name lists with three or more names),
+	#   'always', and 'never'.
+	#
+	# * et-al-min and et-al-use-first: Together, these attributes control et-al
+	#   abbreviation. When the number of names in a name variable matches or
+	#   exceeds the number set on et-al-min, the rendered name list is truncated
+	#   at the number of names set on et-al-use-first. If truncation occurs, the
+	#   "et-al" term is appended to the names rendered (see also Et-al). With a
+	#   single name (et-al-use-first="1"), the "et-al" term is preceded by a
+	#   space (e.g. "Doe et al."). With multiple names, the "et-al" term is
+	#   preceded by the name delimiter (e.g. "Doe, Smith, et al.").
+	#
+	# * et-al-subsequent-min / et-al-subsequent-use-first: The (optional)
+	#   et-al-min and et-al-use-first attributes take effect for all cites and
+	#   bibliographic entries. With the et-al-subsequent-min and
+	#   et-al-subsequent-use-first attributes divergent et-al abbreviation rules
+	#   can be specified for subsequent cites (cites referencing earlier cited
+	#   items).
 	#
 	class Names < Variable
 		
 		@defaults = {
-			
+			:and => '&',
+			:delimiter => ', ',
+			:'delimiter-precedes-last' => :contextual,
+			:'et-al-min' => 5,
+			:'et-al-use-first' => 3,
+			:'et-al-subsequent-min' => 5,
+			:'et-al-subsequent-use-first' => 3
 		}.freeze
 		
 		class << self
@@ -374,7 +420,7 @@ module CiteProc
 			end
 		end
 		
-				
+						
 		def initialize(*arguments)
 			@options = Names.defaults.dup
 			super(arguments.flatten(1))
@@ -406,6 +452,70 @@ module CiteProc
 			self
 		end
 		
+		# Returns true if the Names, if printed, will be abbreviated.
+		def abbreviate?
+			length >= options[:'et-al-min'].to_i
+		end
+		
+		# Returns true if the Names, if printed on subsequent cites, will be abbreviated.
+		def abbreviate_subsequent?
+			length >= options[:'et-al-subsequent-min'].to_i
+		end
+	
+		def delimiter
+			options[:delimiter]
+		end
+		
+		def last_delimiter
+			delimiter_precedes_last? ? [delimiter, connector].compact.join : connector
+		end
+		
+		# Returns whether or not the delimiter will be inserted between the penultimate and the last name.
+		def delimiter_precedes_last?
+			case
+			when delimiter_never_precedes_last?
+				false	
+			when delimiter_always_precedes_last?
+				true
+			else
+				length > 2
+			end
+		end
+		
+		def delimiter_always_precedes_last?
+			!!(options[:'delimiter-precedes-last'].to_s =~ /^always$/i)
+		end
+
+		def delimiter_always_precedes_last!
+			options[:'delimiter-precedes-last'].to_s = :always
+		end
+
+		alias delimiter_precedes_last! delimiter_always_precedes_last!
+		
+		def delimiter_never_precedes_last?
+			!!(options[:'delimiter-precedes-last'].to_s =~ /^never$/i)
+		end
+
+		def delimiter_never_precedes_last!
+			options[:'delimiter-precedes-last'].to_s = :never
+		end
+
+		def delimiter_never_precedes_last?
+			!!(options[:'delimiter-precedes-last'].to_s =~ /^contextual/i)
+		end
+
+		def delimiter_contextually_precedes_last!
+			options[:'delimiter-precedes-last'].to_s = :contextual
+		end
+
+	
+		
+		# Returns the string used as connector between the penultimate and the last name.
+		def connector
+			options[:and]
+		end
+		
+		# Names are not numeric
 		def numeric?
 			false
 		end
@@ -425,7 +535,7 @@ module CiteProc
 		end
 		
 		def to_s
-			names.join(', ')
+			names.to_sentence(join_options)
 		end
 		
 		def to_citeproc
@@ -436,6 +546,16 @@ module CiteProc
 			"#<CiteProc::Names #{to_s}>"
 		end
 		
+		
+		private
+		
+		def join_options
+			{
+				:word_connector => delimiter,
+				:two_words_connector => last_delimiter,
+				:last_word_connector => last_delimiter
+			}
+		end
 	end
 	
 end

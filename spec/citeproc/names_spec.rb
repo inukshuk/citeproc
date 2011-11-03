@@ -20,6 +20,15 @@ module CiteProc
 			:suffix => 'III')
 		}
 
+		let(:markup) { Name.new(
+			:given => '<b>Gérard</b>',
+			:'dropping-particle' => 'd<i>e</i>',
+			:'non-dropping-particle' => 'la',
+			:family => 'Mar<strong>tinière</strong>',
+			:suffix => 'III')
+		}
+
+
 		let(:japanese) { Name.new(
 			"family" => "穂積",
 			"given" => "陳重")
@@ -409,6 +418,19 @@ module CiteProc
 				it 'accepts an array of names' do
 					Names.new([joe, poe]).should have(2).names
 				end
+				
+			end
+
+			describe '#strip_markup' do
+				
+				it 'strips markup off string representation' do
+					Names.new(markup).strip_markup.should == utf.to_s
+				end
+				
+				it 'when using the bang! version, strips markup off each name part' do
+					Names.new(markup).strip_markup![0].should == utf
+				end
+				
 				
 			end
 			

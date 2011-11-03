@@ -57,6 +57,28 @@ module CiteProc
 			end
 		end
 		
+		# based and compatible to the active support version
+		module ToSentence
+			def to_sentence(options = {})
+				options = {
+					:words_connector => ", ",
+					:two_words_connector => " and ",
+					:last_word_connector => ", and "
+				}.merge!(options)
+
+				case length
+				when 0
+					""
+				when 1
+					self[0].to_s.dup
+				when 2
+					"#{self[0]}#{options[:two_words_connector]}#{self[1]}"
+				else
+					"#{self[0...-1].join(options[:words_connector])}#{options[:last_word_connector]}#{self[-1]}"
+				end
+			end
+		end
+
     module AliasMethods
       private
       def alias_methods(*arguments)
@@ -71,12 +93,14 @@ end
 class Hash
   include CiteProc::Extensions::DeepCopy
   include CiteProc::Extensions::DeepFetch
-  include CiteProc::Extensions::SymbolizeKeys unless Hash.instance_methods.include?(:symbolize_keys)
-  include CiteProc::Extensions::StringifyKeys unless Hash.instance_methods.include?(:stringify_keys)
+  include CiteProc::Extensions::SymbolizeKeys unless method_defined?(:symbolize_keys)
+  include CiteProc::Extensions::StringifyKeys unless method_defined?(:stringify_keys)
 end
 
 class Array
 	include CiteProc::Extensions::CompactJoin
+	include CiteProc::Extensions::ToSentence unless method_defined?(:to_sentence)
+	
 end
 
 # module Kernel

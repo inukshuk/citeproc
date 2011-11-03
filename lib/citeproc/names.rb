@@ -1,5 +1,39 @@
 module CiteProc
 	
+	# Names consist of several dependent parts of strings. Simple personal names
+	# are composed of family and given elements, containing respectively the
+	# family and given name of the individual.
+	#
+	#		 Name.new(:family => 'Doe', :given => 'Jane')
+	#
+	# Institutional and other names that should always be presented literally
+	# (such as "The Artist Formerly Known as Prince", "Banksy", or "Ramses IV")
+	# should be delivered as a single :literal element:
+	#
+	#		 Name.new(:literal => 'Banksy')
+	#
+	# Name particles, such as the "von" in "Alexander von Humboldt", can be
+	# delivered separately from the family and given name, as :dropping-particle
+	# and :non-dropping-particle elements.
+	#
+	# Name suffixes such as the "Jr." in "Frank Bennett, Jr." and the "III" in
+	# "Horatio Ramses III" can be delivered as a suffix element.
+	#
+	#		 Name.new do |n|
+	#			 n.family, n.given, n.suffix = 'Ramses', 'Horatio', 'III'
+	#		 end
+	#
+	# Names not written in the Latin or Cyrillic scripts are always displayed
+	# with the family name first. Sometimes it might be desired to handle a
+	# Latin or Cyrillic transliteration as if it were a fixed (non-Byzantine)
+	# name. This behavior can be prompted by including activating
+	# static-ordering:
+	#
+	#    Name.new(:family => 'Muramaki', :given => 'Haruki').to_s
+	#      #=> "Haruki Muramaki"
+	#    Name.new(:family => 'Muramaki', :given => 'Haruki').static_order!.to_s
+	#      #=> "Muramaki Haruki"
+	#   
 	class Name
 		
 		extend Forwardable
@@ -88,6 +122,8 @@ module CiteProc
 			@sort_prefix = (/^(the|an?|der|die|das|eine?|l[ae])\s+|^l\W/i).freeze
 			
 			merge(attributes)
+			
+			yield self if block_given?
 		end
 		
 		def initialize_copy(other)
@@ -114,6 +150,14 @@ module CiteProc
 		def static_order?
 			static_ordering? || !romanesque?
 		end
+
+		def static_order!
+			self.static_ordering = true
+			self
+		end
+
+		alias static_order static_ordering
+		alias static_order= static_ordering=
 
 		# Returns true if this Name's sort-oder options currently set.
 		def sort_order?
@@ -269,7 +313,33 @@ module CiteProc
 						
 	end
 	
+	
+	
+	#
+	# Names are a CiteProc Variable containing an ordered list of Name objects.
+	#
 	class Names < Variable
+		
+		@defaults = {
+			
+		}.freeze
+		
+		class << self
+			
+			attr_reader :defaults
+			
+			def parse(names_string)
+				parse!(names_string)
+			rescue ParseError
+				nil
+			end
+			
+			def parse!(names_string)
+				
+			end
+			
+		end
+		
 		
 		include Enumerable
 				
@@ -280,12 +350,32 @@ module CiteProc
 		def value
 			@value ||= []
 		end
-		
+				
 		alias names value
 		
+		# Don't expose value/names writer
+		undef_method :value=
+		
+		# Delegate bang! methods to each name
 		Variable.instance_methods(false).each do |m|
 			if m.to_s.end_with?('!')
-				define_method(m) { names.each(&m.to_sym) }
+				define_method(m) do |*arguments, &block|
+					names.each do |name|
+						name.send(m, *arguments, &block) if name.respond_to?(m)
+					end
+					self
+				end
+			end
+		end
+		
+		# Names quack sorta like an Array
+		def_delegators :names, :length, :empty?, :[]
+		
+		# Some delegators should return self
+		[:push, :<<, :unshift].each do |m|
+			define_method(m) do |*arguments, &block|
+				names.send(m, *arguments, &block)
+				self
 			end
 		end
 		
@@ -310,8 +400,16 @@ module CiteProc
 			names <=> other.names
 		end
 		
+		def to_s
+			names.join(', ')
+		end
+		
 		def to_citeproc
 			names.map(&:to_citeproc)
+		end
+		
+		def inspect
+			"#<CiteProc::Names #{to_s}>"
 		end
 		
 	end

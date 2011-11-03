@@ -253,6 +253,14 @@ module CiteProc
 				dostoyevksy.to_s.should == 'Фёдор Михайлович Достоевский'
 			end
 
+			describe 'when static ordering is active' do
+				
+				it 'always prints the family name first' do
+					poe.static_order!.to_s.should == 'Poe Edgar Allen'
+				end
+				
+			end
+			 
 			describe 'when the sort order option is active' do
 
 				it 'returns an empty string by default' do

@@ -63,8 +63,8 @@ module CiteProc
     
     attr_accessor :value
 
-    def_delegators :@value, :to_s, :strip!, :upcase!, :downcase!, :sub!,
-			:gsub!, :chop!, :chomp!, :rstrip!
+    def_delegators :@value, :to_s,
+			*::String.instance_methods(false).select {|m| m.to_s =~ /!$/ }
     
     def_delegators :to_s, :=~, :===,
 			*::String.instance_methods(false).reject {|m| m.to_s =~ /^\W|!$|to_s/ }

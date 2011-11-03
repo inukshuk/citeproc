@@ -48,7 +48,7 @@ module CiteProc
 		
 		attr_reader :options
 		
-		attr_predicates :'comma-suffix', :'static-ordering', *@parts
+		attr_predicates :'comma-suffix', :'static-ordering', :multi, *@parts
 		
 		# Aliases
 		[[:last, :family], [:first, :given], [:particle, :'non_dropping_particle']].each do |a, m|
@@ -73,7 +73,8 @@ module CiteProc
 			if m.to_s.end_with?('!')
 				define_method(m) do |*arguments, &block|
 					Name.parts.each do |part|
-						attributes.fetch(part, '').send(m, *arguments, &block)
+						p = attributes[part]
+						p.send(m, *arguments, &block) if p.respond_to?(m)
 					end
 					self
 				end
@@ -153,6 +154,13 @@ module CiteProc
 			options[:form] = 'long'
 			self
 		end
+
+		# TODO should be done via mixin to be reused for variables
+		# def transliterable?
+		# end
+		# 
+		# def transliterate(locale)
+		# end
 		
 		def initials?
 			!!options[:'initialize-with'] && personal? && romanesque?

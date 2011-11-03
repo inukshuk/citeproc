@@ -8,6 +8,8 @@ module CiteProc
 		let(:poe) { Name.new(:family => 'Poe', :given => 'Edgar Allen') }
 		let(:joe) { Name.new(:given => 'Joe') }
 		let(:plato) { Name.new(:given => 'Plato') }
+		let(:aristotle) { Name.new(:given => 'Ἀριστοτέλης') }
+		let(:dostoyevksy) { Name.new(:given => 'Фёдор Михайлович', :family => 'Достоевский') }
 		
 		let(:utf) { Name.new(
 			:given => 'Gérard',
@@ -15,6 +17,11 @@ module CiteProc
 			:'non-dropping-particle' => 'la',
 			:family => 'Martinière',
 			:suffix => 'III')
+		}
+
+		let(:japanese) { Name.new(
+			"family" => "穂積",
+			"given" => "陳重")
 		}
 
 		let(:saunders) { Name.new("family" => "Saunders", "given" => "John Bertrand de Cusance Morant") }
@@ -70,6 +77,34 @@ module CiteProc
 			
 		end
 
+		describe 'script awareness' do
+			
+			it 'english names are romanesque' do
+				frank.should be_romanesque
+			end
+			
+			it 'ancient greek names are romanesque' do
+				aristotle.should be_romanesque
+			end
+			 
+			it 'russian names are romanesque' do
+				dostoyevksy.should be_romanesque
+			end
+			
+			it 'japanese names are not romanesque' do
+				japanese.should_not be_romanesque
+			end
+			
+			it 'german names are romanesque' do
+				Name.new(:given => 'Firedrich', :family => 'Hölderlin').should be_romanesque
+			end
+			
+			it 'french names are romanesque' do
+				utf.should be_romanesque
+			end
+			
+		end
+		
 		describe 'literals' do
 			
 			it 'is a literal if the literal attribute is set' do
@@ -128,6 +163,10 @@ module CiteProc
 
 				it 'returns the first name if only the first name is set' do
 					Name.new(:given => 'John').to_s.should == 'John'
+				end
+				
+				it 'prints japanese names using static ordering' do
+					japanese.to_s.should == '穂積 陳重'
 				end
 				
 				it 'returns the literal if the name is a literal' do

@@ -346,17 +346,28 @@ module CiteProc
 				van_gogh.sort_order.should == ['van Gogh', '', 'Vincent', '']
 			end
 
+			it 'does not demote non dropping particles by default but dropping particles are demoted' do
+				utf.sort_order.should == ['la Martinière', 'de', 'Gérard', 'III']
+			end
+
 			it 'demotes dropping particles' do
 				humboldt.sort_order.should == ['Humboldt', 'von', 'Alexander', '']
 			end
-
+			
 			it 'combines non dropping particles with family name if option demote-non-dropping-particles is not active' do
 				van_gogh.never_demote_particle!.sort_order.should == ['van Gogh', '', 'Vincent', '']
 			end
 			
+		end
+		
+		describe 'sorting' do
+			
+			it 'sorts by sort order by default' do
+				[poe, utf, joe, plato].sort.should == [joe, plato, utf, poe]
+			end
 			
 		end
-			
+		
 		
 	end
 	

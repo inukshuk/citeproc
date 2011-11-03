@@ -204,9 +204,10 @@ module CiteProc
 
 		alias demote_particle! always_demote_non_dropping_particle!
 
+		# Compares two names. The comparison is based on #sort_order_downcase.
 		def <=>(other)
-			return nil unless other.respond_to?(:sort_order)
-			sort_order <=> other.sort_order
+			return nil unless other.respond_to?(:sort_order_downcase)
+			sort_order_downcase <=> other.sort_order_downcase
 		end
 		
 		def to_citeproc
@@ -254,6 +255,9 @@ module CiteProc
 			end
 		end
 		
+		def sort_order_downcase
+			sort_order.map(&:downcase)
+		end
 		
 		def inspect
 			"#<CiteProc::Name #{to_s.inspect}>"

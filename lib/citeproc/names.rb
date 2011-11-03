@@ -12,7 +12,6 @@ module CiteProc
     ROMANESQUE =
 			/^[a-zA-Z\u0080-\u017f\u0400-\u052f\u0386-\u03fb\u1f00-\u1ffe\.,\s\u0027\u02bc\u2019-]*$/
 
-
     # Class instance variables
 
 		# Default formatting options
@@ -85,7 +84,9 @@ module CiteProc
 		# Instance methods
 		
 		def initialize(attributes = {}, options = {})
-			@options = Name.defaults.merge(options)			
+			@options = Name.defaults.merge(options)
+			@sort_prefix = (/^(the|an?|der|die|das|eine?|l[ae])\s+|^l\W/i).freeze
+			
 			merge(attributes)
 		end
 		
@@ -116,7 +117,7 @@ module CiteProc
 
 		# Returns true if this Name's sort-oder options currently set.
 		def sort_order?
-			!!options[:'name-as-sort-order']
+			!!(options[:'name-as-sort-order'].to_s =~ /^(y(es)?|always|t(rue)?)$/i)
 		end
 		
 		def display_order?
@@ -150,6 +151,10 @@ module CiteProc
 			self
 		end
 
+		def long_form?
+			options[:form] == 'long'
+		end
+
 		def long_form!
 			options[:form] = 'long'
 			self
@@ -167,10 +172,37 @@ module CiteProc
 		end
 		
 		def demote_non_dropping_particle?
-			flag = options[:'demote-non-dropping-particle']
-			flag == 'display-and-sort' || sort_order? && flag == 'sort-only'
+			always_demote_non_dropping_particle? ||
+				(sort_order? && options[:'demote-non-dropping-particle'] =~ /^sort(-only)?$/i)
 		end
+
+		alias demote_particle? demote_non_dropping_particle?
 		
+		def never_demote_non_dropping_particle?
+			!!(options[:'demote-non-dropping-particle'] =~ /^never$/i)
+		end
+
+		def never_demote_non_dropping_particle!
+			options[:'demote-non-dropping-particle'] = 'never'
+			self
+		end
+
+		alias never_demote_particle? never_demote_non_dropping_particle?
+		alias never_demote_particle! never_demote_non_dropping_particle!
+
+		def always_demote_non_dropping_particle?
+			!!(options[:'demote-non-dropping-particle'] =~ /^(display-and-sort|always)$/i)
+		end
+
+		def always_demote_non_dropping_particle!
+			options[:'demote-non-dropping-particle'] = 'display-and-sort'
+			self
+		end
+
+		alias always_demote_particle? always_demote_non_dropping_particle?
+		alias always_demote_particle! always_demote_non_dropping_particle!
+
+
 		def <=>(other)
 			return nil unless other.respond_to?(:sort_order)
 			sort_order <=> other.sort_order
@@ -180,7 +212,8 @@ module CiteProc
 			attributes.stringify_keys
 		end
 		
-		def display_order
+		# Returns the Name as a String according to the Name's formatting options.
+		def to_s
 			case
 			when literal?
 				literal.to_s
@@ -191,39 +224,43 @@ module CiteProc
 			when !short_form?
 				case
 				when !sort_order?
-					[[given, dropping_particle, non_dropping_particle, family].compact_join(' '),
+					[[given, dropping_particle, particle, family].compact_join(' '),
 						suffix].compact_join(comma_suffix? ? comma : ' ')
 					
-				when !demote_non_dropping_particle
-					[[non-dropping-particle, family].compact_join(' '), [given,
-							dropping_particle].compact_join(' '), suffix].compact_join(comma)
+				when !demote_particle?
+					[[particle, family].compact_join(' '), [given,
+						dropping_particle].compact_join(' '), suffix].compact_join(comma)
 					
 				else
-					[family, [given, dropping_particle, non_dropping_particle].compact.join(' '),
+					[family, [given, dropping_particle, particle].compact_join(' '),
 						suffix].compact_join(comma)
 				end
 				
 			else
-				[don_dropping_particle, family].compact_join(' ')
+				[particle, family].compact_join(' ')
 			end
 		end
 		
+		# Returns an ordered array of formatted name parts to be used for sorting.
 		def sort_order
 			case
 			when literal?
-				literal.to_s
+				[literal.to_s.sub(sort_prefix, '')]
+			when never_demote_particle?
+				[[particle, family].compact_join(' '), dropping_particle, given, suffix].map(&:to_s)
 			else
-				[family, given].compact.join(sort_separator)
+				[family, [particle, dropping_particle].compact_join(' '), given, suffix].map(&:to_s)
 			end
 		end
 		
-		def to_s
-			sort_order? ? sort_order : display_order
-		end
 		
 		def inspect
 			"#<CiteProc::Name #{to_s.inspect}>"
 		end
+		
+		private
+		
+		attr_reader :sort_prefix
 						
 	end
 	

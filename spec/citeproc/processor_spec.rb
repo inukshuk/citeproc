@@ -15,7 +15,7 @@ module CiteProc
 				
 				it 'returns an empty bibliography'
 				
-				it 'returns a bibliography of all registered items if invoked with :all'
+				# it 'returns a bibliography of all registered items if invoked with :all'
 				
 			end
 			
@@ -23,7 +23,7 @@ module CiteProc
 				
 				it 'returns a bibliography containing all cited items'
 
-				it 'returns a bibliography of all registered items if invoked with :all'
+				# it 'returns a bibliography of all registered items if invoked with :all'
 				
 				describe 'when invoked with a block as filter' do
 				

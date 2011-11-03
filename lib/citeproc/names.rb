@@ -18,7 +18,7 @@ module CiteProc
 		@defaults = {
 			:form => 'long',
 			:'name-as-sort-order' => false,
-			:'demote-non-dropping-particle' => 'display-and-sort',
+			:'demote-non-dropping-particle' => 'never',
 			:'sort-separator' => ', ',
 			:'initialize-with' => nil
 		}.freeze
@@ -173,7 +173,7 @@ module CiteProc
 		
 		def demote_non_dropping_particle?
 			always_demote_non_dropping_particle? ||
-				(sort_order? && options[:'demote-non-dropping-particle'] =~ /^sort(-only)?$/i)
+				!!(sort_order? && options[:'demote-non-dropping-particle'] =~ /^sort(-only)?$/i)
 		end
 
 		alias demote_particle? demote_non_dropping_particle?
@@ -202,6 +202,7 @@ module CiteProc
 		alias always_demote_particle? always_demote_non_dropping_particle?
 		alias always_demote_particle! always_demote_non_dropping_particle!
 
+		alias demote_particle! always_demote_non_dropping_particle!
 
 		def <=>(other)
 			return nil unless other.respond_to?(:sort_order)

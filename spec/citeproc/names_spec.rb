@@ -62,18 +62,33 @@ module CiteProc
 
 		describe 'formatting options' do
 			
-			it 'always demotes particle by default' do
-				Name.new.always_demote_particle?.should be true
-				Name.new.always_demote_non_dropping_particle?.should be true
+			it 'does not always demote particle by default' do
+				Name.new.always_demote_particle?.should be false
+				Name.new.always_demote_non_dropping_particle?.should be false
 			end
 
-			it 'demotes particle by default' do
-				Name.new.demote_particle?.should be true
-				Name.new.demote_non_dropping_particle?.should be true
+			it 'does not demote particle by default' do
+				Name.new.demote_particle?.should be false
+				Name.new.demote_non_dropping_particle?.should be false
+			end
+
+			it 'does not demote particle in sort order by default' do
+				Name.new.sort_order!.demote_particle?.should be false
+				Name.new.sort_order!.demote_non_dropping_particle?.should be false
+			end
+
+			it 'always demotes particle if option is set' do
+				Name.new({}, :'demote-non-dropping-particle' => 'display-and-sort').always_demote_particle?.should be true
+				Name.new({}, :'demote-non-dropping-particle' => 'display-and-sort').always_demote_non_dropping_particle?.should be true
+			end
+
+			it 'demotes particle in sort order if option is set to sort-only' do
+				Name.new({}, :'demote-non-dropping-particle' => 'display-and-sort').sort_order!.demote_particle?.should be true
 			end
 			
-			it 'never demotes particle if option set to "never"' do
-				Name.new({}, :'demote-non-dropping-particle' => 'never').never_demote_particle?.should be true
+			it 'never demotes particle by default' do
+				Name.new.never_demote_particle?.should be true
+				Name.new.never_demote_non_dropping_particle?.should be true
 			end
 			
 			it 'is not in sort order by default' do
@@ -260,7 +275,34 @@ module CiteProc
 					Name.new(:literal => 'GNU/Linux').sort_order!.to_s == 'GNU/Linux'
 				end
 
+				it 'uses comma for suffix if comma suffix is set' do
+					frank.sort_order!.to_s.should == 'Bennett, Frank G., Jr.'
+				end
+				
+				it 'also uses comma for suffix if comma suffix is *not* set' do
+					jr.sort_order!.to_s.should == 'Stephens, James, Jr.'
+				end
+
+				it 'for normal names it prints them as "family, given"' do
+					poe.sort_order!.to_s.should == 'Poe, Edgar Allen'
+				end
 			
+				it 'particles come after given name by default' do
+					van_gogh.sort_order!.to_s.should == 'van Gogh, Vincent'
+				end
+
+				it 'particles come after given name if demote option is active' do
+					van_gogh.sort_order!.demote_particle!.to_s.should == 'Gogh, Vincent van'
+				end
+				
+				it 'dropping particles come after given name' do
+					humboldt.sort_order!.to_s.should == 'Humboldt, Alexander von'
+				end
+				
+				it 'by default if all parts are set they are returned as "particle family, first dropping-particle, suffix"' do
+					utf.sort_order!.to_s.should == 'la Martinière, Gérard de, III'
+				end
+				
 			end
 			
 		end
@@ -296,8 +338,12 @@ module CiteProc
 				japanese.sort_order.should have(4).elements
 			end
 			
-			it 'demotes non dropping particles by default' do
-				van_gogh.sort_order.should == ['Gogh', 'van', 'Vincent', '']
+			it 'demotes non dropping particles if option is set' do
+				van_gogh.demote_particle!.sort_order.should == ['Gogh', 'van', 'Vincent', '']
+			end
+
+			it 'does not demote non dropping particles by default' do
+				van_gogh.sort_order.should == ['van Gogh', '', 'Vincent', '']
 			end
 
 			it 'demotes dropping particles' do

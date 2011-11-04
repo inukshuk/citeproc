@@ -161,6 +161,10 @@ module CiteProc
 					utf.should be_romanesque
 				end
 			
+				it 'markup does not interfere with romanesque test' do
+					markup.should be_romanesque
+				end
+				
 			end
 		
 			describe 'literals' do

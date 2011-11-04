@@ -143,7 +143,7 @@ module CiteProc
 		# greek based script. It will be false, for example, for names written
 		# in Chinese, Japanese, Arabic or Hebrew.
 		def romanesque?
-			[given, family].join =~ ROMANESQUE
+			!!([given, family].join.gsub(Variable.markup, '') =~ ROMANESQUE)
 		end
 		
 		alias byzantine? romanesque?

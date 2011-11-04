@@ -2,6 +2,18 @@
 module CiteProc
   module Extensions
     
+		module Underscore
+			def underscore(word)
+				word = word.to_s.dup
+	      word.gsub!(/::/, '/')
+	      word.gsub!(/([A-Z]+)([A-Z][a-z])/,'\1_\2')
+	      word.gsub!(/([a-z\d])([A-Z])/,'\1_\2')
+	      word.tr!('-', '_')
+	      word.downcase!
+	      word
+			end
+		end
+		
     module DeepCopy  
       def deep_copy
         Hash[*map { |k,v| [
@@ -104,6 +116,10 @@ end
 class Array
 	include CiteProc::Extensions::CompactJoin
 	# include CiteProc::Extensions::ToSentence unless method_defined?(:to_sentence)	
+end
+
+class String
+	include CiteProc::Extensions::Underscore unless method_defined?(:underscore)
 end
 
 # module Kernel

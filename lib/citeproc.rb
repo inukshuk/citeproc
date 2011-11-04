@@ -26,6 +26,7 @@ CiteProc::Variable.class_eval do
 end
 
 require 'citeproc/item'
+require 'citeproc/citation_data'
 require 'citeproc/selector'
 require 'citeproc/bibliography'
 require 'citeproc/assets'

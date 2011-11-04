@@ -35,31 +35,9 @@ module CiteProc
 		def initialize_copy(other)
 			@attributes = other.attributes.deep_copy
 		end
-				
-    def merge(other)
-      return self if other.nil?
-      
-      case other
-      when String, /^\s*\{/
-        other = MulitJson.decode(other, :symbolize_keys => true)
-      when Hash
-				# do nothing
-      when Attributes
-        other = other.to_hash
-			else
-				raise ParseError, "failed to merge item and #{other.inspect}"
-      end
-
-      other.each_pair do |key, value|
-				key = key.to_sym
-				attributes[key] = Variable.create!(value, key)
-			end
-      
-      self
-    end
     
 		# Don't expose attributes. Items need to mimic Hash functionality in a controlled way.
-		private_methods :attributes
+		private :attributes
 
 		def [](key)
 			return nil unless key.respond_to?(:to_sym)
@@ -89,6 +67,12 @@ module CiteProc
 			MultiJson.encode(to_citeproc)
 		end
 		
+		private
+
+		def filter_value(value, key)
+			Variable.create!(value, key)
+		end
+
 	end
-	
+
 end

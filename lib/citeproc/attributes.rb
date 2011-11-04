@@ -19,6 +19,18 @@ module CiteProc
       @attributes ||= {}
     end
     
+		def filter_key(key)
+			key.to_sym
+		end
+		
+		def filter_value(value, key = nil)
+			value.respond_to?(:deep_copy) ? value.deep_copy : value.dup
+		rescue
+			value
+		end
+		
+		private :filter_key, :filter_value
+		
     def merge(other)
       return self if other.nil?
       
@@ -34,11 +46,7 @@ module CiteProc
       end
 
       other.each_pair do |key, value|
-				attributes[key.to_sym] = begin
-					value.respond_to?(:deep_copy) ? value.deep_copy : value.dup
-				rescue
-					value
-				end
+				attributes[filter_key(key)] = filter_value(value, key)
 			end
       
       self
@@ -54,14 +62,39 @@ module CiteProc
 			attributes.deep_copy
 		end
 
-		def_delegators :attributes, :empty?
+		def_delegators :attributes, :length, :empty?
 
+	
+		# def eql?(other)
+		# 	case
+		# 	when equal?(other)
+		# 		true
+		# 	when self.class != other.class, length != other.length
+		# 		false
+		# 	else
+		# 		other.attributes.each_pair do |key, value|
+		# 			return false unless attributes[key].eql?(value)
+		# 		end
+		# 		
+		# 		true
+		# 	end
+		# end
+		# 
+		# def hash
+		# end
+		
     module ClassMethods
 
-      def create(parameters)
-        new.merge(parameters)
-      end
-      
+			def create(parameters)
+				create!(parameters)
+			rescue
+				nil
+			end
+
+			def create!(parameters)
+				new.merge(parameters)
+			end
+
       def attr_predicates(*arguments)
         arguments.flatten.each do |field|
           field, default = *(field.is_a?(Hash) ? field.to_a.flatten : [field]).map(&:to_s)
@@ -76,7 +109,7 @@ module CiteProc
       end
       
       def attr_field(field, default = nil, predicate = false)
-        method_id = field.downcase.gsub(/[-\s]+/, '_')
+        method_id = field.to_s.downcase.gsub(/[-\s]+/, '_')
 
         unless instance_methods.include?(method_id)
           if default

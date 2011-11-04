@@ -535,7 +535,11 @@ module CiteProc
 		end
 		
 		def to_s
-			names.to_sentence(join_options)
+			if length < 2
+				names.join(last_delimiter)
+			else
+				[names[0...-1].join(delimiter), names[-1]].join(last_delimiter)
+			end
 		end
 		
 		def to_citeproc
@@ -545,17 +549,7 @@ module CiteProc
 		def inspect
 			"#<CiteProc::Names #{to_s}>"
 		end
-		
-		
-		private
-		
-		def join_options
-			{
-				:word_connector => delimiter,
-				:two_words_connector => last_delimiter,
-				:last_word_connector => last_delimiter
-			}
-		end
+				
 	end
 	
 end

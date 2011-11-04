@@ -5,8 +5,8 @@ module CiteProc
     module DeepCopy  
       def deep_copy
         Hash[*map { |k,v| [
-          k.is_a?(Symbol) ? k : k.respond_to?(:deep_copy) ? k.deep_copy : k.clone,
-          v.is_a?(Symbol) ? v : v.respond_to?(:deep_copy) ? v.deep_copy : v.clone
+          begin k.respond_to?(:deep_copy) ? k.deep_copy : k.dup rescue k end,
+          begin v.respond_to?(:deep_copy) ? v.deep_copy : v.dup rescue v end
         ]}.flatten(1)]
       end
     end
@@ -58,26 +58,26 @@ module CiteProc
 		end
 		
 		# based and compatible to the active support version
-		module ToSentence
-			def to_sentence(options = {})
-				options = {
-					:words_connector => ", ",
-					:two_words_connector => " and ",
-					:last_word_connector => ", and "
-				}.merge!(options)
-
-				case length
-				when 0
-					""
-				when 1
-					self[0].to_s.dup
-				when 2
-					"#{self[0]}#{options[:two_words_connector]}#{self[1]}"
-				else
-					"#{self[0...-1].join(options[:words_connector])}#{options[:last_word_connector]}#{self[-1]}"
-				end
-			end
-		end
+		# module ToSentence
+		# 	def to_sentence(options = {})
+		# 		options = {
+		# 			:words_connector => ", ",
+		# 			:two_words_connector => " and ",
+		# 			:last_word_connector => ", and "
+		# 		}.merge!(options)
+		# 
+		# 		case length
+		# 		when 0
+		# 			""
+		# 		when 1
+		# 			self[0].to_s.dup
+		# 		when 2
+		# 			"#{self[0]}#{options[:two_words_connector]}#{self[1]}"
+		# 		else
+		# 			"#{self[0...-1].join(options[:words_connector])}#{options[:last_word_connector]}#{self[-1]}"
+		# 		end
+		# 	end
+		# end
 
     module AliasMethods
       private
@@ -91,16 +91,19 @@ module CiteProc
 end
 
 class Hash
+	warn "citeproc: re-defining Hash#deep_copy, this may cause conflicts with other libraries" if method_defined?(:deep_copy)
   include CiteProc::Extensions::DeepCopy
+
+	warn "citeproc: re-defining Hash#deep_copy, this may cause conflicts with other libraries" if method_defined?(:deep_fetch)
   include CiteProc::Extensions::DeepFetch
+
   include CiteProc::Extensions::SymbolizeKeys unless method_defined?(:symbolize_keys)
   include CiteProc::Extensions::StringifyKeys unless method_defined?(:stringify_keys)
 end
 
 class Array
 	include CiteProc::Extensions::CompactJoin
-	include CiteProc::Extensions::ToSentence unless method_defined?(:to_sentence)
-	
+	# include CiteProc::Extensions::ToSentence unless method_defined?(:to_sentence)	
 end
 
 # module Kernel

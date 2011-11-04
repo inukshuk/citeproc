@@ -27,9 +27,9 @@ module CiteProc
         Variable.new(23.1).should == '23.1'
       end
       
-      it 'raises type error when initialized with a hash' do
-        lambda { Variable.new(:value => 'test') }.should raise_error(TypeError)
-      end
+      # it 'raises type error when initialized with a hash' do
+      #   lambda { Variable.new(:value => 'test') }.should raise_error(TypeError)
+      # end
       
       it 'supports self yielding block' do
         Variable.new { |v| v.value = 'test' }.should == 'test'

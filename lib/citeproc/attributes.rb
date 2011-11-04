@@ -1,11 +1,15 @@
 
 module CiteProc
   
+	# TODO refactor using a Struct instead of a hash. This will have to convert
+	# the CiteProc/CSL names which are no proper method names.
+	
+	
   module Attributes
     extend Forwardable
     
 
-		FALSE_VALUES = [nil, false, '', [], 'false', 'no', 'never'].freeze
+		FALSE_PATTERN = (/^(false|no|never)$/i).freeze
 		
     def self.included(base)
       base.extend(ClassMethods)
@@ -21,29 +25,36 @@ module CiteProc
       case other
       when String, /^\s*\{/
         other = MulitJson.decode(other, :symbolize_keys => true)
-
       when Hash
-        other = other.deep_copy
-
+				# do nothing
       when Attributes
         other = other.to_hash
-
 			else
 				raise ParseError, "failed to merge attributes and #{other.inspect}"
       end
 
-      other.each_pair { |k,v| attributes[k.to_sym] = v }
+      other.each_pair do |key, value|
+				attributes[key.to_sym] = begin
+					value.respond_to?(:deep_copy) ? value.deep_copy : value.dup
+				rescue
+					value
+				end
+			end
       
       self
     end
 
     alias update merge
     
-    def reverse_merge(other)
-      other.merge(self)
-    end
+		def reverse_merge(other)
+			fail "not implemented yet"
+		end
 
-    alias to_hash attributes
+		def to_hash
+			attributes.deep_copy
+		end
+
+		def_delegators :attributes, :empty?
 
     module ClassMethods
 
@@ -89,7 +100,8 @@ module CiteProc
         predicate_id = [method_id, '?'].join  
         if predicate && !instance_methods.include?(predicate_id)
           define_method(predicate_id) do
-            !FALSE_VALUES.include?(attributes[field.to_sym])
+						v = attributes[field.to_sym]
+						!(v.nil? || (v.respond_to?(:empty?) && v.empty?) || v =~ FALSE_PATTERN)
           end
           
           has_predicate = ['has_', predicate_id].join

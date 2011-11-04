@@ -56,10 +56,18 @@ module CiteProc
 		
 		
     class << self
-      attr_reader :fields, :types, :markup
+	
+      attr_reader :fields, :types, :markup, :factories
       
-      def create(value)
-				new(value)
+			def create(value, type = nil)
+				create!(value, type)
+			rescue
+				nil
+			end
+			
+      def create!(value, type = nil)
+				factory = factories[type]
+				value.is_a?(factory) ? value : factory.new(value)
       end
 
     end
@@ -87,13 +95,9 @@ module CiteProc
 		# a wide range of argument types; subclasses (especially Date and Names)
 		# override this method.
 		def replace(value)
-			case value
-			when NilClass, FalseClass, TrueClass, String, Symbol, Numeric, Variable
-				@value = value.to_s
-				self
-			else
-				raise TypeError, "failed to set date variable to #{value.inspect}"
-			end
+			raise TypeError, "failed to set value to #{value.inspect}" unless value.respond_to?(:to_s)
+			@value = value.to_s
+			self
 		end
 
 		def type
@@ -135,7 +139,7 @@ module CiteProc
       end
     end
     
-		alias to_citeproc value
+		alias to_citeproc to_s
 		
     def to_json
       MultiJson.encode(to_citeproc)

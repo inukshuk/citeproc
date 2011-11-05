@@ -43,7 +43,7 @@ module CiteProc
       
       # Returns the best available engine class or nil.
       def autodetect(options = {})
-        klass = subclasses.detect { |e|
+        subclasses.detect { |e|
           !options.has_key?(:engine) || e.name == options[:engine] and
           !options.has_key?(:name) || e.name == options[:name]
         } || subclasses.first        
@@ -52,7 +52,7 @@ module CiteProc
       # Loads the engine by requiring the engine name.
       def load(name)
         require name.gsub(/-/,'/')
-      rescue LoadError => e
+      rescue LoadError
         warn "failed to load #{name} engine: try to gem install #{name}"
       end
       
@@ -73,7 +73,6 @@ module CiteProc
     attr_accessor :processor, :locales, :style, :items    
     
     def initialize(attributes = {})
-      
       @processor = attributes[:processor]
       
       @items = attributes[:items] || {}
@@ -114,11 +113,6 @@ module CiteProc
     
     alias append_citation_cluster append
 
-    def preview
-      raise NotImplementedByEngine
-    end
-    
-    alias preview_citation_cluster preview
     
     def bibliography
       raise NotImplementedByEngine

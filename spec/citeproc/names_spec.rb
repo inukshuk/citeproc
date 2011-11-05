@@ -135,6 +135,14 @@ module CiteProc
 			
 			end
 
+			describe '#dup' do
+				
+				it 'returns a new name copied by value' do
+					poe.dup.upcase!.to_s.should_not == poe.to_s
+				end
+				
+			end
+			
 			describe 'script awareness' do
 			
 				it 'english names are romanesque' do
@@ -446,7 +454,31 @@ module CiteProc
 				
 			end
 			
+			describe '#to_bibtex' do
+				
+				describe 'when there is only a single name' do
+					it 'prints the name in sort order' do
+						Names.new(poe).to_bibtex.should == 'Poe, Edgar Allen'
+					end
+				end
+				
+				describe 'when there are two or more names' do
+					it 'prints the names in sort order connected with the word "and"' do
+						Names.new(poe, plato, humboldt).to_bibtex.should == 'Poe, Edgar Allen and Plato and Humboldt, Alexander von'
+					end
+				end
+				
+			end
+			
 			describe '#to_s' do
+			
+				describe 'when the number of names exceeds the et-al-min option' do
+					
+					it 'prints only the et-al-use-first names'
+					it 'adds et-al at the end'
+					it 'adds the delimiter before et-al only in the right circumstances'
+					
+				end
 				
 			end
 			

@@ -361,6 +361,7 @@ module CiteProc
 			:and => '&',
 			:delimiter => ', ',
 			:'delimiter-precedes-last' => :contextual,
+			:'et-al' => 'et al.',
 			:'et-al-min' => 5,
 			:'et-al-use-first' => 3,
 			:'et-al-subsequent-min' => 5,
@@ -394,11 +395,11 @@ module CiteProc
 		undef_method :value=
 		
 		# Delegate bang! methods to each name
-		Variable.instance_methods(false).each do |m|
+		Name.instance_methods(false).each do |m|
 			if m.to_s.end_with?('!')
 				define_method(m) do |*arguments, &block|
 					names.each do |name|
-						name.send(m, *arguments, &block) if name.respond_to?(m)
+						name.send(m, *arguments, &block)
 					end
 					self
 				end
@@ -538,8 +539,12 @@ module CiteProc
 			end
 		end
 		
+		def to_bibtex
+			map { |n| n.dup.sort_order! }.join(' and ')
+		end
+		
 		def to_citeproc
-			names.map(&:to_citeproc)
+			map(&:to_citeproc)
 		end
 		
 		def inspect

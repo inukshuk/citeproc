@@ -81,7 +81,10 @@ module CiteProc
 		end
 
 		# Don't expose internals to public API
-		private :filter_key, :filter_value, :attributes
+		private :filter_key, :filter_value
+		
+		# initialize_copy should be able to access attributes
+		protected :attributes
 		
 
 	

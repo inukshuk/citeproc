@@ -70,11 +70,11 @@ module CiteProc
       end      
     end
 
-    attr_accessor :processor, :locales, :style, :items    
+    attr_accessor :options, :locales, :style, :items    
     
+		
     def initialize(attributes = {})
-      @processor = attributes[:processor]
-      
+      @processor = attributes[:options] || {}
       @items = attributes[:items] || {}
       @abbreviations = attributes[:abbreviations] || { :default => {} }
       

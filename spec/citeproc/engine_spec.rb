@@ -8,7 +8,7 @@ module CiteProc
     end
     
     describe 'subclasses' do
-      let(:subject) { Class.new(Engine).new { |e| e.processor = double(:processor) } }
+      let(:subject) { Class.new(Engine).new }
 
       it 'can be instantiated' do
         subject.should_not be nil

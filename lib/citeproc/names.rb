@@ -33,7 +33,7 @@ module CiteProc
 	#      #=> "Haruki Muramaki"
 	#    Name.new(:family => 'Muramaki', :given => 'Haruki').static_order!.to_s
 	#      #=> "Muramaki Haruki"
-	#   
+	#
 	class Name
 		
 		extend Forwardable
@@ -255,10 +255,6 @@ module CiteProc
 			sort_order_downcase <=> other.sort_order_downcase
 		end
 		
-		def to_citeproc
-			attributes.stringify_keys
-		end
-		
 		# Returns the Name as a String according to the Name's formatting options.
 		def to_s
 			case
@@ -410,7 +406,7 @@ module CiteProc
 		end
 		
 		# Names quack sorta like an Array
-		def_delegators :names, :length, :empty?, :[]
+		def_delegators :names, :length, :empty?, :[], :join
 		
 		# Some delegators should return self
 		[:push, :<<, :unshift].each do |m|

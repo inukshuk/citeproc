@@ -19,6 +19,16 @@ module CiteProc
       @attributes ||= {}
     end
     
+		def_delegators :attributes, :length, :empty?
+
+		def [](key)
+			attributes[filter_key(key)]
+		end
+		
+		def []=(key, value)
+			attributes[filter_key(key)] = filter_value(value)
+		end
+		
 		def filter_key(key)
 			key.to_sym
 		end
@@ -28,8 +38,6 @@ module CiteProc
 		rescue
 			value
 		end
-		
-		private :filter_key, :filter_value
 		
     def merge(other)
       return self if other.nil?
@@ -62,7 +70,19 @@ module CiteProc
 			attributes.deep_copy
 		end
 
-		def_delegators :attributes, :length, :empty?
+		def to_citeproc
+			Hash[*attributes.map { |k,v|
+				[k.to_s, v.respond_to?(:to_citeproc) ? v.to_citeproc : v.to_s]
+			}.flatten(1)]
+		end
+		
+		def to_json
+			MultiJson.encode(to_citeproc)
+		end
+
+		# Don't expose internals to public API
+		private :filter_key, :filter_value, :attributes
+		
 
 	
 		# def eql?(other)
@@ -129,7 +149,7 @@ module CiteProc
             attributes[field.to_sym] = value
           end
         end
-        
+        				
         predicate_id = [method_id, '?'].join  
         if predicate && !instance_methods.include?(predicate_id)
           define_method(predicate_id) do

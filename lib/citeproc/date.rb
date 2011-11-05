@@ -6,8 +6,8 @@ module CiteProc
 		include Attributes
 
 		alias attributes value
-		alias to_hash value
-
+		private :attributes, :value=
+		
 
 		# Date parsers (must respond to :parse)
 		@parsers = []
@@ -128,7 +128,7 @@ module CiteProc
 			define_method(m) { parts[0][i] }
 			define_method("#{m}=") { |v| parts[0][i] = v.to_i }
 		end
-
+		
 		def -@
 			d = dup
 			d.year = -1 * year

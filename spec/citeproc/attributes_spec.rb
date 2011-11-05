@@ -9,13 +9,13 @@ module CiteProc
   
     let(:instance) do
 			o = A.new
-			o.attributes[:bar] = 'foo'
+			o[:bar] = 'foo'
 			o
 		end
 
     let(:other) do
 	 		o = A.new
-			o.attributes[:foo] = 'bar'
+			o[:foo] = 'bar'
 			o
 		end
   
@@ -40,11 +40,11 @@ module CiteProc
     describe '#merge' do    
     
       it 'merges non-existent values from other object' do
-        A.new.merge(other).attributes[:foo].should == 'bar'
+        A.new.merge(other)[:foo].should == 'bar'
       end
     
       it 'does not overwrite existing values when merging other object' do
-        instance.merge(other).attributes[:bar].should == 'foo'
+        instance.merge(other)[:bar].should == 'foo'
       end
     
     end

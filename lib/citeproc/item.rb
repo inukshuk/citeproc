@@ -23,10 +23,40 @@ module CiteProc
 	# #to_json to get a JSON string).
 	class Item
 		
+		@types = [
+			:article, :'article-journal', :'article-magazine', :'article-newspaper',
+			:bill, :book, :broadcast, :chapter, :entry, :'entry-dictionary',
+			:'entry-encyclopedia', :figure, :graphic, :interview, :legal_case,
+			:legislation, :manuscript, :map, :motion_picture, :musical_score,
+			:pamphlet, :'paper-conference', :patent, :personal_communication, :post,
+			:'post-weblog', :report, :review, :'review-book', :song, :speech,
+			:thesis, :treaty, :webpage].freeze
+		
+		@bibtex_types = Hash.new { |h,k| :misc }.merge(Hash[*%w{
+			pamphlet          booklet
+			paper-conference  conference
+			chapter           inbook
+			chapter           incollection
+			paper-conference  inproceedings
+			book              manual
+			thesis            phdthesis
+			paper-conference  proceedings
+			report            techreport
+			manuscript        unpublished
+			article           article
+			article-journal   article
+			article-magazine  article
+		}.map(&:intern)]).freeze
+	  
+		class << self
+			attr_reader :types, :bibtex_types
+		end
+		
 		include Attributes
 		include Enumerable
 		
-		attr_predicates :id, *Variable.fields[:all]
+		attr_predicates :id, :'short-title', :'journal-abbreviation',
+			*Variable.fields[:all]
 		
 		def initialize(attributes = nil)
 			merge(attributes)
@@ -38,15 +68,6 @@ module CiteProc
     
 		# Don't expose attributes. Items need to mimic Hash functionality in a controlled way.
 		private :attributes
-
-		def [](key)
-			return nil unless key.respond_to?(:to_sym)
-			attributes[key.to_sym]
-		end
-
-		def []=(key, value)
-			attributes[key.to_sym] = Variable.create(value, key.to_sym)
-		end
 		
 		def each
 			if block_given?
@@ -57,16 +78,30 @@ module CiteProc
 			end
 		end
 		
-		def to_citeproc
-			Hash[*attributes.map { |k,v|
-				[k.to_s, v.respond_to?(:to_citeproc) ? v.to_citeproc : v.to_s]
-			}.flatten]
+		# Returns a corresponding BibTeX::Entry if the bibtex-ruby gem is installed;
+		# otherwise returns a BibTeX string.
+		def to_bibtex
+			# hash = to_hash
+			# 
+			# hash[:type] = Item.bibtex_types[hash[:type]]
+			# 
+			# if hash.has_key?(:issued)
+			# 	date = hash.delete(:issued)
+			# 	hash[:year] = date.year
+			# 	hash[:month] = date.month
+			# end
+			# 
+			# Variable.fields[:date].each do |field|
+			# 	hash[field] = hash[field].to_s if hash.has_key?(field)
+			# end
+			# 
+			# Variable.fields[:names].each do |field|
+			# 	hash[field] = hash[field].map(&:sort_order!).join(' and ')
+			# end
+			
+			raise 'not implemented yet'
 		end
-		
-		def to_json
-			MultiJson.encode(to_citeproc)
-		end
-		
+				
 		private
 
 		def filter_value(value, key)

@@ -1,4 +1,10 @@
 
+# CiteProc processes bibliographic data and formats it according to a style
+# defined in CSL (Citation Style Language).
+#
+# TODO
+#
+#
 module CiteProc
   module Utilities
 

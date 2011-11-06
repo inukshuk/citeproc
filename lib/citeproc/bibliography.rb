@@ -119,8 +119,17 @@ module CiteProc
 
 		attr_accessor :prefix, :suffix
 
-		def_delegators :@references, :[], :[]=, :<<, :push, :unshift, :pop,
-			:concat, :include?, :index, :length, :empty?
+		# Bibliographies quack sorta like an Array
+		def_delegators :@references, :length, :empty?, :[], :include?, :index
+
+		# Some delegators should return self
+		[:push, :<<, :unshift, :concat].each do |m|
+			define_method(m) do |*arguments, &block|
+				references.send(m, *arguments, &block)
+				self
+			end
+		end
+  	
 		
 		def initialize(options = {})
 			@options = Bibliography.defaults.merge(options)
@@ -139,6 +148,10 @@ module CiteProc
 		end
 		
 		alias errors? has_errors?
+		
+		def join(connector = "\n")
+		  [prefix, references.join(connector), suffix].join
+		end
 		
 		def each
 			if block_given?

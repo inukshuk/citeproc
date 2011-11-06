@@ -1,7 +1,13 @@
 
 require 'multi_json'
 require 'forwardable'
+require 'observer'
+require 'uri'
 
+if ENV['DEBUG']
+  require 'ruby-debug'
+  Debugger.start
+end
 
 require 'citeproc/version'
 
@@ -9,6 +15,7 @@ require 'citeproc/compatibility'
 require 'citeproc/extensions'
 
 require 'citeproc/errors'
+require 'citeproc/utilities'
 
 require 'citeproc/abbreviate'
 require 'citeproc/attributes'
@@ -33,6 +40,5 @@ require 'citeproc/assets'
 
 require 'citeproc/engine'
 require 'citeproc/processor'
-require 'citeproc/utilities'
 
 CiteProc.extend CiteProc::Utilities

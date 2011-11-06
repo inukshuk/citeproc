@@ -1,6 +1,5 @@
-require 'uri'
-
 module CiteProc
+
 	module Asset
 
 		def self.included(base)

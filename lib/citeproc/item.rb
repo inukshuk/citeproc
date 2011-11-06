@@ -1,5 +1,6 @@
 module CiteProc
 	
+	
 	# Items are similar to a Ruby Hash but pose a number of constraints on their
 	# contents: keys are always (implicitly converted to) symbols and values
 	# are strictly instances of CiteProc::Variable. When Items are constructed
@@ -96,12 +97,20 @@ module CiteProc
 			# end
 			# 
 			# Variable.fields[:names].each do |field|
-			# 	hash[field] = hash[field].map(&:sort_order!).join(' and ')
+			# 	hash[field] = hash[field].to_bibtex
 			# end
 			
 			raise 'not implemented yet'
 		end
-				
+		
+		def to_sym
+			id.to_s.to_sym
+		end
+		
+		def inspect
+			"#<CiteProc::Item id=#{id.inspect} attributes={#{attributes.length}}>"
+		end
+		
 		private
 
 		def filter_value(value, key)
@@ -109,5 +118,5 @@ module CiteProc
 		end
 
 	end
-
+	
 end

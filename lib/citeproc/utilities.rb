@@ -5,6 +5,7 @@
 #
 #
 module CiteProc
+	
   module Utilities
 
     # call-seq:
@@ -19,6 +20,18 @@ module CiteProc
     def bibliography(items, options = {})
       process(:bibliography, items, options)
     end
-
+		
   end
+
+
+	module Converters
+
+		module_function
+	
+		def Item(item)
+			item.is_a?(Item) ? item : Item.create(item)
+		end
+		
+	end
+	
 end

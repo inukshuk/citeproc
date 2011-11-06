@@ -74,7 +74,7 @@ module CiteProc
 		def_delegators :@processor, :options, :abbreviations, :style, :locale,
 			:items, :language, :region, :abbreviate
 
-		def initialize(processor = Processor.new)
+		def initialize(processor = nil)
 			@processor = processor
 			yield self if block_given?
 		end

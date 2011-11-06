@@ -103,11 +103,11 @@ module CiteProc
 
 
     def process(*arguments)
-      engine.process(CitationData(arguments.flatten(1)))
+      engine.process(CitationData.create(arguments.flatten(1)))
     end
 
     def append(*arguments)
-      engine.append(CitationData(arguments.flatten(1)))
+      engine.append(CitationData.create(arguments.flatten(1)))
     end
 
     def bibliography(*arguments, &block)

@@ -21,15 +21,15 @@ module CiteProc
 
 		def initialize(options = {})
 			@options = Processor.defaults.merge(options)
-			@style = Style.load(@options[:style])
-			@locale = Locale.load(@options[:locale])
+			@style = Style.open(@options[:style])
+			@locale = Locale.open(@options[:locale])
 			@items = {}
 
 			@engine = Engine.autodetect(@options).new(:options => @options, :style => @style, :locale => @locale, :items => @items)
 		end
 
 		def style=(style)
-			@style = Style.load(style.to_s)
+			@style = Style.open(style.to_s)
 			@engine.style = @style
 			@style
 		end

@@ -70,12 +70,14 @@ module CiteProc
       end      
     end
 
-    attr_accessor :options, :locales, :style, :items    
+    attr_accessor :options, :locale, :style, :items    
     
 		
     def initialize(attributes = {})
-      @processor = attributes[:options] || {}
+      @options = attributes[:options] || {}
       @items = attributes[:items] || {}
+      @locale = attributes[:locale]
+      @style = attributes[:style]
       @abbreviations = attributes[:abbreviations] || { :default => {} }
       
       yield self if block_given?

@@ -1,66 +1,105 @@
 require 'uri'
 
 module CiteProc
-  module Asset
-    
-    def self.included(base)
-      base.extend(ClassMethods)
-    end
-    
-    attr_accessor :asset
-    
-    alias to_s asset
+	module Asset
 
-    def inspect
-      to_s.inspect
-    end
-    
-    module ClassMethods
-      
-      attr_accessor :root, :extension, :prefix
-      
-      def load(asset)
-        instance = new
-        case
-        when File.exists?(asset)
-          instance.asset = read(asset)
-        when File.exists?(File.join(root.to_s, extend_name(asset)))
-          instance.asset = read(File.join(root.to_s, extend_name(asset)))
-        else
-          instance.asset = asset
-        end
-        instance
-      end
-      
-      private
+		def self.included(base)
+			base.extend(ClassMethods)
+		end
 
-      def read(name)
-        io = open(name, 'r:UTF-8')
-        io.read
-      ensure
-        io.close
-      end
+		attr_reader :asset, :location
+		
+		def opened?
+			!asset.nil?
+		end
+		
+		def open(input)
+			case
+			when input.respond_to?(:read)
+				@location = nil
+				@asset = input.read
+			when input.to_s =~ /^\s*</
+				@location = nil
+				@asset = input.to_s.dup
+			else
+				case
+				when File.exists?(input)
+					@location = input
+				when File.exists?(self.class.extend_name(input))
+					@location = self.class.extend_name(input)
+				when File.exists?(self.class.extend_path(input))
+					@location = self.class.extend_path(input)
+				else
+					@location = input
+				end
 
-      def extend_name(file)
-        file = File.extname(file).empty? ? [file, extension].compact.join : file
-        file = file.start_with?(prefix.to_s) ? file : [prefix,file].join
-        file
-      end
-    end
-    
-  end
-  
-  class Style
-    include Asset
-    @root = '/usr/local/share/citation-style-language/styles'.freeze
-    @extension = '.csl'.freeze
-  end
-  
-  class Locale
-    include Asset
-    @root = '/usr/local/share/citation-style-language/locales'.freeze
-    @extension = '.xml'.freeze
-    @prefix = 'locales-'
-  end
-    
+				Kernel.open(@location, 'r:UTF-8') do |io|
+					@asset = io.read
+				end
+			end
+		rescue => e
+			puts e.backtrace.join("\n")
+			raise ArgumentError, "failed to open asset #{input.inspect}: #{e.message}"
+		end
+
+		def name
+			File.basename(location, self.class.extension).sub(Regexp.new("^#{self.class.prefix}"), '')
+		end
+		
+		alias to_s asset
+
+		def inspect
+			"#<CiteProc::#{self.class.name} #{name}>"
+		end
+		
+		module ClassMethods
+
+			attr_accessor :root, :extension, :prefix
+
+			def open(path_or_name)
+				new.open(path_or_name)
+			end
+
+			def extend_path(input)
+				File.join(root.to_s, extend_name(input))
+			end
+			
+			def extend_name(input)
+				name = File.extname(input).empty? ? [input, extension].compact.join : input.to_s.dup
+				name = name.start_with?(prefix.to_s) ? name : [prefix, name].join
+				name
+			end
+
+		end
+
+	end
+
+	class Style
+		
+		include Asset
+		
+		@root = '/usr/local/share/citation-style-language/styles'.freeze
+		@extension = '.csl'.freeze
+		
+	end
+
+	class Locale
+		
+		include Asset
+		
+		@root = '/usr/local/share/citation-style-language/locales'.freeze
+		@extension = '.xml'.freeze
+		@prefix = 'locales-'.freeze
+		
+		
+		def language
+			name.split('-')[0]
+		end
+		
+		def region
+			name.split('-')[1]
+		end
+		
+	end
+
 end

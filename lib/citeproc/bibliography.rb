@@ -74,11 +74,20 @@ module CiteProc
 			
 			attr_reader :defaults, :cp2rb, :rb2cp
 			
-			# Create a new Bibliography from the passed-in string or array.
-			def parse(input)
+			# Create a new Bibliography from the passed-in string or array, or nil
+			# if the input cannot be parsed.
+			def create(input)
+			  create!(input)
+			rescue
+			  nil
+			end
+			
+			# Create a new Bibliography from the passed-in string or array. Raises
+			# ParseError if the input cannot be parsed.
+			def create!(input)
 				case
 				when input.is_a?(String)
-					parse(MultiJson.decode(input))
+					create!(MultiJson.decode(input))
 					
 				when input.is_a?(Array) && input.length == 2
 					options, references = input
@@ -87,7 +96,7 @@ module CiteProc
 						b.concat(references)
 						b.errors.concat(options.fetch('bibliography_errors', []))
 						
-						b.preamble, b.postamble = options['bibstart'], options['bibend']
+						b.prefix, b.suffix = options['bibstart'], options['bibend']
 						
 						(options.keys & cp2rb.keys).each do |k|
 							b.options[cp2rb[k]] = options[k]
@@ -108,11 +117,8 @@ module CiteProc
 
 		attr_reader :options, :errors, :references
 
-		attr_accessor :preamble, :postamble
+		attr_accessor :prefix, :suffix
 
-		alias before preamble
-		alias after postamble
-		
 		def_delegators :@references, :[], :[]=, :<<, :push, :unshift, :pop,
 			:concat, :include?, :index, :length, :empty?
 		
@@ -157,8 +163,8 @@ module CiteProc
 		def to_citeproc
 			[
 				citeproc_options.merge({		
-		      'bibstart' => preamble,
-		      'bibend' => postamble,
+		      'bibstart' => prefix,
+		      'bibend' => suffix,
 		      'bibliography_errors' => errors
 				}),
 				

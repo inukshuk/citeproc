@@ -17,13 +17,16 @@ module CiteProc
 		end
 
 		attr_reader :options, :items
+		attr_writer :engine
 
 		def_delegators :@locale, :language, :region
 		
 		def initialize(options = {})
 			@options, @items = Processor.defaults.merge(options), {}
-			@abbreviations = { :default => {} }
-			@engine = Engine.autodetect(@options).new(:processor => self)
+		end
+
+		def engine
+			@engine ||= Engine.autodetect(options).new(self)
 		end
 
 		def style
@@ -44,17 +47,20 @@ module CiteProc
 
 
 		def process(*arguments)
-			@engine.process(CitationData(arguments.flatten(1)))
+			engine.process(CitationData(arguments.flatten(1)))
 		end
 
 		def append(*arguments)
-			@engine.append(CitationData(arguments.flatten(1)))
+			engine.append(CitationData(arguments.flatten(1)))
 		end
 
 		def bibliography(*arguments, &block)
-			@engine.bibliography(Selector.new(*arguments, &block))
+			engine.bibliography(Selector.new(*arguments, &block))
 		end
 
+		def inspect
+			"#<CiteProc::Processor style=#{style.name.inspect} locale=#{locale.name.inspect} items=[#{items.length}]>"
+		end
 		
 	end
 end

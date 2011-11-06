@@ -30,6 +30,10 @@ module CiteProc
 				Style.extension = @default_extension
 			end
 
+			it 'should not be open by default' do
+				Style.new.should_not be_open
+			end
+			
 			describe '.open' do  
 
 				it 'accepts an absolute file name' do

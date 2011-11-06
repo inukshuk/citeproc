@@ -9,7 +9,7 @@ module CiteProc
 
 		attr_reader :asset, :location
 		
-		def opened?
+		def open?
 			!asset.nil?
 		end
 		
@@ -37,6 +37,8 @@ module CiteProc
 					@asset = io.read
 				end
 			end
+			
+			self
 		rescue => e
 			puts e.backtrace.join("\n")
 			raise ArgumentError, "failed to open asset #{input.inspect}: #{e.message}"

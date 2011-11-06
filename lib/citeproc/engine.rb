@@ -3,8 +3,9 @@ require 'forwardable'
 module CiteProc
 
 	class Engine
-
 		extend Forwardable
+
+    include Converters
 
 		@subclasses ||= []
 

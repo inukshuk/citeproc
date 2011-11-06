@@ -3,6 +3,7 @@ module CiteProc
 	class Processor
 
 		extend Forwardable
+    include Abbreviate
 
 		@defaults = {
 			:locale => 'en-US',
@@ -15,30 +16,32 @@ module CiteProc
 			attr_reader :defaults
 		end
 
-		attr_reader :options, :engine, :items, :style
+		attr_reader :options, :items
 
-		def_delegators :@engine, :abbreviate, :abbreviations, :abbreviations=
-
+		def_delegators :@locale, :language, :region
+		
 		def initialize(options = {})
-			@options = Processor.defaults.merge(options)
-			@style = Style.open(@options[:style])
-			@locale = Locale.open(@options[:locale])
-			@items = {}
-
-			@engine = Engine.autodetect(@options).new(:options => @options, :style => @style, :locale => @locale, :items => @items)
+			@options, @items = Processor.defaults.merge(options), {}
+			@abbreviations = { :default => {} }
+			@engine = Engine.autodetect(@options).new(:processor => self)
 		end
 
-		def style=(style)
-			@style = Style.open(style.to_s)
-			@engine.style = @style
-			@style
+		def style
+			@style || load_style
+		end
+		
+		def locale
+			@locale || load_locale
+		end
+		
+		def load_style
+			@style = Style.open(options[:style])
 		end
 
-		def locales=(locale)
-			@locales = { locale.to_sym => Locale.load(locale.to_s) }
-			@engine.locales = @locales
-			@locales
+		def load_locale
+			@locale = Locale.open(options[:locale])
 		end
+
 
 		def process(*arguments)
 			@engine.process(CitationData(arguments.flatten(1)))
@@ -52,5 +55,6 @@ module CiteProc
 			@engine.bibliography(Selector.new(*arguments, &block))
 		end
 
+		
 	end
 end

@@ -13,11 +13,7 @@ module CiteProc
       it 'can be instantiated' do
         subject.should_not be nil
       end
-      
-      it 'can be started' do
-        expect { subject.start }.to change { subject.running? }.from(false).to(true)
-      end
-      
+            
     end
     
   end

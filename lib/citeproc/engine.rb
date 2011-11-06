@@ -5,7 +5,6 @@ module CiteProc
   class Engine
     
     extend Forwardable
-    include Abbreviate
     
     @subclasses ||= []
 
@@ -70,32 +69,15 @@ module CiteProc
       end      
     end
 
-    attr_accessor :options, :locale, :style, :items    
-    
+    attr_accessor :processor
+
+		def_delegators :@processor, :options, :abbreviations, :style, :locale, :items
+
 		
-    def initialize(attributes = {})
-      @options = attributes[:options] || {}
-      @items = attributes[:items] || {}
-      @locale = attributes[:locale]
-      @style = attributes[:style]
-      @abbreviations = attributes[:abbreviations] || { :default => {} }
-      
+    def initialize(processor = nil)
+      @processor = processor
       yield self if block_given?
     end
-
-    def start
-      @started = true
-      self
-    end
-    
-    def stop
-      @started = false
-      self
-    end
-    
-    def started?; !!@started; end
-    
-    alias running? started?
     
     [[:name, :engine_name], :type, :version].each do |method_id, target|
       define_method(method_id) do

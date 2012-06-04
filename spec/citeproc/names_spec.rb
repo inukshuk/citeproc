@@ -416,7 +416,7 @@ module CiteProc
 				end
 
 				it 'accepts a single name as hash' do
-					Names.new(:given => 'Jim').should have(1).name
+					Names.new(:given => 'Jim').should have(1).names
 				end
 				
 				it 'accepts two names' do

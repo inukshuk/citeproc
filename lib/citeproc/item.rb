@@ -55,6 +55,7 @@ module CiteProc
     
     include Attributes
     include Enumerable
+    include Comparable
     
     attr_predicates :id, :'short-title', :'journal-abbreviation',
       *Variable.fields[:all]
@@ -67,9 +68,6 @@ module CiteProc
       @attributes = other.attributes.deep_copy
     end
     
-    # Don't expose attributes. Items need to mimic Hash functionality in a controlled way.
-    private :attributes
-    
     def each
       if block_given?
         attributes.each(&Proc.new)
@@ -77,6 +75,11 @@ module CiteProc
       else
         to_enum
       end
+    end
+    
+    def <=>(other)
+      return nil unless other.is_a?(Attributes)
+      attributes <=> other.attributes
     end
     
     # Returns a corresponding BibTeX::Entry if the bibtex-ruby gem is installed;

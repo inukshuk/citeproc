@@ -7,7 +7,6 @@ module CiteProc
 	
   module Attributes
     extend Forwardable
-    
 
 		FALSE_PATTERN = (/^(false|no|never)$/i).freeze
 		
@@ -84,8 +83,7 @@ module CiteProc
 		private :filter_key, :filter_value
 		
 		# initialize_copy should be able to access attributes
-		protected :attributes
-		
+    protected :attributes
 
 	
 		# def eql?(other)

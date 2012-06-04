@@ -108,7 +108,7 @@ module CiteProc
     end
     
     def inspect
-      "#<CiteProc::Item id=#{id.inspect} attributes={#{attributes.length}}>"
+      "#<CiteProc::Item id=#{id.to_s.inspect} attributes={#{attributes.length}}>"
     end
     
     private

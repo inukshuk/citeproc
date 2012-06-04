@@ -3,22 +3,26 @@ module CiteProc
   
   # Items are similar to a Ruby Hash but pose a number of constraints on their
   # contents: keys are always (implicitly converted to) symbols and values
-  # are strictly instances of CiteProc::Variable. When Items are constructed
+  # are strictly {CiteProc::Variable Variables}. When Items are constructed
   # from (or merged with) JSON objects or Hashes Variable instances are
-  # automatically created using by passing the variables key as type to
-  # Variable.create – this will create the expected Variable type for all
-  # fields defined in CSL (for example, the `issued' field will become a
-  # CiteProc::Date object); unknown types will be converted to simple
-  # CiteProc::Variable instances, which should be fine for numeric or string
-  # values but may cause problems for more complex types.
+  # automatically created using by passing the variable's key as type to
+  # {CiteProc::Variable.create}; this will create the expected
+  # {CiteProc::Variable} type for all fields defined in CSL (for example,
+  # the `issued' field will become a {CiteProc::Date} object; unknown types
+  # will be converted to simple {CiteProc::Variable} instances, which should
+  # be fine for numeric or string values but may cause problems for more
+  # complex types.
   #
   # Every Item provides accessor methods for all known field names; unknown
   # fields can still be accessed using array accessor syntax.
   #
   #     i = Item.new(:edition => 3, :unknown_field => 42)
-  #     i.edition         -> #<CiteProc::Number "3">
-  #     i[:edition]       -> #<CiteProc::Number "3">
-  #     i[:unknown_field] -> #<CiteProc::Variable "42">
+  #
+  #     i.edition
+  #     #-> #<CiteProc::Number "3">
+  #
+  #     i[:unknown_field]
+  #     #-> #<CiteProc::Variable "42">
   #
   # Items can be converted to the CiteProc JSON format via #to_citeproc (or
   # #to_json to get a JSON string).
@@ -75,6 +79,15 @@ module CiteProc
       else
         to_enum
       end
+    end
+    
+    def each_pair
+      if block_given?
+        attributes.each_pair(&Proc.new)
+        self
+      else
+        enum_for :each_pair
+      end      
     end
     
     def <=>(other)

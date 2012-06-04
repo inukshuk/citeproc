@@ -6,7 +6,7 @@ module CiteProc
 		include Attributes
 
 		alias attributes value
-		private :attributes, :value=
+		private :value=
 		
 
 		# Date parsers (must respond to :parse)
@@ -15,12 +15,15 @@ module CiteProc
 		require 'date'
 		@parsers << ::Date
 		
-		begin
-			require 'chronic'
-			@parsers << Chronic
-		rescue LoadError
-			# warn 'failed to load chronic gem'
+		[%{ edtf EDTF }, %w{ chronic Chronic }].each do |date_parser, module_id|
+  		begin
+  			require date_parser
+  			@parsers << ::Object.const_get(module_id)
+  		rescue LoadError
+  			# warn "failed to load `#{date_parser}' gem"
+  		end
 		end
+		
 		
 		# Format string used for sorting dates
 		@sort_order = "%04d%02d%02d-%04d%02d%02d".freeze
@@ -35,6 +38,9 @@ module CiteProc
 			#
 			# For an equivalent method that raises an error on invalid input
 			# @see #parse!
+			#
+			# @param date_string [String] the date to be parsed
+			# @return [CiteProc::Date,nil] the parsed date or nil
 			def parse(date_string)
 				parse!(date_string)
 			rescue ParseError
@@ -42,16 +48,22 @@ module CiteProc
 			end
 			
 			# Like #parse but raises a ParseError if the input failed to be parsed.
+			#
+			# @param date_string [String] the date to be parsed
+			# @return [CiteProc::Date,nil] the parsed date or nil
+			#
+			# @raise [ParseError] when the string cannot be parsed		
 			def parse!(date_string)
 				@parsers.each do |p|
-					d = p.parse(date_string) rescue nil
-					return new(d) unless d.nil?
+					date = p.parse(date_string) rescue nil
+					return new(date) unless date.nil?
 				end
 				
 				# if we get here, all parsers failed
 				raise ParseError, "failed to parse #{date_string.inspect}"
 			end
 
+      # @return [CiteProc::Date] a date object for the current day
 			def today
 				new(::Date.today)
 			end
@@ -147,8 +159,8 @@ module CiteProc
 			parts[1] = date.nil? ? [0,0,0] : date.strftime('%Y-%m-%d').split(/-/).map(&:to_i)
 		end
 
-		# Returns a Ruby date object for this instance, or Range object if this
-		# instance is closed range
+		# @return [Date,Range] the date as a Ruby date object or as a Range if
+		#   this instance is closed range
 		def to_ruby
 			closed_range? ? start_date ... end_date : start_date
 		end
@@ -192,19 +204,32 @@ module CiteProc
 			!uncertain?
 		end
 
+    # @return false
 		def numeric?
 			false
 		end
 
-		def bc?; year and year < 0; end
-		def ad?; not bc? and year < 1000; end
+    # A date is said to be BC when the year is defined and less than zero.
+    # @return [true,false] whether or not the date is BC
+		def bc?
+		  !!(year && year < 0)
+		end
+		
+		# A date is said to be AD when it is in the first millennium, i.e.,
+		# between 1 and 1000 AD
+		# @return [true,false] whether or not the date is AD
+		def ad?
+		  !bc? && year < 1000
+		end
 
+    # @return [Hash] a hash representation of the date.
 		def to_citeproc
 			cp = @value.stringify_keys
 			cp.delete('date-parts') if empty?
 			cp
 		end
 		
+		# @return [String] the date as a string
 		def to_s
 			literal? ? literal : to_ruby.to_s
 		end

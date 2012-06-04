@@ -20,8 +20,7 @@ module CiteProc
 				end
 		end
 
-		# call-seq:
-		# abbreviate(namespace = :default, context, word)
+		# @overload abbreviate(namespace = :default, context, word)
 		def abbreviate(*arguments)
 			raise ArgumentError, "wrong number of arguments (#{arguments.length} for 2..3)" unless (2..3).include?(arguments.length)
 			arguments.unshift(namespace || :default) if arguments.length < 3

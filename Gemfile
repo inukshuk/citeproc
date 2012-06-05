@@ -8,9 +8,7 @@ end
 group :optional do
 	gem 'chronic', '~>0.6'
 	gem 'edtf', '~>1.0.0'
-	
-	gem 'namae', '~>0.1.0'
-	
+		
 	gem 'bibtex-ruby', '~>2.0.10', :require => 'bibtex'
 	
   gem 'simplecov', '~>0.6.4'

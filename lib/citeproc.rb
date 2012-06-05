@@ -1,8 +1,10 @@
 
-require 'multi_json'
 require 'forwardable'
 require 'observer'
 require 'uri'
+
+require 'multi_json'
+require 'namae'
 
 require 'citeproc/version'
 

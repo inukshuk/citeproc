@@ -18,7 +18,7 @@ module CiteProc
       @attributes ||= {}
     end
     
-		def_delegators :attributes, :length, :empty?
+		def_delegators :attributes, :length, :empty?, :values_at
 
 		def [](key)
 			attributes[filter_key(key)]
@@ -41,13 +41,13 @@ module CiteProc
     def merge(other)
       return self if other.nil?
       
-      case other
-      when String, /^\s*\{/
+      case
+      when String === other && /^\s*\{/ =~ other
         other = MulitJson.decode(other, :symbolize_keys => true)
-      when Hash
+      when other.respond_to?(:each_pair)
 				# do nothing
-      when Attributes
-        other = other.to_hash
+      when other.respond_to?(:to_hash)
+				other = other.to_hash
 			else
 				raise ParseError, "failed to merge attributes and #{other.inspect}"
       end
@@ -55,7 +55,7 @@ module CiteProc
       other.each_pair do |key, value|
 				attributes[filter_key(key)] = filter_value(value, key)
 			end
-      
+
       self
     end
 

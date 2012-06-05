@@ -61,19 +61,7 @@ module CiteProc
       :'non-dropping-particle'].freeze
       
     class << self
-      
       attr_reader :defaults, :parts
-      
-      def parse(name_string)
-        parse!(name_string)
-      rescue ParseError
-        nil
-      end
-      
-      def parse!(name_string)
-        fail 'not implemented yet'
-      end
-      
     end
 
 
@@ -322,7 +310,7 @@ module CiteProc
   
   
 
-  # Names are a CiteProc Variable containing an ordered list of Name objects.
+  # Names are a {CiteProc::Variable} containing an ordered list of Name objects.
   #
   # Names can be formatted using CSL formatting options. The available options
   # and their default values are described below.
@@ -330,7 +318,7 @@ module CiteProc
   # * and: specifies the delimiter between the penultimate and the last name.
   #   Defaults to '&'.
   #
-  # * delimiter: Soecifies the text string to seaparate the individual names.
+  # * delimiter: Specifies the text string to seaparate the individual names.
   #   The default value is ', '.
   #
   # * delimiter-precedes-last: determines in which cases the delimiter used
@@ -372,16 +360,31 @@ module CiteProc
       
       attr_reader :defaults
       
-      def parse(names_string)
-        parse!(names_string)
+      # Parses the passed-in string and returns a Names object. Behaves like
+      # parse but returns nil for bad input without raising an error.
+      #
+      # @see parse!
+      #
+      # @param names [String] the name or names to be parsed
+      # @return [Names,nil] the parsed names
+      def parse(names)
+        parse!(names)
       rescue ParseError
         nil
       end
       
-      def parse!(names_string)
-        fail 'not implemented yet'
+      # Parses the passed-in string and returns a Names object.
+      #
+      # @param names [String] the name or names to be parsed
+      # @return [Names] the parsed names
+      #
+      # @raise [ParseError] if the string cannot be parsed.
+      def parse!(names)
+        new Namae.parse!(names)
+      rescue ArgumentError => e
+        raise ParseError, e.message
       end
-      
+
     end
     
     
@@ -434,13 +437,10 @@ module CiteProc
         case
         when value.is_a?(Name)
           @value << value
-        
-        when value.is_a?(Hash)
+        when value.respond_to?(:each_pair), value.respond_to?(:to_hash)
           @value << Name.new(value)
-          
         when value.respond_to?(:to_s)
-          @value << Name.parse!(value.to_s)
-          
+          @value << Name.new(:literal => value.to_s)
         else
           raise TypeError, "failed to create names from #{value.inspect}"       
         end
@@ -458,7 +458,8 @@ module CiteProc
     def abbreviate_subsequent?
       length >= options[:'et-al-subsequent-min'].to_i
     end
-  
+
+    # @return [String] the delimiter between names
     def delimiter
       options[:delimiter]
     end
@@ -504,19 +505,29 @@ module CiteProc
     def delimiter_contextually_precedes_last!
       options[:'delimiter-precedes-last'].to_s = :contextual
     end
-
-  
-    
-    # Returns the string used as connector between the penultimate and the last name.
+ 
+    # @return [String] the connector between the penultimate and the last name
     def connector
       options[:and]
     end
     
-    # Names are not numeric
+    # @return [false] Names are non-numeric Variables
     def numeric?
       false
     end
-    
+
+    # Calls a block once for each field in the item, passing the field's
+    # name-value pair as parameters.
+    #
+    # If not block is given, an enumerator is returned instead.
+    #
+    #    item.each { |name, value| block }
+    #    #-> item
+    #
+    #    item.each
+    #    #-> an enumerator
+    #
+    # @return [self,Enumerator] the item or an enumerator if no block is given    
     def each
       if block_given?
         names.each(&Proc.new)
@@ -539,6 +550,7 @@ module CiteProc
       end
     end
     
+    # @return [String] the names in a BibTeX-compatible format
     def to_bibtex
       map { |n| n.dup.sort_order! }.join(' and ')
     end
@@ -547,10 +559,11 @@ module CiteProc
       map(&:to_citeproc)
     end
     
+    # @return [String] a human-readable representation of the Names object
     def inspect
       "#<CiteProc::Names #{to_s}>"
     end
-        
+    
   end
   
 end

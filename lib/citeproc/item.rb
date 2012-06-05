@@ -1,6 +1,5 @@
 module CiteProc
   
-  
   # Items are similar to a Ruby Hash but pose a number of constraints on their
   # contents: keys are always (implicitly converted to) symbols and values
   # are strictly {CiteProc::Variable Variables}. When Items are constructed
@@ -24,8 +23,8 @@ module CiteProc
   #     i[:unknown_field]
   #     #-> #<CiteProc::Variable "42">
   #
-  # Items can be converted to the CiteProc JSON format via #to_citeproc (or
-  # #to_json to get a JSON string).
+  # Items can be converted to the CiteProc JSON format via
+  # {CiteProc::Item#to_citeproc} (or {CiteProc::Item#to_json} to get a JSON string).
   class Item
     
     @types = [
@@ -60,6 +59,7 @@ module CiteProc
     include Attributes
     include Enumerable
     include Comparable
+    include Observable
     
     attr_predicates :id, :'short-title', :'journal-abbreviation',
       *Variable.fields[:all]
@@ -72,31 +72,36 @@ module CiteProc
       @attributes = other.attributes.deep_copy
     end
     
+    # Calls a block once for each field in the item, passing the field's
+    # name-value pair as parameters.
+    #
+    # If not block is given, an enumerator is returned instead.
+    #
+    #    item.each { |name, value| block }
+    #    #-> item
+    #
+    #    item.each
+    #    #-> an enumerator
+    #
+    # @return [self,Enumerator] the item or an enumerator if no block is given
     def each
       if block_given?
-        attributes.each(&Proc.new)
+        attributes.each_pair(&Proc.new)
         self
       else
         to_enum
       end
     end
     
-    def each_pair
-      if block_given?
-        attributes.each_pair(&Proc.new)
-        self
-      else
-        enum_for :each_pair
-      end      
-    end
+    alias each_pair each
     
     def <=>(other)
       return nil unless other.is_a?(Attributes)
       attributes <=> other.attributes
     end
     
-    # Returns a corresponding BibTeX::Entry if the bibtex-ruby gem is installed;
-    # otherwise returns a BibTeX string.
+    # Returns a corresponding {BibTeX::Entry} if the bibtex-ruby gem is
+    # installed; otherwise returns a BibTeX string.
     def to_bibtex
       # hash = to_hash
       # 
@@ -119,16 +124,20 @@ module CiteProc
       raise 'not implemented yet'
     end
     
+    # @return [Symbol] the item's id
     def to_sym
-      id.to_s.to_sym
+      id.to_s.intern
     end
     
+    # @return [String] a string containing a human-readable
+    #   representation of the item
     def inspect
       "#<CiteProc::Item id=#{id.to_s.inspect} attributes={#{attributes.length}}>"
     end
     
     private
 
+    # @private
     def filter_value(value, key)
       Variable.create!(value, key)
     end

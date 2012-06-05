@@ -66,8 +66,7 @@ module CiteProc
 			:given => 'Horatio',
 			:suffix => 'III')
 		}
-		
-		
+				
 		describe Name do
 
 
@@ -406,6 +405,10 @@ module CiteProc
 	
 		describe Names do
 		
+		  let(:gang_of_four) {
+		    Names.parse!('Erich Gamma and Richard Helm and Ralph Johnson and John Vlissides')
+		  }
+  		
 			it { should_not be nil }
 			it { should_not be_numeric }
 		
@@ -433,6 +436,21 @@ module CiteProc
 				
 			end
 
+      describe 'parsing' do
+        it 'accepts a single name as a string' do
+          Names.parse!('Edgar A. Poe').should have(1).names
+        end
+
+        it 'accepts multiple names as a string' do
+          Names.parse!('Edgar A. Poe and Hawthorne, Nathaniel and Herman Melville').should have(3).names
+        end
+
+        it 'parses the passed-in family names' do
+          Names.parse!('Edgar A. Poe and Hawthorne, Nathaniel and Herman Melville').map { |n|
+            n.values_at(:family) }.flatten.should == %w{ Poe Hawthorne Melville }
+        end
+      end
+      
 			describe '#strip_markup' do
 				
 				it 'strips markup off string representation' do
@@ -473,9 +491,17 @@ module CiteProc
 			describe '#to_s' do
 			
 				describe 'when the number of names exceeds the et-al-min option' do
+					before do
+					  gang_of_four.options[:'et-al-min'] = 2
+					  gang_of_four.options[:'et-al'] = 'FOO'
+					end
 					
 					it 'prints only the et-al-use-first names'
-					it 'adds et-al at the end'
+					
+					it 'adds et-al at the end' do
+					  gang_of_four.to_s.should end_with(gang_of_four.options[:'et-al'])
+					end
+					
 					it 'adds the delimiter before et-al only in the right circumstances'
 					
 				end

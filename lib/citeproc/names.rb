@@ -42,7 +42,8 @@ module CiteProc
     include Comparable
     
     # Based on the regular expression in Frank G. Bennett's citeproc-js
-    # https://bitbucket.org/fbennett/citeproc-js/overview
+    # @private
+    # @see https://bitbucket.org/fbennett/citeproc-js/overview
     ROMANESQUE =
       /^[a-zA-Z\u0080-\u017f\u0400-\u052f\u0386-\u03fb\u1f00-\u1ffe\.,\s\u0027\u02bc\u2019-]*$/
 
@@ -64,16 +65,18 @@ module CiteProc
       attr_reader :defaults, :parts
     end
 
-
+    
 
     # Method generators
     
+    # @!attribute [r] options
+    # @return the name's formatting options
     attr_reader :options
     
     attr_predicates :'comma-suffix', :'static-ordering', :multi, *@parts
     
     # Aliases
-    [[:last, :family], [:first, :given], [:particle, :'non_dropping_particle']].each do |a, m|
+    [[:particle, :'non_dropping_particle']].each do |a, m|
       alias_method(a, m) if method_defined?(m)
 
       wa, wm = "#{a}=", "#{m}="
@@ -123,23 +126,32 @@ module CiteProc
     
     # Returns true if the Name looks like it belongs to a person.
     def personal?
-      !!family && !literal?
+      !empty? && !literal?
     end
     
-    # Returns true if the name contains only romanesque characters. This
-    # should be the case for the majority of names written in latin or
-    # greek based script. It will be false, for example, for names written
+
+    # A name is `romanesque' if it contains only romanesque characters. This
+    # should be the case for the majority of names written in latin- or
+    # greek-based script. It will be false, for example, for names written
     # in Chinese, Japanese, Arabic or Hebrew.
+    #
+    # @return [Boolean] whether or not the name is romanesque
     def romanesque?
       !!([given, family].join.gsub(Variable.markup, '') =~ ROMANESQUE)
     end
     
     alias byzantine? romanesque?
     
+    # @return [Boolean] whether or not the name should be printed in static order
     def static_order?
       static_ordering? || !romanesque?
     end
 
+    # Set the name to use static order for printing, i.e., print the family
+    # name before the given name as is customary, for example, in Hungarian
+    # and many Asian languages.
+    #
+    # @return [self]
     def static_order!
       self.static_ordering = true
       self
@@ -148,7 +160,7 @@ module CiteProc
     alias static_order static_ordering
     alias static_order= static_ordering=
 
-    # Returns true if this Name's sort-oder options currently set.
+    # @return [Boolean] whether or not the name will be printed in sort-order
     def sort_order?
       !!(options[:'name-as-sort-order'].to_s =~ /^(y(es)?|always|t(rue)?)$/i)
     end
@@ -157,13 +169,15 @@ module CiteProc
       !sort_order?
     end
     
-    # Sets this name sort-order option to true. Returns the Name instance.
+    # Sets the name to use sort-order. The reverse of {#display_order!}.
+    # @return [self]
     def sort_order!
       options[:'name-as-sort-order'] = true
       self
     end
     
-    # The reverse of @sort_order!
+    # Sets the name to use display-order. The reverse of {#sort_order!}.
+    # @return [self]
     def display_order!
       options[:'name-as-sort-order'] = false
       self
@@ -389,8 +403,8 @@ module CiteProc
       # @raise [ParseError] if the string cannot be parsed.
       def parse!(names)
         new Namae.parse!(names)
-      rescue ArgumentError => e
-        raise ParseError, e.message
+      rescue
+        raise ParseError, $!.message
       end
 
     end
@@ -421,15 +435,26 @@ module CiteProc
     
     # Names quack sorta like an Array
     def_delegators :names, :length, :empty?, :[], :join
+
     
     # Some delegators should return self
-    [:push, :<<, :unshift].each do |m|
+
+    # @!method push(name)
+    #    Appends the given name to the list of names.
+    #    @param name [Name] a name
+    #    @return [self]
+    # @!method unshift(name)
+    #    Inserts the given name at the beginning of the list of names.
+    #    @param name [Name] a name
+    #    @return [self]
+    [:push, :unshift].each do |m|
       define_method(m) do |*arguments, &block|
         names.send(m, *arguments, &block)
         self
       end
     end
     
+    alias << push
             
     def initialize(*arguments)
       @options = Names.defaults.dup
@@ -519,7 +544,7 @@ module CiteProc
     # Set the :'delimiter-precedes-last' option to :always
     # @return [self] self
     def delimiter_always_precedes_last!
-      options[:'delimiter-precedes-last'].to_s = :always
+      options[:'delimiter-precedes-last'] = :always
       self
     end
 
@@ -535,7 +560,7 @@ module CiteProc
     # Set the :'delimiter-precedes-last' option to :never
     # @return [self] self
     def delimiter_never_precedes_last!
-      options[:'delimiter-precedes-last'].to_s = :never
+      options[:'delimiter-precedes-last'] = :never
       self
     end
 
@@ -548,7 +573,7 @@ module CiteProc
     # Set the :'delimiter-precedes-last' option to :contextual
     # @return [self] self
     def delimiter_contextually_precedes_last!
-      options[:'delimiter-precedes-last'].to_s = :contextual
+      options[:'delimiter-precedes-last'] = :contextual
       self
     end
  

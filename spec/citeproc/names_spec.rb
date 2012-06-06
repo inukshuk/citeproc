@@ -438,17 +438,26 @@ module CiteProc
 
       describe 'parsing' do
         it 'accepts a single name as a string' do
-          Names.parse!('Edgar A. Poe').should have(1).names
+          Names.parse('Edgar A. Poe').should have(1).names
         end
 
         it 'accepts multiple names as a string' do
-          Names.parse!('Edgar A. Poe and Hawthorne, Nathaniel and Herman Melville').should have(3).names
+          Names.parse('Edgar A. Poe and Hawthorne, Nathaniel and Herman Melville').should have(3).names
         end
 
         it 'parses the passed-in family names' do
-          Names.parse!('Edgar A. Poe and Hawthorne, Nathaniel and Herman Melville').map { |n|
+          Names.parse('Edgar A. Poe and Hawthorne, Nathaniel and Herman Melville').map { |n|
             n.values_at(:family) }.flatten.should == %w{ Poe Hawthorne Melville }
         end
+        
+        it '#parse returns nil on error' do
+          Names.parse(23).should be_nil
+        end
+        
+        it '#parse! raises an error on bad input' do
+          expect { Names.parse!('A,B,C,D,E') }.to raise_error(ParseError)
+        end
+        
       end
       
       describe '#strip_markup' do
@@ -465,11 +474,46 @@ module CiteProc
       end
       
       describe 'bang! methods' do
-        
         it 'delegate to the individual names and return self' do
           Names.new(poe, plato, joe).upcase!.map(&:given).should == ['EDGAR ALLEN', 'PLATO', 'JOE']
-        end
+        end        
+      end
+      
+      [:never, :always, :contextually].each do |setting|
+        setter = "delimiter_#{setting}_precedes_last!"
+        predicate = "delimiter_#{setting}_precedes_last?"
         
+        describe "##{setter}" do
+          it 'sets the delimiter precedes last option accordingly' do
+            Names.new.send(setter).send(predicate).should == true
+          end
+        end
+      end
+      
+      describe '#delimiter_precedes_last' do
+        it 'returns false by default' do
+          Names.new(joe).should_not be_delimiter_precedes_last
+        end
+
+        it 'returns false by default for a single name' do
+          Names.new(joe).should_not be_delimiter_precedes_last
+        end
+
+        it 'returns false by default for two names' do
+          Names.new(joe, poe).should_not be_delimiter_precedes_last
+        end
+
+        it 'returns true for two names when option set to always' do
+          Names.new(joe, poe).delimiter_always_precedes_last!.should be_delimiter_precedes_last
+        end
+
+        it 'returns true by default for three names' do
+          Names.new(joe, poe, plato).should be_delimiter_precedes_last
+        end
+
+        it 'returns false for three names when option set to :never' do
+          Names.new(joe, poe, plato).delimiter_never_precedes_last!.should_not be_delimiter_precedes_last
+        end
       end
       
       describe '#to_bibtex' do
@@ -522,7 +566,34 @@ module CiteProc
         end 
       end
       
+      describe '#each' do
+        it 'returns an enumerator when no block given' do
+          gang_of_four.each.should be_a(Enumerator)
+        end
+      end
+      
+      describe '#to_citeproc' do
+        it 'returns a list of hashes' do
+          gang_of_four.to_citeproc.map(&:class).uniq.should == [Hash]
+        end
+      end
+      
       describe 'sorting' do
+        it 'accepts other Names instance' do
+          (Names.new(poe, plato) <=> Names.new(plato)).should equal(1)
+          (Names.new(plato) <=> Names.new(poe, plato)).should equal(-1)
+        end
+
+        it 'accepts other list of names' do
+          (Names.new(poe, plato) <=> [plato]).should equal(1)
+          (Names.new(plato) <=> [poe, plato]).should equal(-1)
+        end
+      end
+
+      describe '#inspect' do
+        it 'returns a string' do
+          gang_of_four.inspect.should be_a(String)
+        end
       end
       
     end

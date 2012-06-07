@@ -40,20 +40,19 @@ module CiteProc
     
     include Attributes
     include Comparable
-    
-    # Based on the regular expression in Frank G. Bennett's citeproc-js
-    # @private
-    # @see https://bitbucket.org/fbennett/citeproc-js/overview
-    ROMANESQUE =
-      /^[a-zA-Z\u0080-\u017f\u0400-\u052f\u0386-\u03fb\u1f00-\u1ffe\.,\s\u0027\u02bc\u2019-]*$/
 
     # Class instance variables
+    
+    # Based on the regular expression in Frank G. Bennett's citeproc-js
+    # @see https://bitbucket.org/fbennett/citeproc-js/overview
+    @romanesque =
+      /^[a-zA-Z\u0080-\u017f\u0400-\u052f\u0386-\u03fb\u1f00-\u1ffe\.,\s\u0027\u02bc\u2019-]*$/
 
     # Default formatting options
     @defaults = {
       :form => 'long',
       :'name-as-sort-order' => false,
-      :'demote-non-dropping-particle' => 'never',
+      :'demote-non-dropping-particle' => :never,
       :'sort-separator' => ', ',
       :'initialize-with' => nil
     }.freeze
@@ -62,7 +61,7 @@ module CiteProc
       :'non-dropping-particle'].freeze
       
     class << self
-      attr_reader :defaults, :parts
+      attr_reader :defaults, :parts, :romanesque
     end
 
     
@@ -124,7 +123,7 @@ module CiteProc
     end
     
     
-    # Returns true if the Name looks like it belongs to a person.
+    # @return [Boolean] whether or not the Name looks like it belongs to a person
     def personal?
       !empty? && !literal?
     end
@@ -137,7 +136,7 @@ module CiteProc
     #
     # @return [Boolean] whether or not the name is romanesque
     def romanesque?
-      !!([given, family].join.gsub(Variable.markup, '') =~ ROMANESQUE)
+      !!([given, family].join.gsub(Variable.markup, '') =~ Name.romanesque)
     end
     
     alias byzantine? romanesque?
@@ -183,37 +182,38 @@ module CiteProc
       self
     end
     
+    # @return [String] the current sort separator
     def sort_separator
       options[:'sort-separator']
     end
     
     alias comma sort_separator
     
+    # @return [Boolean] whether or not the short form will be used for printing
     def short_form?
-      options[:form] == 'short'
+      options[:form].to_s =~ /short/i
     end
 
+    # Use short form for printing the name
+    # @return [self]
     def short_form!
-      options[:form] = 'short'
+      options[:form] = :short
       self
     end
 
+    # @return [Boolean] whether or not the long form will be used for printing
     def long_form?
-      options[:form] == 'long'
+      !short_form?
     end
 
+    # Use long form for printing the name
+    # @return [self]
     def long_form!
-      options[:form] = 'long'
+      options[:form] = :long
       self
     end
-
-    # TODO should be done via mixin to be reused for variables
-    # def transliterable?
-    # end
-    # 
-    # def transliterate(locale)
-    # end
     
+    # @return [Boolean] whether or not initials will be used for printing
     def initials?
       !!options[:'initialize-with'] && personal? && romanesque?
     end
@@ -251,42 +251,45 @@ module CiteProc
 
     alias demote_particle! always_demote_non_dropping_particle!
 
-    # Compares two names. The comparison is based on #sort_order_downcase.
+    # Compares two names. The comparison is based on #sort_order_downcase
+    #
+    # @see #sort_order_downcase
+    #
+    # @param other [#sort_order_downcase] the other name
+    # @return [Fixnum,nil] -1, 0, or 1 depending on the result of the
+    #   comparison; nil if the name cannot be compared to the passed-in object
     def <=>(other)
       return nil unless other.respond_to?(:sort_order_downcase)
       sort_order_downcase <=> other.sort_order_downcase
     end
     
-    # Returns the Name as a String according to the Name's formatting options.
+    # @return [String] the name formatted according to the current options
     def to_s
       case
       when literal?
         literal.to_s
-      
       when static_order?
         [family, given].compact.join(' ')
-        
       when !short_form?
         case
         when !sort_order?
           [[given, dropping_particle, particle, family].compact_join(' '),
             suffix].compact_join(comma_suffix? ? comma : ' ')
-          
+
         when !demote_particle?
           [[particle, family].compact_join(' '), [given,
             dropping_particle].compact_join(' '), suffix].compact_join(comma)
-          
+
         else
           [family, [given, dropping_particle, particle].compact_join(' '),
             suffix].compact_join(comma)
-        end
-        
+        end   
       else
         [particle, family].compact_join(' ')
       end
     end
     
-    # Returns an ordered array of formatted name parts to be used for sorting.
+    # @return [Array<String>] an ordered array of formatted name parts to be used for sorting
     def sort_order
       case
       when literal?
@@ -298,19 +301,22 @@ module CiteProc
       end
     end
     
+    # @return [String] the name as a string stripped off all markup
     def strip_markup
       gsub(Variable.markup, '')
     end
     
+    # @return [self] the name with all parts stripped off markup
     def strip_markup!
       gsub!(Variable.markup, '')
     end
     
-    # Returns the sort order array stripped off markup and downcased.
+    # @return [Array<String>] the sort order array stripped off markup and downcased
     def sort_order_downcase
       sort_order.map { |s| s.downcase.gsub(Variable.markup, '') }
     end
     
+    # @return [String] a human-readable representation of the name object
     def inspect
       "#<CiteProc::Name #{to_s.inspect}>"
     end
@@ -324,7 +330,7 @@ module CiteProc
   
   
 
-  # Names are a {CiteProc::Variable} containing an ordered list of Name
+  # Names are a {CiteProc::Variable} containing an ordered list of {Name}
   # objects. The names can be formatted using CSL formatting options (see
   # {Names.defaults} for details).
   class Names < Variable
@@ -468,14 +474,18 @@ module CiteProc
     def replace(values)
       @value = []
       
-      values.each do |value|
+      [*values].each do |value|
         case
         when value.is_a?(Name)
           @value << value
         when value.respond_to?(:each_pair), value.respond_to?(:to_hash)
           @value << Name.new(value)
         when value.respond_to?(:to_s)
-          @value << Name.new(:literal => value.to_s)
+          begin
+            @value.concat Namae.parse!(value.to_s)
+          rescue
+            raise TypeError, $!.message
+          end
         else
           raise TypeError, "failed to create names from #{value.inspect}"       
         end
@@ -602,9 +612,8 @@ module CiteProc
     end
     
     # Compares two lists of Names.
-    #
     # @param other [(Name)] a list of names
-    # @return [-1,0,1,nil] the sort index depending on the result of the
+    # @return [Fixnum,nil] -1, 0, or 1 depending on the result of the
     #   comparison; or nil if the two objects cannot be compared
     def <=>(other)
       return nil unless other.respond_to?(:to_a)
@@ -630,13 +639,14 @@ module CiteProc
       map { |n| n.dup.sort_order! }.join(' and ')
     end
     
+    # @return [Array<Hash>] the list of names converted to hash objects
     def to_citeproc
       map(&:to_citeproc)
     end
     
     # @return [String] a human-readable representation of the Names object
     def inspect
-      "#<CiteProc::Names #{to_s}>"
+      "#<CiteProc::Names #{to_s.inspect}>"
     end
     
   end

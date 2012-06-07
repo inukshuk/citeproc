@@ -1,10 +1,12 @@
 
 module CiteProc
-  
-  #
+
   # A CiteProc Variable represents the content of a text, numeric, date, or
-  # name variable.
+  # name variable. In its basic form it is thin abstraction that behaves
+  # almost like a regular Ruby string; more complex Variables are handled
+  # by dedicated sub-classes that make the variable's type more explicit.
   #
+  # @abstract
   class Variable
 
     extend Forwardable
@@ -12,29 +14,29 @@ module CiteProc
     
     @fields = Hash.new { |h,k| h.fetch(k.to_sym, nil) }.merge({
       :date => %w{
-				accessed container event-date issued original-date submitted
-			},
+        accessed container event-date issued original-date submitted
+      },
 
       :names => %w{
-				author collection-editor composer container-author recipient editor
-				editorial-director illustrator interviewer original-author translator
-			},
+        author collection-editor composer container-author recipient editor
+        editorial-director illustrator interviewer original-author translator
+      },
       
-			:number => %w{
-				chapter-number collection-number edition issue number number-of-pages
-				number-of-volumes volume				
-			},
-			
+      :number => %w{
+        chapter-number collection-number edition issue number number-of-pages
+        number-of-volumes volume        
+      },
+      
       :text => %w{
-				abstract annote archive archive_location archive-place authority
-				call-number citation-label citation-number collection-title
-				container-title container-title-short dimensions DOI event event-place
-				first-reference-note-number genre ISBN ISSN jurisdiction keyword
-				locator medium note original-publisher original-publisher-place
-				original-title page page-first PMID PMCID publisher publisher-place
-				references section source status title title-short URL version
-				year-suffix
-			}
+        abstract annote archive archive_location archive-place authority
+        call-number citation-label citation-number collection-title
+        container-title container-title-short dimensions DOI event event-place
+        first-reference-note-number genre ISBN ISSN jurisdiction keyword
+        locator medium note original-publisher original-publisher-place
+        original-title page page-first PMID PMCID publisher publisher-place
+        references section source status title title-short URL version
+        year-suffix
+      }
     })
     
     @fields.each_value { |v| v.map!(&:to_sym) }
@@ -52,37 +54,92 @@ module CiteProc
 
     @fields.freeze
 
-		@markup = /<[^>]*>/.freeze
-		
-		
+    @markup = /<[^>]*>/.freeze
+    
+    
     class << self
-	
-      attr_reader :fields, :types, :markup, :factories
+  
+      # @!attribute [r] fields
+      # @return [{Symbol => Array<Symbol>}] mapping of variable types to
+      #   their respective field names
+      attr_reader :fields
       
-			def create(value, type = nil)
-				create!(value, type)
-			rescue
-				nil
-			end
-			
-      def create!(value, type = nil)
-				factory = factories[type]
-				value.is_a?(factory) ? value : factory.new(value)
+      # @!attribute [r] types
+      # @return [{Symbol => Symbol}] mapping of field names to variable types
+      attr_reader :types
+      
+      # @!attribute [r] factories
+      # @return [{Symbol => Class}] mapping of field names to their respective
+      #   Variable classes
+      attr_reader :factories
+
+      # @!attribute markup
+      # @return [Regexp] pattern used to strip markup off values
+      attr_accessor :markup
+      
+      # Creates a new {Variable} instance using the passed-in field name
+      # to distinguish which {Variable} class to use as factory. This
+      # method returns nil if the creation fails.
+      #
+      # @see .create!
+      #
+      # @example
+      #   Variable.create('foo')
+      #   #-> #<CiteProc::Variable "foo">
+      #
+      #   Variable.create('foo', :title)
+      #   #-> #<CiteProc::Text "foo">
+      #
+      #   Variable.create(['Matz', 'Flanagan'], :author)
+      #   #-> #<CiteProc::Names "Matz & Flanagan">
+      #
+      #   Variable.create(2009, :issued)
+      #   #-> #<CiteProc::Date "2009-01-01">
+      #
+      # @param value [Object] the variable's value
+      # @param field [Symbol] the value's field name
+      #
+      # @return [Variable] a new {Variable} (or sub-class) instance
+      def create(value, field = nil)
+        create!(value, field)
+      rescue
+        nil
+      end
+      
+      
+      # Creates a new {Variable} instance using the passed-in field name
+      # to distinguish which {Variable} class to use as factory.
+      #
+      # @see .create
+      #
+      # @raise [TypeError] if no variable can be created for the given value
+      #   and type
+      #
+      # @param value [Object] the variable's value
+      # @param field [Symbol] the variable's field name
+      #
+      # @return [Variable] a new {Variable} (or sub-class) instance
+      def create!(value, field = nil)
+        factory = factories[field]
+        value.is_a?(factory) ? value : factory.new(value)
       end
 
     end
-    
+
+    # @!attribute value
+    # @return [Object] the value wrapped by this variable
     attr_accessor :value
 
     def_delegators :@value, :to_s,
-			*::String.instance_methods(false).select {|m| m.to_s =~ /!$/ }
+      *::String.instance_methods(false).select {|m| m.to_s =~ /!$/ }
     
     def_delegators :to_s, :=~, :===,
-			*::String.instance_methods(false).reject {|m| m.to_s =~ /^\W|!$|to_s/ }
+      *::String.instance_methods(false).reject {|m| m.to_s =~ /^\W|!$|to_s/ }
 
+    
+    # Creates new Variable for the passed-in value
     def initialize(value = nil)
       replace(value)
-      yield self if block_given?
     end
     
     def initialize_copy(other)
@@ -90,72 +147,94 @@ module CiteProc
     end
     
 
-		# The replace method is typically called by the Variable's constructor. It
-		# will try to set the Variable to the passed in value and should accept
-		# a wide range of argument types; subclasses (especially Date and Names)
-		# override this method.
-		def replace(value)
-			raise TypeError, "failed to set value to #{value.inspect}" unless value.respond_to?(:to_s)
-			@value = value.to_s
-			self
-		end
+    # The replace method is typically called by the Variable's constructor. It
+    # will try to set the Variable to the passed in value and should accept
+    # a wide range of argument types; subclasses (especially Date and Names)
+    # override this method.
+    #
+    # @raise [TypeError] if the variable cannot be set to the passed-in value
+    #
+    # @param value [Object] the variable's new value
+    # @return [self]
+    def replace(value)
+      raise TypeError, "failed to set value to #{value.inspect}" unless value.respond_to?(:to_s)
+      @value = value.to_s
+      self
+    end
 
-		def type
-			@type ||= self.class.name.split(/::/)[-1].downcase.to_sym
-		end
+    # @return [Symbol] the variable's type
+    def type
+      @type ||= self.class.name.split(/::/)[-1].downcase.to_sym
+    end
 
-		# Returns true if the Variable can be (safely) cast to a numeric value.
+    # @return [Boolean] whether or not the variable can be (safely) cast to a numeric value
     def numeric?
-      match(/\d/) ? to_i : false
+      !!match(/\d/)
     end
     
-    # Returns (first) numeric data contained in the variable's value
+    # @return [Fixnum] the first (!) numeric data contained in the variable's
+    #   value; zero if no numeric data is present
     def to_i
-     to_s =~ /(-?\d+)/ && $1.to_i || 0
+     to_s =~ /([+-]?\d+)/ && $1.to_i || 0
     end
     
+    # @return [Float] the first (!) numeric or floating point data contained
+    #   in the variable's value; zero if no numeric data is present
     def to_f
-      to_s =~ /(-?\d[\d,\.]*)/ && $1.tr(',','.').to_f || 0.0
+      to_s =~ /([+-]?\d[\d,\.]*)/ && $1.tr(',','.').to_f || 0.0
     end
     
+    # @return [String] the variable's value stripped of markup
     def strip_markup
       gsub(Variable.markup, '')
     end
     
+    # Strips markup off the variable's value.
+    # @return [self]
     def strip_markup!
       gsub!(Variable.markup, '')
     end 
     
+    # Compares the variable with the passed-in value. If other responds
+    # to {#strip_markup} the stripped strings will be compared; otherwise
+    # both objects will be converted to and compared as strings.
+    #
+    # @param other [Object] the object used for comparison
+    # @return [Fixnum,nil] -1, 0, or 1 depending on the result of the
+    #   comparison; or nil if the two objects cannot be ignored.
     def <=>(other)
       case
       when other.respond_to?(:strip_markup)
         strip_markup <=> other.strip_markup
-
       when other && other.respond_to?(:to_s)
         to_s <=> other.to_s
-
       else
         nil
       end
     end
+
+    # @!method to_s
+    # @return [String] the variable's value as a string
+    alias to_citeproc to_s
     
-		alias to_citeproc to_s
-		
+    # @return [String] a JSON string representation of the variable
     def to_json
       MultiJson.encode(to_citeproc)
     end
 
-		def inspect
-			"#<#{self.class.name}: #{to_s.inspect}>"
-		end
-		
+    # @return [String] a human-readable representation of the variable
+    def inspect
+      "#<#{self.class.name} #{to_s.inspect}>"
+    end
+    
   end
 
+  # A CiteProc Variable used for string values.
+  class Text < Variable
+  end
 
-	class Text < Variable
-	end
-
-	class Number < Variable
-	end
+  # A CiteProc Variable used for numeric values.
+  class Number < Variable
+  end
 
 end

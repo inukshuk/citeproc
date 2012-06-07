@@ -1,5 +1,3 @@
-require 'forwardable'
-
 module CiteProc
 
   class Engine

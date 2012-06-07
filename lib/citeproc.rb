@@ -31,7 +31,7 @@ require 'citeproc/date'
 require 'citeproc/names'
 
 CiteProc::Variable.class_eval do
-  @factories = Hash.new { |h,k| h.fetch(k.to_sym, CiteProc::Variable) }.merge(
+  @factories = Hash.new { |h,k| h.fetch(k.to_s.intern, CiteProc::Variable) }.merge(
     Hash[*@types.map { |n,k|
       [n, CiteProc.const_get(k.to_s.capitalize)]
     }.flatten]

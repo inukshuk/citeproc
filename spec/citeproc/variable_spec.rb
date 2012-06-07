@@ -24,16 +24,11 @@ module CiteProc
 
       it 'accepts a numeric value' do
         Variable.new(23).should == '23'
-        Variable.new(23.1).should == '23.1'
       end
       
-      # it 'raises type error when initialized with a hash' do
-      #   lambda { Variable.new(:value => 'test') }.should raise_error(TypeError)
-      # end
-      
-      it 'supports self yielding block' do
-        Variable.new { |v| v.value = 'test' }.should == 'test'
-      end
+      it 'accepts a floating point value' do
+        Variable.new(23.12).should == '23.12'
+      end      
     end
 
     describe '.fields' do
@@ -63,10 +58,7 @@ module CiteProc
     
     describe '.types' do
       it 'given a field name returns the corresponding type' do
-        Variable.types[:author].should == :names
-        Variable.types[:issued].should == :date
-        Variable.types[:abstract].should == :text
-        Variable.types[:issue].should == :number
+        Variable.types.values_at(:author, :issued, :abstract, :issue).should == [:names, :date, :text, :number]
       end
       
       it 'accepts either string or symbol input' do

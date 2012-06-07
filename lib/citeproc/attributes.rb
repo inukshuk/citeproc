@@ -7,8 +7,6 @@ module CiteProc
   module Attributes
     extend Forwardable
 
-    FALSE_PATTERN = (/^(false|no|never)$/i).freeze
-    
     def self.included(base)
       base.extend(ClassMethods)
     end
@@ -19,6 +17,8 @@ module CiteProc
     
     def_delegators :attributes, :length, :empty?, :values_at
 
+    alias size length
+    
     def [](key)
       attributes[filter_key(key)]
     end
@@ -68,12 +68,14 @@ module CiteProc
       attributes.deep_copy
     end
 
+    # @return [Hash] a hash-based representation of the attributes
     def to_citeproc
       Hash[*attributes.map { |k,v|
         [k.to_s, v.respond_to?(:to_citeproc) ? v.to_citeproc : v.to_s]
       }.flatten(1)]
     end
     
+    # @return [String] a JSON string representation of the attributes
     def to_json
       MultiJson.encode(to_citeproc)
     end
@@ -84,24 +86,36 @@ module CiteProc
     # initialize_copy should be able to access attributes
     protected :attributes
 
-  
-    # def eql?(other)
-    #   case
-    #   when equal?(other)
-    #     true
-    #   when self.class != other.class, length != other.length
-    #     false
-    #   else
-    #     other.attributes.each_pair do |key, value|
-    #       return false unless attributes[key].eql?(value)
-    #     end
-    #     
-    #     true
-    #   end
-    # end
+
+    # Two Attribute-based objects are equal if they are the same object,
+    # or if all their attributes are equal using _#eql?_.
     # 
-    # def hash
-    # end
+    # @param [Object] the other object
+    # @return [Boolean] whether or not self and passed-in object are equal
+    def eql?(other)
+      case
+      when equal?(other)
+        true
+      when self.class != other.class, length != other.length
+        false
+      else
+        other.attributes.each_pair do |key, value|
+          return false unless attributes[key].eql?(value)
+        end
+        
+        true
+      end
+    end
+
+    # @return [Fixnum] a hash value based on the object's attributes
+    def hash
+      digest = size
+      attributes.each do |attribute|
+        digest ^= attribute.hash
+      end
+      
+      digest
+    end
     
     module ClassMethods
 
@@ -154,7 +168,7 @@ module CiteProc
         if predicate && !instance_methods.include?(predicate_id)
           define_method(predicate_id) do
             v = attributes[field.to_sym]
-            !(v.nil? || (v.respond_to?(:empty?) && v.empty?) || v =~ FALSE_PATTERN)
+            !(!v || (v.respond_to?(:empty?) && v.empty?) || v.to_s =~ /^(false|no|never)$/i)
           end
           
           has_predicate = ['has_', predicate_id].join

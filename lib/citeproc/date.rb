@@ -81,6 +81,7 @@ module CiteProc
 
 		def initialize(value = ::Date.today)
 			super
+			yield self if block_given?
 		end
 
 		def initialize_copy(other)
@@ -191,13 +192,17 @@ module CiteProc
 		alias uncertain? circa?
 
 		# Marks the date as uncertain
+		# @return [self]
 		def uncertain!
 			@value[:circa] = true
+			self
 		end
 
 		# Marks the date as a certain date
+		# @return [self]
 		def certain!
 			@value[:circa] = false
+			self
 		end
 
 		def certain?

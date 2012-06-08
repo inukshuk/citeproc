@@ -330,7 +330,7 @@ module CiteProc
   
   
 
-  # Names are a {CiteProc::Variable} containing an ordered list of {Name}
+  # Represents a {Variable} containing an ordered list of {Name}
   # objects. The names can be formatted using CSL formatting options (see
   # {Names.defaults} for details).
   class Names < Variable

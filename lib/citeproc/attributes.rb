@@ -1,9 +1,5 @@
 module CiteProc
-  
-  # TODO refactor using a Struct instead of a hash. This will have to convert
-  # the CiteProc/CSL names which are no proper method names.
-  
-  
+    
   module Attributes
     extend Forwardable
 
@@ -90,7 +86,7 @@ module CiteProc
     # Two Attribute-based objects are equal if they are the same object,
     # or if all their attributes are equal using _#eql?_.
     # 
-    # @param [Object] the other object
+    # @param other [Object] the other object
     # @return [Boolean] whether or not self and passed-in object are equal
     def eql?(other)
       case

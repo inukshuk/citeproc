@@ -114,7 +114,7 @@ module CiteProc
 			it 'today is not b.c.' do
 				Date.today.should_not be_bc
 			end
-			
+
 			it 'the year 2000 is not a.d.' do
 				ad2k.should_not be_ad
 			end

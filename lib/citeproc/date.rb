@@ -5,38 +5,111 @@ module CiteProc
 
     # Represents the individual parts of a date (i.e., year, month, day).
     class DateParts < Struct.new(:year, :month, :day)
-      extend Forwardable
-      
-      def_delegators :to_date, :strftime
+      include Comparable
       
       def initialize(*arguments)
         super(*arguments.map(&:to_i))
       end
       
-      # @return [::Date] the date parts as a Ruby date object
+      def initialize_copy(other)
+        update(other)
+      end
+      
+      # Update the date parts with the passed-in values.
+      # @param parts [Array, #each_pair] an ordered list of date parts (year,
+      #   month, day) or a Hash containing the mapping
+      # @return [self]
+      def update(parts)
+        unless parts.respond_to?(:each_pair)
+          parts = Hash[DateParts.members.zip(parts)]
+        end
+        
+        parts.each_pair do |part, value|
+          self[part] = value.to_i
+        end
+        
+        self
+      end
+      
+      # Convert the date parts into a proper Ruby date object; if the date
+      # parts are empty, contain zero or are otherwise invalid, nil will
+      # be returned instead.
+      # @return [::Date,nil] the date parts as a Ruby date object
       def to_date
-        ::Date.new(*to_a.compact)
+        parts = to_citeproc
+        
+        if parts.empty? || parts.include?(0)
+          nil
+        else
+          begin
+            ::Date.new(*parts)
+          rescue
+            # Catch invalid dates (e.g., if the month is 13).
+            nil
+          end
+        end
       end
       
       alias to_ruby to_date
-      
-      def to_citeproc
-        to_a.compact
+
+      # @return [Boolean] whether or not the date parts are unset
+      def empty?
+        to_citeproc.empty?
+      end
+
+      # In the current CiteProc specification, date parts consisting of
+      # zeroes are used to designate open ranges.
+      # @return [Boolean] whether or not the this is an open-end date
+      def open?
+        to_citeproc.include?(0)
+      end
+
+      # Formats the date parts according to the passed-in format string.
+      # @param format [String] a format string
+      # @return [String,nil] the formatted date string; nil if the date
+      #   parts are not a valid date.
+      def strftime(format = '%F')
+        d = to_date
+        
+        if d.nil?
+          nil
+        else
+          d.strftime(format)
+        end
+      end
+
+      # Compares the date parts with the passed-in date.
+      # @param other [#to_date] the other date
+      # @return [Fixnum,nil] the result of the comparison (-1, 0, 1 or nil)
+      def <=>(other)
+        return nil unless other.respond_to?(:to_date)
+        to_date <=> other.to_date
       end
       
+      # @return [Array<Fixnum>] the list of date parts
+      def to_citeproc
+        take_while { |p| !p.nil? }
+      end
+      
+      # @return [String] the date parts as a string
       def to_s
         to_citeproc.to_s
       end
 
+      # @return [String] a human-readable representation of the object
+      def inspect
+        "#<DateParts #{to_s}>"
+      end
     end
     
+
     include Attributes
 
     alias attributes value
     private :value=
     
 
-    # Date parsers (must respond to :parse)
+    # List of date parsers (must respond to #parse)
     @parsers = []
 
     require 'date'
@@ -52,13 +125,20 @@ module CiteProc
     end
     
     
-    # Format string used for sorting dates
-    @sort_order = "%04d%02d%02d-%04d%02d%02d".freeze
-    
     class << self
 
-      attr_reader :parsers, :sort_order
-      
+      # @!attribute [r] parsers
+      #
+      # A list of available date parsers. Each parser must respond to a
+      # #parse method that converts a date string into a Ruby date object.
+      # By default, the list will include Ruby's date parser from the
+      # standard library, as well as the parsers of the Chronic and EDTF
+      # gems if they are available; to install the latter on your system
+      # make sure to `gem install chronic edtf`.
+      #
+      # @return [Array] the available date parsers
+      attr_reader :parsers
+
       # Parses the passed-in string with all available date parsers. Creates
       # a new CiteProc Date from the first valid date returned by a parser;
       # returns nil if no parser was able to parse the string successfully.
@@ -86,7 +166,7 @@ module CiteProc
           return new(date) unless date.nil?
         end
         
-        # if we get here, all parsers failed
+        # Subtle: if we get here it means all parsers failed to create a date
         raise ParseError, "failed to parse #{date_string.inspect}"
       end
 
@@ -98,6 +178,7 @@ module CiteProc
       alias now today
 
     end
+
 
     attr_predicates :circa, :season, :literal, :'date-parts'
 
@@ -115,10 +196,19 @@ module CiteProc
       @value = other.value.deep_copy
     end
 
+    def merge(other)
+      super
+      convert_parts!
+    end
+    
     def replace(value)
       case
       when value.is_a?(CiteProc::Date)
         initialize_copy(value)
+
+      when value.respond_to?(:strftime)
+        @value = { :'date-parts' => [DateParts.new(*value.strftime('%Y-%m-%d').split(/-/))] }
+        uncertain! if value.respond_to?(:uncertain?) && value.uncertain?
 
       when value.is_a?(Numeric)
         @value = { :'date-parts' => [DateParts.new(value)] }
@@ -134,9 +224,6 @@ module CiteProc
         end
         convert_parts!
 
-      when value.respond_to?(:strftime)
-        @value = { :'date-parts' => [DateParts.new(*value.strftime('%Y-%m-%d').split(/-/))] }
-
       when value.is_a?(Array)
         @value = { :'date-parts' => value[0].is_a?(Array) ? value : [value] }
         convert_parts!
@@ -151,17 +238,27 @@ module CiteProc
       self
     end
     
+    # @return [Array<DateParts>]
     def date_parts
-      @value[:'date-parts'] ||= [DateParts.new]
+      @value[:'date-parts'] ||= []
     end
 
-    alias parts date_parts
+    alias parts  date_parts
     alias parts= date_parts=
 
+    # @return [Boolean] whether or not the date parts' are empty
     def empty?
-      parts.map(&:to_citeproc).flatten.compact.empty?
+      parts.all?(&:empty?)
     end
 
+    # @!attribute year
+    # @return [Fixnum] the year (of the start date for ranges)
+
+    # @!attribute month
+    # @return [Fixnum] the month (of the start date for ranges)
+
+    # @!attribute day
+    # @return [Fixnum] the day (of the start date for ranges)
     [:year, :month, :day].each do |reader|
       writer = "#{reader}="
       
@@ -181,15 +278,15 @@ module CiteProc
     end
     
     def start_date
-      ::Date.new(*parts[0])
+      d = parts[0] and d.to_date
     end
 
     def start_date=(date)
-      parts[0] = date.strftime('%Y-%m-%d').split(/-/).map(&:to_i)
+      parts[0] = DateParts.new(date.strftime('%Y-%m-%d').split(/-/))
     end
 
     def end_date=(date)
-      parts[1] = date.nil? ? [0,0,0] : date.strftime('%Y-%m-%d').split(/-/).map(&:to_i)
+      parts[1] = DateParts.new(date.nil? ? 0 : date.strftime('%Y-%m-%d').split(/-/))
     end
 
     # @return [Date,Range] the date as a Ruby date object or as a Range if
@@ -210,7 +307,7 @@ module CiteProc
     alias range? has_end_date?
 
     def open_range?
-      range? && parts[1].uniq == [0]
+      range? && parts[1].open?
     end
 
     alias open? open_range?
@@ -277,13 +374,15 @@ module CiteProc
       literal? ? literal : to_ruby.to_s
     end
 
-    def sort_order
-      Date.sort_order % ((parts[0] + [0,0,0])[0,3] + ((parts[1] || []) + [0,0,0])[0,3])
-    end
-
     def <=>(other)
-      return nil unless other.is_a?(Date)
-      [year, sort_order] <=> [other.year, other.sort_order]
+      case other
+      when Date
+        parts <=> other.parts
+      when ::Date
+        parts <=> [other]
+      else
+        nil
+      end
     end
 
     private
@@ -292,6 +391,7 @@ module CiteProc
       parts.map! do |part|
         part.is_a?(DateParts) ? part : DateParts.new(*part)
       end
+
       self
     end
 

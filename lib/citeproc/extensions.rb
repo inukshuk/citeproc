@@ -14,12 +14,10 @@ module CiteProc
 			end
 		end
 		
-    module DeepCopy  
+    module DeepCopy
+      # See Matz, Flanagan: 'The Ruby Programming Language', p.83
       def deep_copy
-        Hash[*map { |k,v| [
-          begin k.respond_to?(:deep_copy) ? k.deep_copy : k.dup rescue k end,
-          begin v.respond_to?(:deep_copy) ? v.deep_copy : v.dup rescue v end
-        ]}.flatten(1)]
+        Marshal.load(Marshal.dump(self))
       end
     end
    
@@ -116,6 +114,9 @@ end
 class Array
 	include CiteProc::Extensions::CompactJoin
 	# include CiteProc::Extensions::ToSentence unless method_defined?(:to_sentence)	
+	
+	warn "citeproc: re-defining Array#deep_copy, this may cause conflicts with other libraries" if method_defined?(:deep_copy)
+  include CiteProc::Extensions::DeepCopy
 end
 
 class String

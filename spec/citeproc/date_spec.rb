@@ -32,6 +32,39 @@ module CiteProc
           it 'treats [-50] as less than [-50,12]' do
             DateParts.new(-50).should be < DateParts.new(-50,12)
           end
+          
+          it 'treats [1994,1,23] as less than today' do
+            DateParts.new(1994,1,23).should be < ::Date.today
+          end          
+        end
+        
+        describe '#dup' do
+          let(:date) { DateParts.new(1991,8,22) }
+          
+          it 'creates a copy that contains the same parts' do
+            date.dup.to_a.should == [1991,8,22]
+          end
+          
+          it 'does not return self' do
+            date.dup.should_not equal(date)
+            date.dup.should == date
+          end
+        end
+        
+        describe '#update' do
+          it 'accepts a hash' do
+            DateParts.new.update(:month => 2, :year => 80).to_a.should == [80,2,nil]
+          end
+          
+          it 'accepts an array' do
+            DateParts.new.update([80,2]).to_a.should == [80,2,nil]
+          end
+        end
+        
+        describe '#strftime' do
+          it 'formats the date parts according to the format string' do
+            DateParts.new(1998,2,4).strftime('FOO %0m%0d%y').should == 'FOO 020498'
+          end
         end
         
         describe 'to_citeproc' do
@@ -79,7 +112,65 @@ module CiteProc
     it { should_not be_numeric }
     
     describe '.new' do
+      it 'accepts a hash as input' do
+        Date.new(:literal => 'Summer').to_s.should == 'Summer'
+      end
+
+      it 'accepts a hash as input and converts date parts' do
+        Date.new(:'date-parts' => [[2003,2]]).parts[0].should be_a(Date::DateParts)
+      end
       
+      it 'accepts a fixnum and treats it as the year' do
+        Date.new(1666).year.should == 1666
+      end
+      
+      it 'accepts a date' do
+        Date.new(::Date.new(1980,4)).month.should == 4
+      end
+      
+      it 'accepts a date and creates date parts' do
+        Date.new(::Date.new(1980,4)).parts[0].to_citeproc.should == [1980,4,1]
+      end
+      
+      it 'is empty by default' do
+        Date.new.should be_empty
+      end
+      
+      it 'accepts date strings' do
+        Date.new('2009-03-19').day.should == 19
+      end
+
+      it 'accepts JSON strings' do
+        Date.new('{ "date-parts": [[2001,1,19]]}').day.should == 19
+      end
+
+      it 'accepts date parts in an array' do
+        Date.new([2009,3]).month.should == 3
+      end
+
+      it 'accepts ranges as an array' do
+        Date.new([[2009],[2012]]).should be_range
+      end
+
+      it 'accepts year ranges' do
+        Date.new(2009..2012).should be_range
+      end
+
+      it 'accepts exclusive date ranges' do
+        Date.new(::Date.new(2009) ... ::Date.new(2011)).end_date.year.should == 2010
+      end
+
+      it 'accepts inclusive date ranges' do
+        Date.new(::Date.new(2009) .. ::Date.new(2011)).end_date.year.should == 2011
+      end
+      
+      it 'accepts EDTF date strings' do
+        Date.new('2009?-03-19').should be_uncertain
+      end
+
+      it 'accepts EDTF intervals' do
+        Date.new('2009-03-19/2010-11-21').parts.map(&:to_citeproc).should == [[2009,3,19],[2010,11,21]]
+      end
     end
     
 		describe '.parse' do
@@ -96,6 +187,32 @@ module CiteProc
     describe '.create' do
       it 'should accept parameters and return a new instance' do
         Date.create('date-parts' => [[2001, 1]]).year.should == 2001
+      end
+    end
+    
+    describe '#dup' do
+      let(:date) { Date.new([1991,8]) }
+      
+      it 'creates a copy that contains the same parts' do
+        date.dup.parts.map(&:to_citeproc).should == [[1991,8]]
+      end
+
+      it 'copies uncertainty' do
+        date.dup.should_not be_uncertain
+        date.uncertain!.dup.should be_uncertain
+      end
+      
+      it 'makes a deep copy of attributes' do
+        expect { date.dup.uncertain! }.not_to change { date.uncertain? }
+      end
+      
+      it 'makes a deep copy of date parts' do
+        expect { date.dup.parts[0].update(:year => 2012) }.not_to change { date.year }
+      end
+      
+      it 'does not return self' do
+        date.dup.should_not equal(date)
+        date.dup.should == date
       end
     end
     
@@ -183,12 +300,16 @@ module CiteProc
 		end
 		
 		describe '#empty?' do
-		  it 'returns false by default' do
-		    Date.new.should_not be_empty
+		  it 'returns true by default' do
+		    Date.new.should be_empty
 		  end
 		  
 		  it 'returns true when it contains no date parts' do
 		    Date.new({}).should be_empty
+		  end
+		  
+		  it 'returns false for today' do
+		    Date.today.should_not be_empty
 		  end
 		  
 		  it 'returns false for literal dates' do

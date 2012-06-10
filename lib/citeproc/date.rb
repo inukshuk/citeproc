@@ -1,14 +1,87 @@
 module CiteProc
 
-  # Represents a {Variable} wrapping a date value.
+  # Represents a {Variable} wrapping a date value. A date value is a hybrid
+  # object in that it can represent either an atomic date or a date range,
+  # depending on whether or not the 'date-parts' attribute contains one
+  # or two lists of date parts.
+  #
+  # {Date Dates} can be constructed from a wide range of input values,
+  # including Ruby date objects, integers, date ranges, ISO 8601 and
+  # CiteProc JSON strings or hashes, and - provided you have the respective
+  # gems installed - EDTF strings all strings supported by Chronic.
+  #
+  # @example Initialization
+  #   CiteProc::Date.new
+  #   #-> #<CiteProc::Date "[]">
+  #
+  #   CiteProc::Date.today
+  #   #-> #<CiteProc::Date "[2012, 6, 10]">
+  #
+  #   CiteProc::Date.new('Yesterday')
+  #   #-> #<CiteProc::Date "[[2012, 6, 9]]">
+  #
+  #   CiteProc::Date.new(1966)
+  #   #-> #<CiteProc::Date "[1966]">
+  #
+  #   CiteProc::Date.new(1999..2003)
+  #   #-> #<CiteProc::Date "[[1999], [2003]]">
+  #
+  #   CiteProc::Date.new(Date.new(1900)...Date.new(2000))
+  #   #-> #<CiteProc::Date "[[1900, 1, 1], [1999, 12, 31]]">
+  #
+  #   CiteProc::Date.new('2009-03?')
+  #   #-> #<CiteProc::Date "[[2009, 3]]">
+  #
+  #   CiteProc::Date.new('2001-02/2007')
+  #   #-> #<CiteProc::Date "[[2001, 2, 1], [2007, 12, 31]]">
+  #
+  # {Date} instances are typically manipulated by a cite processor. Therefore,
+  # the API is optimized for easy information extraction and formatting.
+  # Additionally, {Date Dates} can be serialized as CiteProc JSON data.
+  #
+  # @example Serialization
+  #   CiteProc::Date.new('2009-03?').to_citeproc
+  #   #-> {"date-parts"=>[[2009, 3]], "circa"=>true}
+  #
+  #   CiteProc::Date.new(1999..2003).to_json
+  #   #-> '{"date-parts":[[1999],[2003]]}'
+  #
   class Date < Variable
 
+
     # Represents the individual parts of a date (i.e., year, month, day).
+    # There is a sublte difference between CiteProc dates (and date parts)
+    # and regular Ruby dates, because a Ruby date will always contain valid
+    # year, month and date values, whereas CiteProc dates may leave the month
+    # and day parts empty. That is to say, CiteProc distinguishes between
+    # the first of May 1955 and the month of May 1955 - a distinction that
+    # is not supported by regular Ruby dates.
+    #
+    #     may_1955 = CiteProc::Date::DateParts.new(1955, 5)
+    #     first_of_may_1955 = CiteProc::Date::DateParts.new(1955, 5, 1)
+    #
+    #     may_1955 < first_of_may_1955
+    #     #-> true
+    #
+    #     Date.new(1955, 5) < Date.new(1955, 5, 1)
+    #     #-> false
+    #
+    # The above example shows that a month's sort order is less than a day
+    # in that month, whereas, with Ruby date's there is no such distinction.
+    #
+    # The {DateParts} class encapsulates the year, month and day parts of a
+    # date; it is used internally by {Date} variables and not supposed to
+    # be used in an external context.
     class DateParts < Struct.new(:year, :month, :day)
       include Comparable
       
       def initialize(*arguments)
-        super(*arguments.map(&:to_i))
+        if arguments.length == 1 && arguments[0].is_a?(::Date)
+          d = arguments[0]
+          super(d.year, d.month, d.day)
+        else
+          super(*arguments.map(&:to_i))
+        end
       end
       
       def initialize_copy(other)
@@ -25,7 +98,7 @@ module CiteProc
         end
         
         parts.each_pair do |part, value|
-          self[part] = value.to_i
+          self[part] = value.nil? ? nil : value.to_i
         end
         
         self
@@ -44,14 +117,14 @@ module CiteProc
       end
 
       # A date is said to be BC when the year is defined and less than zero.
-      # @return [true,false] whether or not the date is BC
+      # @return [Boolean] whether or not the date is BC
       def bc?
         !!(year && year < 0)
       end
 
       # A date is said to be AD when it is in the first millennium, i.e.,
       # between 1 and 1000 AD
-      # @return [true,false] whether or not the date is AD
+      # @return [Boolean] whether or not the date is AD
       def ad?
         !bc? && year < 1000
       end
@@ -125,23 +198,23 @@ module CiteProc
     include Attributes
 
     alias attributes value
-    private :value=
+    
+    undef_method :value=
     
 
     # List of date parsers (must respond to #parse)
     @parsers = []
-
-    require 'date'
-    @parsers << ::Date
     
-    [%{ edtf EDTF }, %w{ chronic Chronic }].each do |date_parser, module_id|
+    [%w{ edtf EDTF }, %w{ chronic Chronic }].each do |date_parser, module_id|
       begin
         require date_parser
         @parsers << ::Object.const_get(module_id)
       rescue LoadError
-        # warn "failed to load `#{date_parser}' gem"
+        warn "failed to load `#{date_parser}' gem"
       end
     end
+
+    @parsers << ::Date
     
     
     class << self
@@ -176,7 +249,7 @@ module CiteProc
       # Like #parse but raises a ParseError if the input failed to be parsed.
       #
       # @param date_string [String] the date to be parsed
-      # @return [CiteProc::Date,nil] the parsed date or nil
+      # @return [CiteProc::Date] the parsed date
       #
       # @raise [ParseError] when the string cannot be parsed    
       def parse!(date_string)
@@ -195,7 +268,7 @@ module CiteProc
       end
 
       alias now today
-
+      
     end
 
 
@@ -203,10 +276,10 @@ module CiteProc
 
     # Make Date behave like a regular Ruby Date
     def_delegators :to_ruby,
-      *::Date.instance_methods(false).reject { |m| m.to_s =~ /^to_s$|^inspect$|start$|^\W/ }
+      *::Date.instance_methods(false).reject { |m| m.to_s =~ /^to_s$|^inspect$|start$|^\W|uncertain|season/ }
 
 
-    def initialize(value = ::Date.today)
+    def initialize(value = {})
       super
       yield self if block_given?
     end
@@ -220,18 +293,19 @@ module CiteProc
       convert_parts!
     end
     
+    # Replaces the date's value. Typically called by the constructor, this
+    # method intelligently converts various input values.
     def replace(value)
       case
       when value.is_a?(CiteProc::Date)
         initialize_copy(value)
-
+      when value.is_a?(::Date) && Object.const_defined?(:EDTF)
+        @value = { :'date-parts' => [DateParts.new(*value.values)] }
+        uncertain! if value.uncertain?
       when value.respond_to?(:strftime)
         @value = { :'date-parts' => [DateParts.new(*value.strftime('%Y-%m-%d').split(/-/))] }
-        uncertain! if value.respond_to?(:uncertain?) && value.uncertain?
-
       when value.is_a?(Numeric)
         @value = { :'date-parts' => [DateParts.new(value)] }
-
       when value.is_a?(Hash)
         attributes = value.symbolize_keys
 
@@ -242,14 +316,20 @@ module CiteProc
           @value = attributes.deep_copy
         end
         convert_parts!
-
+        
       when value.is_a?(Array)
         @value = { :'date-parts' => value[0].is_a?(Array) ? value : [value] }
         convert_parts!
+      when value.respond_to?(:min) && value.respond_to?(:max)
+        @value = { :'date-parts' => [
+            DateParts.new(value.min),
+            DateParts.new(value.max)
+          ]}
 
+      when value.is_a?(String) && /^\s*\{/ =~ value
+        return replace(MultiJson.decode(value, :symbolize_keys => true))
       when value.respond_to?(:to_s)
-        @value = Date.parse(value.to_s).value
-
+        @value = Date.parse!(value.to_s).value
       else
         raise TypeError, "failed to create date from #{value.inspect}"
       end
@@ -265,7 +345,8 @@ module CiteProc
     alias parts  date_parts
     alias parts= date_parts=
 
-    # @return [Boolean] whether or not the date parts' are empty
+    # @return [Boolean] whether or not the date parts' are empty and the
+    #   date is neither literal nor a season
     def empty?
       parts.all?(&:empty?) && !literal? && !season?
     end
@@ -282,20 +363,23 @@ module CiteProc
       writer = "#{reader}="
       
       define_method(reader) do
-        parts[0].send(reader)
+        d = parts[0] and d.send(reader)
       end
       
       define_method(writer) do |v|
+        parts[0] ||= DateParts.new
         parts[0].send(writer, v.to_i)
       end
     end
     
+    # @return [Date] a copy of the date with an inverted year
     def -@
       d = dup
       d.year = -1 * year
       d
     end
     
+    # @return [::Date,nil] the date (start date if this instance is a range); or nil
     def start_date
       d = parts[0] and d.to_date
     end
@@ -311,9 +395,10 @@ module CiteProc
     # @return [Date,Range] the date as a Ruby date object or as a Range if
     #   this instance is closed range
     def to_ruby
-      closed_range? ? start_date ... end_date : start_date
+      closed_range? ? (start_date..end_date) : start_date
     end
 
+    # @return [::Date,nil] the range's end date; or nil
     def end_date
       closed_range? ? ::Date.new(*parts[1]) : nil
     end
@@ -381,6 +466,7 @@ module CiteProc
     def to_citeproc
       cp = @value.stringify_keys
       
+      # Convert (or suppress empty) date-parts
       if parts.all?(&:empty?)
         cp.delete('date-parts')
       else
@@ -392,7 +478,14 @@ module CiteProc
     
     # @return [String] the date as a string
     def to_s
-      literal? ? literal : to_ruby.to_s
+      case
+      when literal?
+        literal
+      when season?
+        season
+      else
+        parts.map(&:to_citeproc).to_s
+      end
     end
 
     def <=>(other)

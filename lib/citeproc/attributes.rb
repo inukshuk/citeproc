@@ -37,8 +37,8 @@ module CiteProc
       return self if other.nil?
       
       case
-      when String === other && /^\s*\{/ =~ other
-        other = MulitJson.decode(other, :symbolize_keys => true)
+      when other.is_a?(String) && /^\s*\{/ =~ other
+        other = MultiJson.decode(other, :symbolize_keys => true)
       when other.respond_to?(:each_pair)
         # do nothing
       when other.respond_to?(:to_hash)

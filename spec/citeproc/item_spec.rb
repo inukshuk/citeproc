@@ -3,11 +3,10 @@ require 'spec_helper'
 module CiteProc
 	describe Item do
 		
-		it { should_not be nil }
-		it { should be_empty }
 		
 		describe '.new' do
-			
+  		it { should_not be nil }
+
 			it 'creates number variables for number fields' do
 				Item.new(:edition => 23).edition.should be_a(Number)
 			end
@@ -22,6 +21,7 @@ module CiteProc
 			
 			it 'creates names variables for name fields' do
 				Item.new(:editor => { :given => 'Jane' }).editor.should be_a(Names)
+				Item.new(:editor => 'Plato and Socrates').editor.should have(2).names
 			end
 			
 			it 'creates text variables for unknown fields' do
@@ -29,7 +29,26 @@ module CiteProc
 				v.should be_a(Variable)
 				v.should == '42'
 			end
-			
+		end
+		
+		describe '#empty' do
+  		it { should be_empty }
+		  
+		  it 'returns false when there is at least one variable in the item' do
+		    Item.new(:title => 'foo').should_not be_empty
+		  end
+		end
+		
+		describe '#each' do
+		  it 'yields each variable to the given block' do
+		    Item.new(:title => 'foo', :edition => 2).each.map {|kv| kv.join('-') }.should == %w{title-foo edition-2}
+		  end
+		end
+
+		describe '#each_value' do
+		  it "yields each variable's value to the given block" do
+		    Item.new(:title => 'foo', :edition => 2).each_value.map(&:to_s).should == %w{foo 2}
+		  end
 		end
 		
 		describe '#to_citeproc' do

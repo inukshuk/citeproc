@@ -2,29 +2,27 @@ module CiteProc
   
   # Items are similar to a Ruby Hash but pose a number of constraints on their
   # contents: keys are always (implicitly converted to) symbols and values
-  # are strictly {CiteProc::Variable Variables}. When Items are constructed
-  # from (or merged with) JSON objects or Hashes Variable instances are
-  # automatically created using by passing the variable's key as type to
-  # {CiteProc::Variable.create}; this will create the expected
-  # {CiteProc::Variable} type for all fields defined in CSL (for example,
-  # the `issued' field will become a {CiteProc::Date} object; unknown types
-  # will be converted to simple {CiteProc::Variable} instances, which should
-  # be fine for numeric or string values but may cause problems for more
-  # complex types.
+  # are strictly {Variable Variables}. When Items are constructed
+  # from (or merged with) JSON objects or Hashes {Variable} instances are
+  # automatically created by passing the variable's key as type to
+  # {Variable.create}; this will create the expected {Variable} type for all
+  # fields defined in CSL (for example, the `issued' field will become a
+  # {Date} object; unknown types will be converted to simple {Variable}
+  # instances, which should be fine for numeric or string values but may
+  # cause problems for more complex types.
   #
   # Every Item provides accessor methods for all known field names; unknown
   # fields can still be accessed using array accessor syntax.
   #
   #     i = Item.new(:edition => 3, :unknown_field => 42)
-  #
   #     i.edition
   #     #-> #<CiteProc::Number "3">
   #
   #     i[:unknown_field]
   #     #-> #<CiteProc::Variable "42">
   #
-  # Items can be converted to the CiteProc JSON format via
-  # {CiteProc::Item#to_citeproc} (or {CiteProc::Item#to_json} to get a JSON string).
+  # Items can be converted to the CiteProc JSON format via {#to_citeproc}
+  # and {#to_json}.
   class Item
     
     @types = [
@@ -83,6 +81,8 @@ module CiteProc
     #    item.each
     #    #-> an enumerator
     #
+    # @yieldparam field [Symbol] the field name
+    # @yieldparam value [Variable] the value
     # @return [self,Enumerator] the item or an enumerator if no block is given
     def each
       if block_given?
@@ -94,13 +94,36 @@ module CiteProc
     end
     
     alias each_pair each
+
+    # Calls a block once for each field in the item, passing the field's
+    # value as parameters.
+    #
+    # If not block is given, an enumerator is returned instead.
+    #
+    #    item.each { |value| block }
+    #    #-> item
+    #
+    #    item.each
+    #    #-> an enumerator
+    #
+    # @yieldparam field [Symbol] the field name
+    # @yieldparam value [Variable] the value
+    # @return [self,Enumerator] the item or an enumerator if no block is given
+    def each_value
+      if block_given?
+        attributes.each_value(&Proc.new)
+        self
+      else
+        enum_for :each_value
+      end
+    end
     
     def <=>(other)
       return nil unless other.is_a?(Attributes)
       attributes <=> other.attributes
     end
     
-    # Returns a corresponding {BibTeX::Entry} if the bibtex-ruby gem is
+    # Returns a corresponding *BibTeX::Entry* if the bibtex-ruby gem is
     # installed; otherwise returns a BibTeX string.
     def to_bibtex
       # hash = to_hash

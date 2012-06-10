@@ -395,14 +395,19 @@ module CiteProc
     # @return [Date,Range] the date as a Ruby date object or as a Range if
     #   this instance is closed range
     def to_ruby
-      closed_range? ? (start_date..end_date) : start_date
+      if closed_range?
+        start_date..end_date
+      else
+        start_date
+      end
     end
 
     # @return [::Date,nil] the range's end date; or nil
     def end_date
-      closed_range? ? ::Date.new(*parts[1]) : nil
+      d = parts[1] and d.to_date
     end
 
+    # @return [Boolean] whether or not the date-parts contain an end date
     def has_end_date?
       parts[1] && !parts[1].empty?
     end
@@ -410,12 +415,14 @@ module CiteProc
     # Returns true if this date is a range
     alias range? has_end_date?
 
+    # @return [Boolean] whether or not this date is an open range
     def open_range?
       range? && parts[1].open?
     end
 
     alias open? open_range?
 
+    # @return [Boolean] whether or not this date is a closed range
     def closed_range?
       range? && !open_range?
     end

@@ -229,16 +229,36 @@ module CiteProc
         Date.create('date-parts' => [[2000]], :literal => 'foo').should be_literal
       end
     end
+
+    describe 'seasons' do
+      it 'is no season by default' do
+        Date.new.should_not be_season
+      end
+      
+      it 'is a season if contains only a season field' do
+        Date.new(:season => 'Winter').should be_season
+      end
+
+      it 'is a season if contains a season field' do
+        Date.new(:'date-parts' => [[2001]], :season => 'Winter').should be_season
+      end      
+    end
     
     describe 'uncertain dates' do
       it 'are uncertain' do
         Date.new({ 'date-parts' => [[-225]], 'circa' => '1' }).should be_uncertain
-        Date.new { |d| d.parts = [[-225]]; d.uncertain! }.should be_uncertain
+        Date.new { |d| d.parts = [[-225]]; d.uncertain! }.should_not be_certain
+      end
+      
+      describe '#(un)certain!' do
+        it 'returns self' do
+          ad2k.uncertain!.should equal(ad2k)
+          ad2k.certain!.should equal(ad2k)
+        end
       end
     end
     
     describe 'sorting' do
-      
       it 'dates with more date-parts will come after those with fewer parts' do
         (ad2k < may  && may < first_of_may).should be true
       end
@@ -246,8 +266,42 @@ module CiteProc
       it 'negative years are sorted inversely' do
         [ad50, bc100, bc50, ad100].sort.map(&:year).should == [-100, -50, 50, 100]
       end
+      
+      it 'can be compared to dates' do
+        ad50.should be < ::Date.new(50,2)
+        ad50.should be > ::Date.new(49)
+      end
     end
 
+    describe '#start_date' do
+      it 'returns nil by default' do
+        Date.new.start_date.should be_nil
+      end
+      
+      it 'returns a ruby date when date-parts are set' do
+        Date.new(1999).start_date.year.should == 1999
+      end
+    end
+
+    describe '#end_date' do
+      it 'returns nil by default' do
+        Date.new.end_date.should be_nil
+      end
+      
+      it 'returns nil when there is a single date-parts set' do
+        Date.new(1312).end_date.should be_nil
+      end
+      
+      it 'returns a ruby date when date-parts are a closed range' do
+        Date.new(1999..2000).end_date.year.should == 2000
+      end
+    end
+    
+    describe '#-@' do
+      it 'inverts the year' do
+        (-ad50).should == bc50
+      end
+    end
 
     describe '#display' do
       it 'returns an empty string by default' do
@@ -320,7 +374,7 @@ module CiteProc
 		    Date.new(:season => 'Summer').should_not be_empty
 		  end
 		end
-		
+				
     describe '#to_json' do    
       it 'supports simple parts' do
         Date.new(%w{2000 1 15}).to_json.should == '{"date-parts":[[2000,1,15]]}'

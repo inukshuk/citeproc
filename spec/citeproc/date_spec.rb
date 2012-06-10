@@ -3,6 +3,68 @@ require 'spec_helper'
 module CiteProc
   describe Date do
     
+    class Date
+      describe DateParts do
+        it { should_not be_nil }
+        it { should be_empty }
+      
+        describe 'sorting' do
+          it 'treats [2003] as less than [2003,1]' do
+            DateParts.new(2003).should be < DateParts.new(2003,1)
+          end
+
+          it 'treats [1992,9,23] as less than [1993,8,22]' do
+            DateParts.new(1992,9,23).should be < DateParts.new(1993,8,22)
+          end
+
+          it 'treats [1992,9,23] as less than [1992,10,22]' do
+            DateParts.new(1992,9,23).should be < DateParts.new(1992,10,22)
+          end
+
+          it 'treats [1992,9,23] as less than [1992,9,24]' do
+            DateParts.new(1992,9,23).should be < DateParts.new(1992,9,24)
+          end
+
+          it 'treats [-50] as less than [-25]' do
+            DateParts.new(-50).should be < DateParts.new(-25)
+          end
+
+          it 'treats [-50] as less than [-50,12]' do
+            DateParts.new(-50).should be < DateParts.new(-50,12)
+          end
+        end
+        
+        describe 'to_citeproc' do
+          it 'returns an empty list by default' do
+            DateParts.new.to_citeproc.should == []
+          end
+          
+          it 'returns a list with the year if only the year is set' do
+            DateParts.new(2001).to_citeproc.should == [2001]
+          end
+
+          it 'supports zero parts' do
+            DateParts.new(0,0).to_citeproc.should == [0,0]
+          end
+        end
+        
+        describe '#open?' do
+          it 'returns false by default' do
+            DateParts.new.should_not be_open
+          end
+          
+          it 'returns false for [1999,8,24]' do
+            DateParts.new(1999, 8, 24).should_not be_open
+          end
+          
+          it 'returns true for [0]' do
+            DateParts.new(0).should be_open
+          end
+        end
+      end
+    end
+    
+    
     let(:ad2k) { Date.create('date-parts' => [[2000]])}
     let(:may) { Date.create('date-parts' => [[2000, 5]])}
     let(:first_of_may) { Date.create('date-parts' => [[2000, 5, 1]])}
@@ -21,7 +83,6 @@ module CiteProc
     end
     
 		describe '.parse' do
-			
 			it 'returns nil by default' do
 				Date.parse('').should be nil
 				Date.parse(nil).should be nil
@@ -121,14 +182,38 @@ module CiteProc
 			
 		end
 		
+		describe '#empty?' do
+		  it 'returns false by default' do
+		    Date.new.should_not be_empty
+		  end
+		  
+		  it 'returns true when it contains no date parts' do
+		    Date.new({}).should be_empty
+		  end
+		  
+		  it 'returns false for literal dates' do
+		    Date.new(:literal => 'foo').should_not be_empty
+		  end
+
+		  it 'returns false for seasons' do
+		    Date.new(:season => 'Summer').should_not be_empty
+		  end
+		end
+		
     describe '#to_json' do    
       it 'supports simple parts' do
         Date.new(%w{2000 1 15}).to_json.should == '{"date-parts":[[2000,1,15]]}'
       end
 
-      it 'supports integers and strings parts' do
+      it 'supports string parts' do
         Date.new(['2000', '1', '15']).to_json.should == '{"date-parts":[[2000,1,15]]}'
+      end
+
+      it 'supports integer parts' do
         Date.new([2000, 1, 15]).to_json.should == '{"date-parts":[[2000,1,15]]}'
+      end
+        
+      it 'supports mixed parts' do
         Date.new(['2000', 1, '15']).to_json.should == '{"date-parts":[[2000,1,15]]}'
       end
 
@@ -136,8 +221,11 @@ module CiteProc
         Date.new(-200).to_json.should == '{"date-parts":[[-200]]}'
       end
 
-      it 'supports seasons' do
+      it 'treats seasons as a strings' do
         Date.create({:season => '1', 'date-parts' => [[1950]]}).to_json.should == '{"date-parts":[[1950]],"season":"1"}'
+      end
+      
+      it 'supports seasons' do
         Date.create({:season => 'Trinity', 'date-parts' => [[1975]]}).to_json.should == '{"date-parts":[[1975]],"season":"Trinity"}'
       end
 
@@ -149,8 +237,11 @@ module CiteProc
         Date.new(:raw => '23 May 1955').to_json.should == '{"date-parts":[[1955,5,23]]}'
       end
 
-      it 'supports open and closed ranges' do
+      it 'supports closed ranges' do
         Date.new([[2000,11],[2000,12]]).to_json.should == '{"date-parts":[[2000,11],[2000,12]]}'
+      end
+      
+      it 'supports open ranges' do
         Date.new([[2000,11],[0,0]]).to_json.should == '{"date-parts":[[2000,11],[0,0]]}'
       end
     end

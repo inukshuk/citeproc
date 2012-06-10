@@ -31,6 +31,59 @@ module CiteProc
         self
       end
       
+      # @return [Boolean] whether or not the date parts are unset
+      def empty?
+        to_citeproc.empty?
+      end
+
+      # In the current CiteProc specification, date parts consisting of
+      # zeroes are used to designate open ranges.
+      # @return [Boolean] whether or not the this is an open-end date
+      def open?
+        to_citeproc.include?(0)
+      end
+
+      # A date is said to be BC when the year is defined and less than zero.
+      # @return [true,false] whether or not the date is BC
+      def bc?
+        !!(year && year < 0)
+      end
+
+      # A date is said to be AD when it is in the first millennium, i.e.,
+      # between 1 and 1000 AD
+      # @return [true,false] whether or not the date is AD
+      def ad?
+        !bc? && year < 1000
+      end
+
+      # Formats the date parts according to the passed-in format string.
+      # @param format [String] a format string
+      # @return [String,nil] the formatted date string; nil if the date
+      #   parts are not a valid date.
+      def strftime(format = '%F')
+        d = to_date
+        
+        if d.nil?
+          nil
+        else
+          d.strftime(format)
+        end
+      end
+
+      # Compares the date parts with the passed-in date.
+      # @param other [DateParts, #to_date] the other date
+      # @return [Fixnum,nil] the result of the comparison (-1, 0, 1 or nil)
+      def <=>(other)
+        case
+        when other.is_a?(DateParts)
+          to_citeproc <=> other.to_citeproc
+        when other.respond_to?(:to_date)
+          to_date <=> other.to_date
+        else
+          nil
+        end
+      end
+           
       # Convert the date parts into a proper Ruby date object; if the date
       # parts are empty, contain zero or are otherwise invalid, nil will
       # be returned instead.
@@ -51,40 +104,6 @@ module CiteProc
       end
       
       alias to_ruby to_date
-
-      # @return [Boolean] whether or not the date parts are unset
-      def empty?
-        to_citeproc.empty?
-      end
-
-      # In the current CiteProc specification, date parts consisting of
-      # zeroes are used to designate open ranges.
-      # @return [Boolean] whether or not the this is an open-end date
-      def open?
-        to_citeproc.include?(0)
-      end
-
-      # Formats the date parts according to the passed-in format string.
-      # @param format [String] a format string
-      # @return [String,nil] the formatted date string; nil if the date
-      #   parts are not a valid date.
-      def strftime(format = '%F')
-        d = to_date
-        
-        if d.nil?
-          nil
-        else
-          d.strftime(format)
-        end
-      end
-
-      # Compares the date parts with the passed-in date.
-      # @param other [#to_date] the other date
-      # @return [Fixnum,nil] the result of the comparison (-1, 0, 1 or nil)
-      def <=>(other)
-        return nil unless other.respond_to?(:to_date)
-        to_date <=> other.to_date
-      end
       
       # @return [Array<Fixnum>] the list of date parts
       def to_citeproc
@@ -248,7 +267,7 @@ module CiteProc
 
     # @return [Boolean] whether or not the date parts' are empty
     def empty?
-      parts.all?(&:empty?)
+      parts.all?(&:empty?) && !literal? && !season?
     end
 
     # @!attribute year
@@ -344,23 +363,25 @@ module CiteProc
     end
 
     # A date is said to be BC when the year is defined and less than zero.
-    # @return [true,false] whether or not the date is BC
+    # @return [Boolean, nil] whether or not the date is BC; nil if there is
+    #   no start date set
     def bc?
-      !!(year && year < 0)
+      date = parts[0] and date.bc?
     end
     
     # A date is said to be AD when it is in the first millennium, i.e.,
     # between 1 and 1000 AD
-    # @return [true,false] whether or not the date is AD
+    # @return [Boolean, nil] whether or not the date is AD; nil if there is
+    #   no start date set
     def ad?
-      !bc? && year < 1000
+      date = parts[0] and date.ad?
     end
 
     # @return [Hash] a hash representation of the date.
     def to_citeproc
       cp = @value.stringify_keys
       
-      if empty?
+      if parts.all?(&:empty?)
         cp.delete('date-parts')
       else
         cp['date-parts'] = cp['date-parts'].map(&:to_citeproc)

@@ -11,7 +11,7 @@ module CiteProc
       @attributes ||= {}
     end
     
-    def_delegators :attributes, :length, :empty?, :values_at
+    def_delegators :attributes, :length, :empty?, :values_at, :key?, :value?
 
     alias size length
     

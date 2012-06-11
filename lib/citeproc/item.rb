@@ -54,16 +54,28 @@ module CiteProc
       attr_reader :types, :bibtex_types
     end
     
+    extend Forwardable
+    
     include Attributes
     include Enumerable
     include Comparable
     include Observable
-    
+
+
     attr_predicates :id, :'short-title', :'journal-abbreviation',
       *Variable.fields[:all]
+
+    def_delegators :attributes, :values_at, :keys, :values
+    
+    alias fields keys
+    
+    # Hide attributes reader
+    protected :attributes
+    
     
     def initialize(attributes = nil)
       merge(attributes)
+      yield self if block_given?
     end
     
     def initialize_copy(other)
@@ -100,13 +112,12 @@ module CiteProc
     #
     # If not block is given, an enumerator is returned instead.
     #
-    #    item.each { |value| block }
+    #    item.each_value { |value| block }
     #    #-> item
     #
-    #    item.each
+    #    item.each_value
     #    #-> an enumerator
     #
-    # @yieldparam field [Symbol] the field name
     # @yieldparam value [Variable] the value
     # @return [self,Enumerator] the item or an enumerator if no block is given
     def each_value
@@ -122,7 +133,7 @@ module CiteProc
       return nil unless other.is_a?(Attributes)
       attributes <=> other.attributes
     end
-    
+
     # Returns a corresponding *BibTeX::Entry* if the bibtex-ruby gem is
     # installed; otherwise returns a BibTeX string.
     def to_bibtex
@@ -147,9 +158,13 @@ module CiteProc
       raise 'not implemented yet'
     end
     
-    # @return [Symbol] the item's id
+    # @return [Symbol,nil] the item's id
     def to_sym
-      id.to_s.intern
+      if id?
+        id.to_s.intern
+      else
+        nil
+      end
     end
     
     # @return [String] a string containing a human-readable

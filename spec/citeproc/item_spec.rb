@@ -41,13 +41,13 @@ module CiteProc
 		
 		describe '#each' do
 		  it 'yields each variable to the given block' do
-		    Item.new(:title => 'foo', :edition => 2).each.map {|kv| kv.join('-') }.should == %w{title-foo edition-2}
+		    Item.new(:title => 'foo', :edition => 2).each.map {|kv| kv.join('-') }.sort.should == %w{edition-2 title-foo}
 		  end
 		end
 
 		describe '#each_value' do
 		  it "yields each variable's value to the given block" do
-		    Item.new(:title => 'foo', :edition => 2).each_value.map(&:to_s).should == %w{foo 2}
+		    Item.new(:title => 'foo', :edition => 2).each_value.map(&:to_s).sort.should == %w{2 foo}
 		  end
 		end
 		

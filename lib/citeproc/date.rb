@@ -185,7 +185,7 @@ module CiteProc
       
       # @return [String] the date parts as a string
       def to_s
-        to_citeproc.to_s
+        to_citeproc.inspect
       end
 
       # @return [String] a human-readable representation of the object
@@ -198,6 +198,7 @@ module CiteProc
     include Attributes
 
     alias attributes value
+    protected :value, :attributes
     
     undef_method :value=
     
@@ -320,12 +321,11 @@ module CiteProc
       when value.is_a?(Array)
         @value = { :'date-parts' => value[0].is_a?(Array) ? value : [value] }
         convert_parts!
-      when value.respond_to?(:min) && value.respond_to?(:max)
+      when !value.is_a?(String) && value.respond_to?(:min) && value.respond_to?(:max)
         @value = { :'date-parts' => [
             DateParts.new(value.min),
             DateParts.new(value.max)
           ]}
-
       when value.is_a?(String) && /^\s*\{/ =~ value
         return replace(MultiJson.decode(value, :symbolize_keys => true))
       when value.respond_to?(:to_s)
@@ -491,7 +491,7 @@ module CiteProc
       when season?
         season
       else
-        parts.map(&:to_citeproc).to_s
+        parts.map(&:to_citeproc).inspect
       end
     end
 

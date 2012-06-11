@@ -1,12 +1,25 @@
 CiteProc
 ========
-The CiteProc gem is a Ruby abstraction layer for the JSON API used by
-citeproc-js. To process citations you also require a dedicated processor engine
-available as a separate gem: these will include citeproc-js, citeproc-ruby and
-eventually citeproc-hs. As work on these packages is still in progress, please
+CiteProc is a cite processor interface and citation data API based on the
+Citation Style Language (CSL) specifications. To actually process citations
+a dedicated processor engine is required; these can be installed as separate
+gems.
+
+### A word of caution
+As work on this and on the related packages is still in progress, please
 be aware of the following caveats: the 0.0.x branch of citeproc-ruby is still
 a standalone package and will conflict with this release of citeproc; support
 will be added in future versions of the 1.x.x branch.
+
+Citation Data
+-------------
+
+Processor Interface
+-------------------
+
+Credits
+-------
+
 
 Copyright
 ---------

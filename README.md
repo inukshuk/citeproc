@@ -29,5 +29,4 @@ Copyright 2009-2012 Sylvester Keil. All rights reserved.
 
 License
 -------
-CiteProc is published under the FreeBSD license.
-See LICENSE for further details.
+CiteProc is dual licensed under the AGPL and the FreeBSD license.

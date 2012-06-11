@@ -1,5 +1,5 @@
 lib/**/*.rb
 bin/*
 - 
-LICENSE
+AGPL
 README.md

@@ -1,6 +1,3 @@
-require 'spec_helper'
-require 'tempfile'
-
 module CiteProc
 
 	describe 'Assets' do

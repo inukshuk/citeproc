@@ -131,7 +131,7 @@ module CiteProc
     
     def <=>(other)
       return nil unless other.is_a?(Attributes)
-      attributes <=> other.attributes
+      eql?(other) ? 0 : length <=> other.length
     end
 
     # Returns a corresponding *BibTeX::Entry* if the bibtex-ruby gem is

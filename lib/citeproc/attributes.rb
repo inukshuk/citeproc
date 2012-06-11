@@ -66,9 +66,9 @@ module CiteProc
 
     # @return [Hash] a hash-based representation of the attributes
     def to_citeproc
-      Hash[*attributes.map { |k,v|
+      Hash[attributes.map { |k,v|
         [k.to_s, v.respond_to?(:to_citeproc) ? v.to_citeproc : v.to_s]
-      }.flatten(1)]
+      }]
     end
     
     # @return [String] a JSON string representation of the attributes

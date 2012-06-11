@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 module CiteProc
   
   # Names consist of several dependent parts of strings. Simple personal names
@@ -42,11 +43,13 @@ module CiteProc
     include Comparable
 
     # Class instance variables
-    
-    # Based on the regular expression in Frank G. Bennett's citeproc-js
-    # @see https://bitbucket.org/fbennett/citeproc-js/overview
-    @romanesque =
-      /^[a-zA-Z\u0080-\u017f\u0400-\u052f\u0386-\u03fb\u1f00-\u1ffe\.,\s\u0027\u02bc\u2019-]*$/
+
+    @romanesque = ruby_19 {
+      /^[\p{Latin}\p{Greek}\p{Cyrillic}\p{Hebrew}\p{Armenian}\p{Georgian}\p{Common}]*$/u
+    } || ruby_18 {
+      # @todo fallback range for non oniguruma patterns
+      /^[a-zA-ZüäößÜÖÄéèДостоевскийФёдорМихайловичἈριστοτέλης\.,\s'ʼ-]*$/u
+    }
 
     # Default formatting options
     @defaults = {

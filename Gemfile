@@ -12,4 +12,7 @@ group :optional do
 	gem 'bibtex-ruby', '~>2.0.10', :require => 'bibtex'
 	
   gem 'simplecov', '~>0.6.4'
+  
+  gem 'unicode_utils', '~>1.3.0', :platform => :mri_19
+  gem 'unicode', '~>0.4.2', :platform => :mri_18
 end

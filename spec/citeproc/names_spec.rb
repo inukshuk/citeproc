@@ -568,7 +568,7 @@ module CiteProc
       
       describe '#each' do
         it 'returns an enumerator when no block given' do
-          gang_of_four.each.should be_a(Enumerator)
+          gang_of_four.each.should respond_to(:each)
         end
       end
       

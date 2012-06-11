@@ -15,7 +15,11 @@ require 'citeproc/version'
 #
 module CiteProc
   
-  module Converters; end
+  module Converters
+  end
+  
+  module Utilities
+  end
   
 end
 

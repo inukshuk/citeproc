@@ -148,14 +148,16 @@ module CiteProc
           frank.should be_romanesque
         end
       
-        it 'ancient greek names are romanesque' do
-          aristotle.should be_romanesque
-        end
+        if CiteProc.oniguruma?
+          it 'ancient greek names are romanesque' do
+            aristotle.should be_romanesque
+          end
        
-        it 'russian names are romanesque' do
-          dostoyevksy.should be_romanesque
+          it 'russian names are romanesque' do
+            dostoyevksy.should be_romanesque
+          end
         end
-      
+        
         it 'japanese names are not romanesque' do
           japanese.should_not be_romanesque
         end
@@ -273,8 +275,10 @@ module CiteProc
           utf.to_s.should == "Gérard de la Martinière III"
         end
 
-        it 'prints russian names normally' do
-          dostoyevksy.to_s.should == 'Фёдор Михайлович Достоевский'
+        if CiteProc.oniguruma?
+          it 'prints russian names normally' do
+            dostoyevksy.to_s.should == 'Фёдор Михайлович Достоевский'
+          end
         end
 
         describe 'when static ordering is active' do

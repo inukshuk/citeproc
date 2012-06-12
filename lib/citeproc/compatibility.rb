@@ -43,10 +43,15 @@ if RUBY_VERSION < '1.9'
       def oniguruma
         Oniguruma::ORegexp.new(yield, :syntax => Oniguruma::SYNTAX_JAVA, :encoding => Oniguruma::ENCODING_UTF8)
       end
+      
+      def oniguruma?
+        true
+      end
     rescue LoadError
       def oniguruma
         false
       end
+      alias oniguruma? oniguruma
     end
   end
 
@@ -74,9 +79,12 @@ else
     def oniguruma
       Regexp.new(yield)
     end
+    
+    def oniguruma?
+      true
+    end
   end
 end
-
 
 #
 # Robust unicode upcase/downcase
@@ -150,5 +158,6 @@ else
 end
 
 module CiteProc
-  module_function :ruby_18, :ruby_19, :oniguruma, :to_unicode, :upcase, :downcase
+  module_function :ruby_18, :ruby_19, :oniguruma, :oniguruma?,
+    :to_unicode, :upcase, :downcase
 end

@@ -48,7 +48,7 @@ module CiteProc
       '^[\p{Latin}\p{Greek}\p{Cyrillic}\p{Hebrew}\p{Armenian}\p{Georgian}\p{Common}]*$'
     } || CiteProc.ruby_18 {
       # @todo improve fallback range
-      /^[[:alpha:]\s[:punct:]]*$/u
+      /^[[:alpha:]äöüéè\s[:punct:]]*$/iu
     }
 
     # Default formatting options

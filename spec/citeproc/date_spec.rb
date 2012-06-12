@@ -135,7 +135,7 @@ module CiteProc
       it 'is empty by default' do
         Date.new.should be_empty
       end
-      
+
       it 'accepts date strings' do
         Date.new('2009-03-19').day.should == 19
       end
@@ -397,11 +397,11 @@ module CiteProc
       end
 
       it 'treats seasons as a strings' do
-        Date.create({:season => '1', 'date-parts' => [[1950]]}).to_json.should == '{"date-parts":[[1950]],"season":"1"}'
+        Date.create({:season => '1', 'date-parts' => [[1950]]}).to_json.should =~ /"season":"1"/
       end
       
       it 'supports seasons' do
-        Date.create({:season => 'Trinity', 'date-parts' => [[1975]]}).to_json.should == '{"date-parts":[[1975]],"season":"Trinity"}'
+        Date.create({:season => 'Trinity', 'date-parts' => [[1975]]}).to_json.should =~ /"season":"Trinity"/
       end
 
       it 'supports string literals' do

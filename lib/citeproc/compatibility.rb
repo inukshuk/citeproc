@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 unless Symbol.is_a?(Comparable)
   class Symbol
     include Comparable

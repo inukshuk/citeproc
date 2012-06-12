@@ -44,11 +44,11 @@ module CiteProc
 
     # Class instance variables
 
-    @romanesque = ruby_19 {
-      /^[\p{Latin}\p{Greek}\p{Cyrillic}\p{Hebrew}\p{Armenian}\p{Georgian}\p{Common}]*$/u
-    } || ruby_18 {
-      # @todo fallback range for non oniguruma patterns
-      /^[a-zA-ZüäößÜÖÄéèДостоевскийФёдорМихайловичἈριστοτέλης\.,\s'ʼ-]*$/u
+    @romanesque = CiteProc.oniguruma {
+      '^[\p{Latin}\p{Greek}\p{Cyrillic}\p{Hebrew}\p{Armenian}\p{Georgian}\p{Common}]*$'
+    } || CiteProc.ruby_18 {
+      # @todo improve fallback range
+      /^[[:alpha:]\s[:punct:]]*$/u
     }
 
     # Default formatting options
@@ -463,7 +463,7 @@ module CiteProc
       end
     end
     
-    alias << push
+    alias_method :<<, :push
             
     def initialize(*arguments)
       @options = Names.defaults.dup

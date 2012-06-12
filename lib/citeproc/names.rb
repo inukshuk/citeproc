@@ -455,15 +455,13 @@ module CiteProc
     # @!method unshift(name)
     #    Inserts the given name at the beginning of the list of names.
     #    @param name [Name] a name
-    #    @return [self]
-    [:push, :unshift].each do |m|
+    #    @return [self]    
+    [:<<, :push, :unshift].each do |m|
       define_method(m) do |*arguments, &block|
         names.send(m, *arguments, &block)
         self
       end
     end
-    
-    alias_method :<<, :push
             
     def initialize(*arguments)
       @options = Names.defaults.dup

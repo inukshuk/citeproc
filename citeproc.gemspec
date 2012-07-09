@@ -11,10 +11,15 @@ Gem::Specification.new do |s|
   
   s.authors     = ['Sylvester Keil']
   s.email       = ['sylvester@keil.or.at']
+  
   s.homepage    = 'https://github.com/inukshuk/citeproc'
   s.summary     = 'A cite processor interface.'
-  s.description = 'A a cite processor for Citation Style Language (CSL) styles.'
-  s.license     = 'FreeBSD'
+  s.description =
+    """
+    A cite processor interface for Citation Style Language (CSL) styles.
+    """
+
+  s.license     = 'AGPL'
   s.date        = Time.now.strftime('%Y-%m-%d')
 
   s.add_runtime_dependency('multi_json', '~>1.3.5')
@@ -31,9 +36,7 @@ Gem::Specification.new do |s|
   s.executables  = []
   s.require_path = 'lib'
 
-  s.rdoc_options      = %w{--line-numbers --inline-source --title "CiteProc" --main README.md --webcvs=http://github.com/inukshuk/citeproc/tree/master/}
-  s.extra_rdoc_files  = %w{README.md}
-  
+  s.has_rdoc      = 'yard'
 end
 
 # vim: syntax=ruby

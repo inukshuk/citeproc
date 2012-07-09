@@ -39,8 +39,7 @@ module CiteProc
 			
 			self
 		rescue => e
-			puts e.backtrace.join("\n")
-			raise ArgumentError, "failed to open asset #{input.inspect}: #{e.message}"
+			raise ArgumentError, "failed to open asset #@location (#{input.inspect}): #{e.message}"
 		end
 
 		def name
@@ -66,8 +65,16 @@ module CiteProc
 			end
 			
 			def extend_name(input)
-				name = File.extname(input).empty? ? [input, extension].compact.join : input.to_s.dup
-				name = name.start_with?(prefix.to_s) ? name : [prefix, name].join
+				if File.extname(input) != extension
+				  name = [input, extension].compact.join
+				else
+				  name = input.to_s.dup
+				end
+				
+				unless name.start_with?(prefix.to_s)
+				  name = [prefix, name].join
+				end
+				
 				name
 			end
 

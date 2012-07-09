@@ -93,9 +93,9 @@ end
 if RUBY_PLATFORM == 'java'
   require 'java'
 
+  puts java.lang.System.getProperty('file.encoding')
+  
   module CiteProc
-    private
-
     def upcase(string)
       java.lang.String.new(string).to_upper_case(java.util.Locale::ENGLISH).to_s
     end
@@ -103,6 +103,14 @@ if RUBY_PLATFORM == 'java'
     def downcase(string)
       java.lang.String.new(string).to_lower_case(java.util.Locale::ENGLISH).to_s
     end
+    
+    # def oniguruma
+    #   Regexp.new(yield)
+    # end
+    # 
+    # def oniguruma?
+    #   true
+    # end
   end
 
 else

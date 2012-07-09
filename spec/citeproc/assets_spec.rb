@@ -53,9 +53,18 @@ module CiteProc
 				it 'returns the given string if it looks like XML' do
 					Style.open('<b>foo bar!</b>').to_s.should == '<b>foo bar!</b>'
 				end
-
 			end
 
+      describe '.extend_name' do
+        it 'adds the default extension if the file does not already end with it' do
+          Style.extend_name(name.sub(/#{extension}$/,'')).should == name
+        end
+        
+        it 'does not add the default extension if the file already ends with it' do
+          Style.extend_name(name).should == name
+        end
+      end
+      
 		end
 	end
 end

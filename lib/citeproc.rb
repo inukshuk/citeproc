@@ -2,7 +2,7 @@
 require 'date'
 require 'forwardable'
 require 'observer'
-require 'uri'
+require 'open-uri'
 
 require 'multi_json'
 require 'namae'

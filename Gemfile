@@ -12,6 +12,13 @@ group :optional do
 	gem 'bibtex-ruby', '~>2.0.10', :require => 'bibtex'
 	
   gem 'simplecov', '~>0.6.4'
+
+  gem 'guard', '~>1.2'
+  gem 'guard-rspec', '~>1.1'
+  gem 'guard-cucumber', '~>1.2'
+
+	gem 'yard', '~>0.8', :platforms => [:mri_19]
+	gem 'redcarpet', '~>2.1', :platforms => [:mri_19]
   
   gem 'unicode_utils', '~>1.3.0', :platform => :mri_19
   gem 'unicode', '~>0.4.2', :platform => :mri_18

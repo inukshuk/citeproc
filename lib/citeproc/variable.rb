@@ -167,11 +167,21 @@ module CiteProc
       @type ||= self.class.name.split(/::/)[-1].downcase.to_sym
     end
 
-    # @return [Boolean] whether or not the variable can be (safely) cast to a numeric value
+		# Tests whether the variable contains numeric content. Content is
+		# considered numeric if it solely consists of numbers. Numbers may have
+		# prefixes and suffixes ("D2", "2b", "L2d"), and may be separated by a
+		# comma, hyphen, or ampersand, with or without spaces ("2, 3", "2-4",
+		# "2 & 4"). For example, "2nd" tests "true" whereas "second" and
+		# "2nd edition" test "false".
+		#
+    # @return [Boolean] whether or not the variable's value is numeric
     def numeric?
-      !!match(/\d/)
+      !!match(/\w*\d+\w*(\s*[,&-]\s*\w*\d+\w*)*/i)
     end
     
+		def numbers
+		end
+
     # @return [Fixnum] the first (!) numeric data contained in the variable's
     #   value; zero if no numeric data is present
     def to_i

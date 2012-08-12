@@ -1,5 +1,6 @@
 module CiteProc
 
+  # @abstract
   class Engine
     extend Forwardable
 

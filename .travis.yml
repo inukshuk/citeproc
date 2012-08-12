@@ -5,9 +5,17 @@ rvm:
   - 1.9.3
   - jruby-18mode
   - jruby-19mode
-#  - rbx-18mode
-#  - rbx-19mode
+  - rbx-18mode
+  - rbx-19mode
   - 1.8.7
   - ree
 notifications:
-  email: false
+  email:
+    - i@nukshuk.io
+  on_success: change
+  on_failure: always
+matrix:
+  allow_failures:
+    rvm:
+      - rbx-18mode
+      - rbx-19mode

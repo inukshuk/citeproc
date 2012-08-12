@@ -90,12 +90,17 @@ end
 # Robust unicode upcase/downcase
 #
 
-if RUBY_PLATFORM == 'java'
+if RUBY_PLATFORM =~ /java/i
   require 'java'
 
   puts java.lang.System.getProperty('file.encoding')
   
   module CiteProc
+    
+    def jruby
+      yield
+    end
+    
     def upcase(string)
       java.lang.String.new(string).to_upper_case(java.util.Locale::ENGLISH).to_s
     end
@@ -115,8 +120,11 @@ if RUBY_PLATFORM == 'java'
 
 else
 
-  module CiteProc
-    private
+  module CiteProc    
+    
+    def jruby
+      false
+    end
 
     begin
       require 'unicode'

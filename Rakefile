@@ -33,6 +33,13 @@ end
 require 'cucumber/rake/task'
 Cucumber::Rake::Task.new(:cucumber)
 
+task :release do |t|
+  system "gem build citeproc.gemspec"
+  system "git tag #{CiteProc::VERSION}"
+  system "git push --tags"
+  system "gem push citeproc-#{CiteProc::VERSION}.gem"
+end
+
 task :default => :spec
 
 require 'yard'

@@ -82,6 +82,22 @@ module CiteProc
       @attributes = other.attributes.deep_copy
     end
     
+		# @param name [Symbol] the name of the variable
+		#
+		# @param options [Hash]
+		# @option options [:short] :form (nil) when given, the variable's
+		#   short form will be returned if available.
+		#
+		# @return [Variable, nil] the matching variable
+		def variable(name, options = {})
+			if options.key?(:form) && options[:form].to_sym == :short
+				var = attributes["#{name}-short"]
+				return var unless var.nil?
+			end
+			
+			attributes[name]
+		end
+		
     # Calls a block once for each field in the item, passing the field's
     # name-value pair as parameters.
     #

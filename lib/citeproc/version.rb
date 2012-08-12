@@ -1,3 +1,3 @@
 module CiteProc
-  VERSION = '0.0.9'.freeze
+  VERSION = '1.0.0.pre1'.freeze
 end

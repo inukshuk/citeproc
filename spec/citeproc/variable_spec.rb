@@ -121,15 +121,45 @@ module CiteProc
       context 'variable contains a number' do
         it 'returns true (string initialized)' do
           Variable.new('23').should be_numeric
-          Variable.new('foo 23').should be_numeric
+          Variable.new('X23').should be_numeric
+          Variable.new('23rd').should be_numeric
         end
         it 'returns true (integer initialized)' do
           Variable.new(23).should be_numeric
         end
       end 
+
       context 'variable does not contain a number' do
         it 'returns false for strings' do
           Variable.new('test').should_not be_numeric
+        end
+      end
+      
+      context 'variable contains numbers but is not numeric' do
+        it 'returns false for strings' do
+          Variable.new('23rd test').should_not be_numeric
+          Variable.new('23rd, 24th & 25th edition').should_not be_numeric
+        end
+      end
+      
+      context 'variable contains multiple numbers' do
+        it 'returns true for simple ranges' do
+          Variable.new('23-24').should be_numeric
+          Variable.new('23 - 24').should be_numeric
+          Variable.new('23-  24').should be_numeric
+        end
+        
+        it 'returns true for simple lists' do
+          Variable.new('23,24').should be_numeric
+          Variable.new('23 , 24').should be_numeric
+          Variable.new('23,  24').should be_numeric
+          Variable.new('23 ,24').should be_numeric
+          Variable.new('23 ,24,25 , 26, 27').should be_numeric
+        end
+        
+        it 'returns true for complex lists' do
+          Variable.new('23rd, 24th & 25th').should be_numeric
+          Variable.new('X23, A2-49th & 25th & A1, B2').should be_numeric
         end
       end
     end

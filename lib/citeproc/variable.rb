@@ -176,12 +176,9 @@ module CiteProc
 		#
     # @return [Boolean] whether or not the variable's value is numeric
     def numeric?
-      !!match(/\w*\d+\w*(\s*[,&-]\s*\w*\d+\w*)*/i)
+      !!match(/^\w*\d+\w*(\s*[,&-]\s*\w*\d+\w*)*$/i)
     end
     
-		def numbers
-		end
-
     # @return [Fixnum] the first (!) numeric data contained in the variable's
     #   value; zero if no numeric data is present
     def to_i

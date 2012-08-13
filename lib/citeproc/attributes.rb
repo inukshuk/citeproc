@@ -21,7 +21,7 @@ module CiteProc
     alias [] read_attribute
 
     def write_attribute(key, value)
-      attributes[filter_key(key)] = filter_value(value)
+      attributes[filter_key(key)] = filter_value(value, key)
     end
 		alias []= write_attribute
 
@@ -137,14 +137,14 @@ module CiteProc
 
       def attr_predicates(*arguments)
         arguments.flatten.each do |field|
-          field, default = *(field.is_a?(Hash) ? field.to_a.flatten : [field]).map(&:to_s)
+          field, default = *(field.is_a?(Hash) ? field.to_a.flatten : [field])
           attr_field(field, default, true)
         end
       end
 
       def attr_fields(*arguments)
         arguments.flatten.each do |field|
-          attr_field(*(field.is_a?(Hash) ? field.to_a.flatten : [field]).map(&:to_s))
+          attr_field(*(field.is_a?(Hash) ? field.to_a.flatten : [field]))
         end
       end
 

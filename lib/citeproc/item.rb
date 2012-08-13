@@ -192,7 +192,7 @@ module CiteProc
     private
 
     # @private
-    def filter_value(value, key)
+    def filter_value(value, key = nil)
       Variable.create!(value, key)
     end
   end

@@ -1,20 +1,20 @@
 module CiteProc
-    
+
   module Attributes
     extend Forwardable
 
     def self.included(base)
       base.extend(ClassMethods)
     end
-    
+
     def attributes
       @attributes ||= {}
     end
-    
+
     def_delegators :attributes, :length, :empty?, :values_at, :key?, :value?
 
     alias size length
-    
+
     def read_attribute(key)
       attributes[filter_key(key)]
     end
@@ -24,20 +24,29 @@ module CiteProc
       attributes[filter_key(key)] = filter_value(value)
     end
 		alias []= write_attribute
-    
+
+		def attribute?(key)
+			value = read_attribute key
+
+			return false if value.nil?
+			return false if value.respond_to?(:empty?) && value.empty?
+
+			value.to_s !~ /^(false|no|never)$/i
+		end
+
     def filter_key(key)
       key.to_sym
     end
-    
+
     def filter_value(value, key = nil)
       value.respond_to?(:deep_copy) ? value.deep_copy : value.dup
     rescue
       value
     end
-    
+
     def merge(other)
       return self if other.nil?
-      
+
       case
       when other.is_a?(String) && /^\s*\{/ =~ other
         other = MultiJson.decode(other, :symbolize_keys => true)
@@ -55,9 +64,8 @@ module CiteProc
 
       self
     end
-
     alias update merge
-    
+
     def reverse_merge(other)
       fail "not implemented yet"
     end
@@ -72,7 +80,7 @@ module CiteProc
         [k.to_s, v.respond_to?(:to_citeproc) ? v.to_citeproc : v.to_s]
       }]
     end
-    
+
     # @return [String] a JSON string representation of the attributes
     def to_json
       MultiJson.encode(to_citeproc)
@@ -80,14 +88,14 @@ module CiteProc
 
     # Don't expose internals to public API
     private :filter_key, :filter_value
-    
+
     # initialize_copy should be able to access attributes
     protected :attributes
 
 
     # Two Attribute-based objects are equal if they are the same object,
     # or if all their attributes are equal using _#eql?_.
-    # 
+    #
     # @param other [Object] the other object
     # @return [Boolean] whether or not self and passed-in object are equal
     def eql?(other)
@@ -100,7 +108,7 @@ module CiteProc
         other.attributes.each_pair do |key, value|
           return false unless attributes[key].eql?(value)
         end
-        
+
         true
       end
     end
@@ -111,10 +119,10 @@ module CiteProc
       attributes.each do |attribute|
         digest ^= attribute.hash
       end
-      
+
       digest
     end
-    
+
     module ClassMethods
 
       def create(parameters)
@@ -139,18 +147,18 @@ module CiteProc
           attr_field(*(field.is_a?(Hash) ? field.to_a.flatten : [field]).map(&:to_s))
         end
       end
-      
+
       def attr_field(field, default = nil, predicate = false)
         method_id = field.to_s.downcase.gsub(/[-\s]+/, '_')
 
         unless instance_methods.include?(method_id)
           if default
             define_method(method_id) do
-              attributes[field.to_sym]
+              read_attribute field
             end
           else
             define_method(method_id) do
-              attributes[field.to_sym] ||= default
+              attributes[filter_key(field)] ||= default
             end
           end
         end
@@ -158,23 +166,22 @@ module CiteProc
         writer_id = [method_id,'='].join
         unless instance_methods.include?(writer_id)
           define_method(writer_id) do |value|
-            attributes[field.to_sym] = value
+            write_attribute field, value
           end
         end
-                
-        predicate_id = [method_id, '?'].join  
+
+        predicate_id = [method_id, '?'].join
         if predicate && !instance_methods.include?(predicate_id)
           define_method(predicate_id) do
-            v = attributes[field.to_sym]
-            !(!v || (v.respond_to?(:empty?) && v.empty?) || v.to_s =~ /^(false|no|never)$/i)
+						attribute?(field)
           end
-          
+
           has_predicate = ['has_', predicate_id].join
           alias_method(has_predicate, predicate_id) unless instance_methods.include?(has_predicate)
         end
       end
-    
+
     end
-  
+
   end
 end

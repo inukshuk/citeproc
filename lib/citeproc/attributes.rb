@@ -15,13 +15,15 @@ module CiteProc
 
     alias size length
     
-    def [](key)
+    def read_attribute(key)
       attributes[filter_key(key)]
     end
-    
-    def []=(key, value)
+    alias [] read_attribute
+
+    def write_attribute(key, value)
       attributes[filter_key(key)] = filter_value(value)
     end
+		alias []= write_attribute
     
     def filter_key(key)
       key.to_sym

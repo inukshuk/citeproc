@@ -91,11 +91,11 @@ module CiteProc
 		# @return [Variable, nil] the matching variable
 		def variable(name, options = {})
 			if options.key?(:form) && options[:form].to_sym == :short
-				var = attributes["#{name}-short"]
+				var = read_attribute "#{name}-short"
 				return var unless var.nil?
 			end
 			
-			attributes[name]
+			read_attribute name
 		end
 		
     # Calls a block once for each field in the item, passing the field's
@@ -195,7 +195,6 @@ module CiteProc
     def filter_value(value, key)
       Variable.create!(value, key)
     end
-
   end
   
 end

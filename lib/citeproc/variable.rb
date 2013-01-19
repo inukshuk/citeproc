@@ -34,8 +34,8 @@ module CiteProc
         first-reference-note-number genre ISBN ISSN jurisdiction keyword
         locator medium note original-publisher original-publisher-place
         original-title page page-first PMID PMCID publisher publisher-place
-        references section source status title title-short URL version
-        year-suffix
+        references reviewed-author reviewed-title scale section source status
+        title title-short URL version year-suffix
       }
     })
     
@@ -167,6 +167,15 @@ module CiteProc
       @type ||= self.class.name.split(/::/)[-1].downcase.to_sym
     end
 
+		# @return [Boolean] whether or not the variable holds a plural value
+		def plural?
+			if numeric?
+				!!match(/\S\s*[,&-]\s*\S|\df/)
+			else
+				false
+			end
+		end
+
 		# Tests whether the variable contains numeric content. Content is
 		# considered numeric if it solely consists of numbers. Numbers may have
 		# prefixes and suffixes ("D2", "2b", "L2d"), and may be separated by a
@@ -176,9 +185,9 @@ module CiteProc
 		#
     # @return [Boolean] whether or not the variable's value is numeric
     def numeric?
-      !!match(/^\w*\d+\w*(\s*[,&-]\s*\w*\d+\w*)*$/i)
+      !!match(/^[\w\.:;]*\d+[\w\.:;]*(\s*[,&-]\s*[\w\.:;]*\d+[\w\.:;]*)*$/i)
     end
-    
+
     # @return [Fixnum] the first (!) numeric data contained in the variable's
     #   value; zero if no numeric data is present
     def to_i

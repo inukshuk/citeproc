@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 module CiteProc
-  
+
   # Names consist of several dependent parts of strings. Simple personal names
   # are composed of family and given elements, containing respectively the
   # family and given name of the individual.
@@ -32,13 +32,13 @@ module CiteProc
   #
   #     Name.new(:family => 'Murakami', :given => 'Haruki').to_s
   #     #-> "Haruki Murakami"
-  #     
+  #
   #     Name.new(:family => 'Murakami', :given => 'Haruki').static_order!.to_s
   #     #-> "Murakami Haruki"
   class Name
-    
+
     extend Forwardable
-    
+
     include Attributes
     include Comparable
 
@@ -59,24 +59,24 @@ module CiteProc
       :'sort-separator' => ', ',
       :'initialize-with' => nil
     }.freeze
-    
+
     @parts = [:family, :given,:literal, :suffix, :'dropping-particle',
       :'non-dropping-particle'].freeze
-      
+
     class << self
       attr_reader :defaults, :parts, :romanesque
     end
 
-    
+
 
     # Method generators
-    
+
     # @!attribute [r] options
     # @return the name's formatting options
     attr_reader :options
-    
+
     attr_predicates :'comma-suffix', :'static-ordering', :multi, *@parts
-    
+
     # Aliases
     [[:particle, :'non_dropping_particle']].each do |a, m|
       alias_method(a, m) if method_defined?(m)
@@ -90,11 +90,11 @@ module CiteProc
       pa, pm = "has_#{a}?", "has_#{m}?"
       alias_method(pa, pm) if method_defined?(pm)
     end
-  
+
     # Names quack sorta like a String
     def_delegators :to_s, :=~, :===,
       *String.instance_methods(false).reject { |m| m =~ /^\W|!$|to_s|replace|first|last/ }
-    
+
     # Delegate bang! methods to each field's value
     String.instance_methods(false).each do |m|
       if m.to_s.end_with?('!')
@@ -107,30 +107,30 @@ module CiteProc
         end
       end
     end
-    
-    
+
+
     # Instance methods
-    
+
     def initialize(attributes = {}, options = {})
       @options = Name.defaults.merge(options)
       @sort_prefix = (/^(the|an?|der|die|das|eine?|l[ae])\s+|^l\W/i).freeze
-      
+
       merge(attributes)
-      
+
       yield self if block_given?
     end
-    
+
     def initialize_copy(other)
       @attributes = other.attributes.deep_copy
       @options = other.options.dup
     end
-    
-    
+
+
     # @return [Boolean] whether or not the Name looks like it belongs to a person
     def personal?
       !empty? && !literal?
     end
-    
+
 
     # A name is `romanesque' if it contains only romanesque characters. This
     # should be the case for the majority of names written in latin- or
@@ -141,9 +141,9 @@ module CiteProc
     def romanesque?
       !!([given, family].join.gsub(Variable.markup, '') =~ Name.romanesque)
     end
-    
+
     alias byzantine? romanesque?
-    
+
     # @return [Boolean] whether or not the name should be printed in static order
     def static_order?
       static_ordering? || !romanesque?
@@ -166,32 +166,32 @@ module CiteProc
     def sort_order?
       !!(options[:'name-as-sort-order'].to_s =~ /^(y(es)?|always|t(rue)?)$/i)
     end
-    
+
     def display_order?
       !sort_order?
     end
-    
+
     # Sets the name to use sort-order. The reverse of {#display_order!}.
     # @return [self]
     def sort_order!
       options[:'name-as-sort-order'] = true
       self
     end
-    
+
     # Sets the name to use display-order. The reverse of {#sort_order!}.
     # @return [self]
     def display_order!
       options[:'name-as-sort-order'] = false
       self
     end
-    
+
     # @return [String] the current sort separator
     def sort_separator
       options[:'sort-separator']
     end
-    
+
     alias comma sort_separator
-    
+
     # @return [Boolean] whether or not the short form will be used for printing
     def short_form?
       options[:form].to_s =~ /short/i
@@ -215,19 +215,19 @@ module CiteProc
       options[:form] = :long
       self
     end
-    
+
     # @return [Boolean] whether or not initials will be used for printing
     def initials?
       !!options[:'initialize-with'] && personal? && romanesque?
     end
-    
+
     def demote_non_dropping_particle?
       always_demote_non_dropping_particle? ||
         !!(sort_order? && options[:'demote-non-dropping-particle'] =~ /^sort(-only)?$/i)
     end
 
     alias demote_particle? demote_non_dropping_particle?
-    
+
     def never_demote_non_dropping_particle?
       !!(options[:'demote-non-dropping-particle'] =~ /^never$/i)
     end
@@ -265,7 +265,7 @@ module CiteProc
       return nil unless other.respond_to?(:sort_order_downcase)
       sort_order_downcase <=> other.sort_order_downcase
     end
-    
+
     # @return [String] the name formatted according to the current options
     def to_s
       case
@@ -286,12 +286,12 @@ module CiteProc
         else
           [family, [given, dropping_particle, particle].compact_join(' '),
             suffix].compact_join(comma)
-        end   
+        end
       else
         [particle, family].compact_join(' ')
       end
     end
-    
+
     # @return [Array<String>] an ordered array of formatted name parts to be used for sorting
     def sort_order
       case
@@ -303,41 +303,41 @@ module CiteProc
         [family, [particle, dropping_particle].compact_join(' '), given, suffix].map(&:to_s)
       end
     end
-    
+
     # @return [String] the name as a string stripped off all markup
     def strip_markup
       gsub(Variable.markup, '')
     end
-    
+
     # @return [self] the name with all parts stripped off markup
     def strip_markup!
       gsub!(Variable.markup, '')
     end
-    
+
     # @return [Array<String>] the sort order array stripped off markup and downcased
     def sort_order_downcase
       sort_order.map { |s| s.downcase.gsub(Variable.markup, '') }
     end
-    
+
     # @return [String] a human-readable representation of the name object
     def inspect
       "#<CiteProc::Name #{to_s.inspect}>"
     end
-    
+
     private
-    
+
     attr_reader :sort_prefix
-            
+
   end
-  
-  
-  
+
+
+
 
   # Represents a {Variable} containing an ordered list of {Name}
   # objects. The names can be formatted using CSL formatting options (see
   # {Names.defaults} for details).
   class Names < Variable
-        
+
     @defaults = {
       :and => ' & ',
       :delimiter => ', ',
@@ -348,7 +348,7 @@ module CiteProc
       :'et-al-subsequent-min' => 5,
       :'et-al-subsequent-use-first' => 3
     }.freeze
-    
+
     class << self
 
       # @!attribute [r] defaults
@@ -388,9 +388,9 @@ module CiteProc
       #      # referencing earlier cited items)
       #    }
       #
-      # @return [Hash] the Names' default formatting options      
+      # @return [Hash] the Names' default formatting options
       attr_reader :defaults
-      
+
       # Parses the passed-in string and returns a Names object. Behaves like
       # parse but returns nil for bad input without raising an error.
       #
@@ -403,7 +403,7 @@ module CiteProc
       rescue ParseError
         nil
       end
-      
+
       # Parses the passed-in string and returns a Names object.
       #
       # @param names [String] the name or names to be parsed
@@ -417,19 +417,19 @@ module CiteProc
       end
 
     end
-    
+
     include Enumerable
 
     # @!attribute [r] options
     # @return [Hash] the current formatting options
 
     attr_reader :options
-    
+
     alias names value
-    
+
     # Don't expose value/names writer
     undef_method :value=
-    
+
     # Delegate bang! methods to each name
     Name.instance_methods(false).each do |m|
       if m.to_s.end_with?('!')
@@ -441,11 +441,11 @@ module CiteProc
         end
       end
     end
-    
+
     # Names quack sorta like an Array
     def_delegators :names, :length, :empty?, :[], :join
 
-    
+
     # Some delegators should return self
 
     # @!method push(name)
@@ -455,26 +455,26 @@ module CiteProc
     # @!method unshift(name)
     #    Inserts the given name at the beginning of the list of names.
     #    @param name [Name] a name
-    #    @return [self]    
+    #    @return [self]
     [:<<, :push, :unshift].each do |m|
       define_method(m) do |*arguments, &block|
         names.send(m, *arguments, &block)
         self
       end
     end
-            
+
     def initialize(*arguments)
       @options = Names.defaults.dup
       super(arguments.flatten(1))
     end
-    
+
     def initialize_copy(other)
       @options, @value = other.options.dup, other.value.map(&:dup)
     end
-    
+
     def replace(values)
       @value = []
-      
+
       [*values].each do |value|
         case
         when value.is_a?(Name)
@@ -488,34 +488,34 @@ module CiteProc
             raise TypeError, $!.message
           end
         else
-          raise TypeError, "failed to create names from #{value.inspect}"       
+          raise TypeError, "failed to create names from #{value.inspect}"
         end
       end
-      
+
       self
     end
-    
+
     # @return [Fixnum] the maximum number of names that should be printed
     def max_names
       [length, options[:'et-al-use-first'].to_i.abs].min
     end
-    
+
     # @return [Boolean] whether or not the Names should be truncate
     def truncate?
       length >= options[:'et-al-min'].to_i.abs
     end
-    
+
     # @return [Boolean] whether ot not the Names, if printed on subsequent
     #   cites, should be truncated
     def truncate_subsequent?
       length >= options[:'et-al-subsequent-min'].to_i
     end
-    
+
     # @return [String] the delimiter between names
     def delimiter
       options[:delimiter]
     end
-    
+
     # @return [String] the delimiter between the penultimate and last name
     # @see #connector
     # @see #delimiter_precedes_last?
@@ -526,26 +526,26 @@ module CiteProc
         connector
       end
     end
-    
+
     # @return [String] the delimiter between the last name printed name and
     #   the 'and others' term
     def truncated_delimiter
       max_names > 1 ? delimiter : ' '
     end
-    
+
     # @return [Boolean] whether or not the delimiter will be inserted between
     #   the penultimate and the last name
     def delimiter_precedes_last?
       case
       when delimiter_never_precedes_last?
-        false 
+        false
       when delimiter_always_precedes_last?
         true
       else
         length > 2
       end
     end
-    
+
     # @return [Boolean] whether or not the should always be inserted between
     #   the penultimate and the last name
     def delimiter_always_precedes_last?
@@ -561,7 +561,7 @@ module CiteProc
 
     alias delimiter_precedes_last! delimiter_always_precedes_last!
 
-    
+
     # @return [Boolean] whether or not the should never be inserted between
     #   the penultimate and the last name
     def delimiter_never_precedes_last?
@@ -587,22 +587,27 @@ module CiteProc
       options[:'delimiter-precedes-last'] = :contextual
       self
     end
- 
+
     # @return [String] the connector between the penultimate and the last name
     def connector
       options[:and]
     end
-    
+
     # @return [false] Names are non-numeric Variables
     def numeric?
       false
     end
 
+    # @return [Boolean] whether or not the variable holds more than one Name
+		def plural?
+			length > 1
+		end
+
     # Calls a block once for each name. If no block is given, an enumerator
     # is returned instead.
     #
     # @yieldparam name [Name] a name in the list
-    # @return [self,Enumerator] self or an enumerator if no block is given    
+    # @return [self,Enumerator] self or an enumerator if no block is given
     def each
       if block_given?
         names.each(&Proc.new)
@@ -611,7 +616,7 @@ module CiteProc
         to_enum
       end
     end
-    
+
     # Compares two lists of Names.
     # @param other [(Name)] a list of names
     # @return [Fixnum,nil] -1, 0, or 1 depending on the result of the
@@ -620,13 +625,15 @@ module CiteProc
       return nil unless other.respond_to?(:to_a)
       to_a <=> other.to_a
     end
-    
+
+		alias to_i length
+
     # Converts the list of names into a formatted string depending on the
     # current formatting options.
     # @return [String] the formatted list of names
     def to_s
       case
-      when truncate? 
+      when truncate?
         [names[0...max_names].join(delimiter), options[:'et-al']].join(truncated_delimiter)
       when length < 2
         names.join(last_delimiter)
@@ -634,22 +641,22 @@ module CiteProc
         [names[0...-1].join(delimiter), names[-1]].join(last_delimiter)
       end
     end
-    
+
     # @return [String] the names in a BibTeX-compatible format
     def to_bibtex
       map { |n| n.dup.sort_order! }.join(' and ')
     end
-    
+
     # @return [Array<Hash>] the list of names converted to hash objects
     def to_citeproc
       map(&:to_citeproc)
     end
-    
+
     # @return [String] a human-readable representation of the Names object
     def inspect
       "#<CiteProc::Names #{to_s.inspect}>"
     end
-    
+
   end
-  
+
 end

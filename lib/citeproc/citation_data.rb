@@ -47,7 +47,7 @@ module CiteProc
   	# @!attribute suffix
   	# @return [String] a string to print after cites produced for this item
 
-		attr_predicates :id, :locator, :label, :'suppress-author',
+		attr_predicates :id, :locator, :page, :label, :'suppress-author',
 			:'author-only', :prefix, :suffix
 
 		# Attributes added by processor

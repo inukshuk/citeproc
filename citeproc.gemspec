@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.license     = 'AGPL'
   s.date        = Time.now.strftime('%Y-%m-%d')
 
-  s.add_runtime_dependency('multi_json', '~>1.3.5')
+  s.add_runtime_dependency('multi_json', '~>1.5')
   s.add_runtime_dependency('namae', '~>0.3')
   
   s.add_development_dependency 'cucumber', '~>1.2'

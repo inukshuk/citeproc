@@ -459,7 +459,7 @@ module CiteProc
         end
         
         it '#parse! raises an error on bad input' do
-          expect { Names.parse!('A,B,C,D,E') }.to raise_error(ParseError)
+          expect { Names.parse!('23') }.to raise_error(ParseError)
         end
         
       end

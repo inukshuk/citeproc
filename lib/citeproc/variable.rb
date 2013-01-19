@@ -176,6 +176,12 @@ module CiteProc
 			end
 		end
 
+    # @return [String, nil] roman equivalent of the variable's numeric value
+		def romanize
+			return unless numeric?
+			Number.romanize(to_i)
+		end
+
 		# Tests whether the variable contains numeric content. Content is
 		# considered numeric if it solely consists of numbers. Numbers may have
 		# prefixes and suffixes ("D2", "2b", "L2d"), and may be separated by a
@@ -248,12 +254,4 @@ module CiteProc
   # A CiteProc Variable used for string values.
   class Text < Variable
   end
-
-  # A CiteProc Variable used for numeric values.
-  class Number < Variable
-		def self.pluralize?(string)
-			/\S\s*[,&-]\s*\S|\df/ === string
-		end
-  end
-
 end

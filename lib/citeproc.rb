@@ -32,6 +32,7 @@ require 'citeproc/abbreviate'
 require 'citeproc/attributes'
 
 require 'citeproc/variable'
+require 'citeproc/number'
 require 'citeproc/date'
 require 'citeproc/names'
 

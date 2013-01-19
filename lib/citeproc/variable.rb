@@ -170,7 +170,7 @@ module CiteProc
 		# @return [Boolean] whether or not the variable holds a plural value
 		def plural?
 			if numeric?
-				!!match(/\S\s*[,&-]\s*\S|\df/)
+				Number.pluralize?(to_s)
 			else
 				false
 			end
@@ -251,6 +251,9 @@ module CiteProc
 
   # A CiteProc Variable used for numeric values.
   class Number < Variable
+		def self.pluralize?(string)
+			/\S\s*[,&-]\s*\S|\df/ === string
+		end
   end
 
 end

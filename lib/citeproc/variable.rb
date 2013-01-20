@@ -182,6 +182,17 @@ module CiteProc
 			Number.romanize(to_i)
 		end
 
+    # @return [Array<String>] tokenizes the variable's value
+    def tokenize
+      numbers = to_s.dup
+
+      numbers.gsub!(/\s*,\s*/, ', ')
+      numbers.gsub!(/\s*-\s*/, '-')
+      numbers.gsub!(/\s*&\s*/, ' & ')
+
+      numbers.split(/(\s*[,&-]\s*)/)
+    end
+
 		# Tests whether the variable contains numeric content. Content is
 		# considered numeric if it solely consists of numbers. Numbers may have
 		# prefixes and suffixes ("D2", "2b", "L2d"), and may be separated by a

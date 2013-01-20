@@ -15,4 +15,5 @@ module CiteProc
   
   NotImplementedByEngine = Class.new(Error)
   
+  RenderingError = Class.new(Error)
 end

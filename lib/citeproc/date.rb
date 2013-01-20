@@ -72,7 +72,7 @@ module CiteProc
     # The {DateParts} class encapsulates the year, month and day parts of a
     # date; it is used internally by {Date} variables and not supposed to
     # be used in an external context.
-    class DateParts < Struct.new(:year, :month, :day)
+    DateParts = Struct.new(:year, :month, :day) do
       include Comparable
 
       def initialize(*arguments)
@@ -194,6 +194,9 @@ module CiteProc
       end
     end
 
+    #
+    # CiteProc::Date
+    #
 
     include Attributes
 

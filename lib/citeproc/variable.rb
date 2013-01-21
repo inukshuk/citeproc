@@ -227,6 +227,10 @@ module CiteProc
       !!match(/^[\w\.:;]*\d+[\w\.:;]*(\s*[,&-]\s*[\w\.:;]*\d+[\w\.:;]*)*$/i)
     end
 
+    def date?
+      false
+    end
+
     # @return [Fixnum] the first (!) numeric data contained in the variable's
     #   value; zero if no numeric data is present
     def to_i

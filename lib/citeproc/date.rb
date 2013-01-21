@@ -354,6 +354,11 @@ module CiteProc
       parts.all?(&:empty?) && !literal? && !season?
     end
 
+    # @return [true] dates are dates
+    def date?
+      true
+    end
+
     # @!attribute year
     # @return [Fixnum] the year (of the start date for ranges)
 

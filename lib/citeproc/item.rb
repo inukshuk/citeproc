@@ -63,7 +63,7 @@ module CiteProc
 
 
     attr_predicates :id, :'short-title', :'journal-abbreviation',
-      *Variable.fields[:all]
+      :type, *Variable.fields[:all]
 
     def_delegators :attributes, :values_at, :keys, :values
 

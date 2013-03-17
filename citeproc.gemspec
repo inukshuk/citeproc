@@ -8,10 +8,10 @@ Gem::Specification.new do |s|
   s.name        = 'citeproc'
   s.version     = CiteProc::VERSION.dup
   s.platform    = Gem::Platform::RUBY
-  
+
   s.authors     = ['Sylvester Keil']
   s.email       = ['sylvester@keil.or.at']
-  
+
   s.homepage    = 'https://github.com/inukshuk/citeproc'
   s.summary     = 'A cite processor interface.'
   s.description =
@@ -24,10 +24,6 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency('multi_json', '~>1.5')
   s.add_runtime_dependency('namae', '~>0.3')
-  
-  s.add_development_dependency 'cucumber', '~>1.2'
-  s.add_development_dependency 'rspec', '~>2.7'
-  s.add_development_dependency 'rake', '~>0.9'
 
   s.files        = `git ls-files`.split("\n")
   s.test_files   = `git ls-files -- {test,spec,features}/*`.split("\n")

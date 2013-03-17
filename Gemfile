@@ -17,7 +17,6 @@ group :optional do
   gem 'guard-rspec', '~>1.1'
   gem 'guard-cucumber', '~>1.2'
 
-	gem 'yard', '~>0.8', :platforms => [:ruby_19, :ruby_20]
 	gem 'redcarpet', '~>2.1', :platforms => [:mri_19, :mri_20]
   
   gem 'unicode_utils', '~>1.3.0', :platform => [:mri_19, :mri_20]
@@ -31,5 +30,6 @@ group :development do
 end
 
 group :extra do
+	gem 'yard', '~>0.8', :platforms => [:ruby_19, :ruby_20]
   gem 'oniguruma', '~>1.1.0', :platform => :mri_18
 end

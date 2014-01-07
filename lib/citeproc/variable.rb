@@ -279,7 +279,7 @@ module CiteProc
 
     # @return [String] a JSON string representation of the variable
     def to_json
-      MultiJson.encode(to_citeproc)
+      ::JSON.dump(to_citeproc)
     end
 
     # @return [String] a human-readable representation of the variable

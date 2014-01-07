@@ -330,7 +330,7 @@ module CiteProc
             DateParts.new(value.max)
           ]}
       when value.is_a?(String) && /^\s*\{/ =~ value
-        return replace(MultiJson.decode(value, :symbolize_keys => true))
+        return replace(::JSON.parse(value, :symbolize_names => true))
       when value.respond_to?(:to_s)
         @value = Date.parse!(value.to_s).value
       else

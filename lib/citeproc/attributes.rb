@@ -49,7 +49,7 @@ module CiteProc
 
       case
       when other.is_a?(String) && /^\s*\{/ =~ other
-        other = MultiJson.decode(other, :symbolize_keys => true)
+        other = ::JSON.parse(other, :symbolize_names => true)
       when other.respond_to?(:each_pair)
         # do nothing
       when other.respond_to?(:to_hash)
@@ -83,7 +83,7 @@ module CiteProc
 
     # @return [String] a JSON string representation of the attributes
     def to_json
-      MultiJson.encode(to_citeproc)
+      ::JSON.dump(to_citeproc)
     end
 
     # Don't expose internals to public API

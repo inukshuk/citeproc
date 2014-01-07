@@ -4,7 +4,7 @@ require 'forwardable'
 require 'observer'
 require 'open-uri'
 
-require 'multi_json'
+require 'json'
 require 'namae'
 
 require 'citeproc/version'
@@ -64,12 +64,12 @@ CiteProc::Converters.class_eval do
     klass = CiteProc.const_get(name)
 
     if klass.instance_of?(Class) && klass.respond_to?(:create)
-      
+
       define_method(name) do |obj|
         obj.instance_of?(klass) ? obj : klass.create(obj)
       end
-      
+
     end
   end
-  
+
 end

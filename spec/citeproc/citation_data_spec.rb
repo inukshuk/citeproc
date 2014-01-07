@@ -15,7 +15,7 @@ module CiteProc
 			}
 		}}
 
-		let(:json) { MultiJson.encode(hash) }
+		let(:json) { ::JSON.dump(hash) }
 
 
 

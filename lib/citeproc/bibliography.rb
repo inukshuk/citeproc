@@ -91,7 +91,7 @@ module CiteProc
       def create!(input)
         case
         when input.is_a?(String)
-          create!(MultiJson.decode(input))
+          create!(::JSON.parse(input))
           
         when input.is_a?(Array) && input.length == 2
           options, references = input
@@ -210,7 +210,7 @@ module CiteProc
     end
     
     def to_json
-      MultiJson.encode(to_citeproc)
+      ::JSON.dump(to_citeproc)
     end
     
     # @return [String] a human-readable representation of the bibliography

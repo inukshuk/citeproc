@@ -10,7 +10,7 @@ module CiteProc
 		def abbreviations=(abbreviations)
 			@abbreviations = case abbreviations
 				when ::String
-					MultiJson.decode(abbreviations, :symbolize_keys => true)
+					::JSON.parse(abbreviations, :symbolize_names => true)
 				when ::Hash
 					abbreviations.deep_copy
 				else

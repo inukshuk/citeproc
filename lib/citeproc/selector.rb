@@ -113,7 +113,7 @@ module CiteProc
 		end
 		
 		def to_json
-			MultiJson.encode(to_citeproc)
+			::JSON.dump(to_citeproc)
 		end
 		
 		private

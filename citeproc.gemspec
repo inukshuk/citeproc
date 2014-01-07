@@ -24,7 +24,6 @@ Gem::Specification.new do |s|
   s.license     = 'AGPL'
   s.date        = Time.now.strftime('%Y-%m-%d')
 
-  s.add_runtime_dependency('multi_json', '~>1.8')
   s.add_runtime_dependency('namae', '~>0.8')
 
   s.files        = `git ls-files`.split("\n")

@@ -14,13 +14,13 @@ require 'citeproc/version'
 # defined in CSL (Citation Style Language).
 #
 module CiteProc
-  
+
   module Converters
   end
-  
+
   module Utilities
   end
-  
+
 end
 
 require 'citeproc/compatibility'
@@ -62,7 +62,7 @@ CiteProc::Converters.class_eval do
   # Define all converters (all classes have been loaded at this point)
   CiteProc.constants.each do |name|
     klass = CiteProc.const_get(name)
-  
+
     if klass.instance_of?(Class) && klass.respond_to?(:create)
       
       define_method(name) do |obj|

@@ -6,3 +6,4 @@ coverage
 .rbx
 *.swp
 .bundle
+.ruby-version

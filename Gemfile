@@ -11,7 +11,7 @@ group :optional do
 
   gem 'bibtex-ruby', '~>3.0', :require => 'bibtex'
 
-  gem 'simplecov', '~>0.6.4'
+  gem 'simplecov', '~>0.8'
 
   gem 'guard', '~>2.2'
   gem 'guard-rspec', '~>4.2'
@@ -30,4 +30,9 @@ end
 
 group :extra do
   gem 'yard', '~>0.8', :platforms => :ruby
+end
+
+platform :rbx do
+  gem 'rubysl'
+  gem 'racc'
 end

@@ -4,3 +4,5 @@ doc
 coverage
 *.rbc
 .rbx
+*.swp
+.bundle

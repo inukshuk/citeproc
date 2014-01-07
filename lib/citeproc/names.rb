@@ -44,12 +44,8 @@ module CiteProc
 
     # Class instance variables
 
-    @romanesque = CiteProc.oniguruma {
-      '^[\p{Latin}\p{Greek}\p{Cyrillic}\p{Hebrew}\p{Armenian}\p{Georgian}\p{Common}]*$'
-    } || CiteProc.ruby_18 {
-      # @todo improve fallback range
-      /^[a-zA-Zäöüéè\s[:punct:]]*$/u
-    }
+    @romanesque =
+      /^[\p{Latin}\p{Greek}\p{Cyrillic}\p{Hebrew}\p{Armenian}\p{Georgian}\p{Common}]*$/
 
     # Default formatting options
     @defaults = {

@@ -9,6 +9,8 @@ Gem::Specification.new do |s|
   s.version     = CiteProc::VERSION.dup
   s.platform    = Gem::Platform::RUBY
 
+  s.required_ruby_version = '>= 1.9.3'
+
   s.authors     = ['Sylvester Keil']
   s.email       = ['sylvester@keil.or.at']
 
@@ -22,8 +24,8 @@ Gem::Specification.new do |s|
   s.license     = 'AGPL'
   s.date        = Time.now.strftime('%Y-%m-%d')
 
-  s.add_runtime_dependency('multi_json', '~>1.5')
-  s.add_runtime_dependency('namae', '~>0.3')
+  s.add_runtime_dependency('multi_json', '~>1.8')
+  s.add_runtime_dependency('namae', '~>0.8')
 
   s.files        = `git ls-files`.split("\n")
   s.test_files   = `git ls-files -- {test,spec,features}/*`.split("\n")

@@ -133,8 +133,9 @@ module CiteProc
     def_delegators :@value, :to_s,
       *::String.instance_methods(false).select {|m| m.to_s =~ /!$/ }
 
-    def_delegators :to_s, :=~, :===,
-      *::String.instance_methods(false).reject {|m| m.to_s =~ /^\W|!$|to_s/ }
+    def_delegators :to_s, :=~, :===, *String.instance_methods(false).reject { |m|
+      m.to_s =~ /^[\W_]|[!=_]$|^(to_s|inspect|replace|first|last|dup|clone)$/
+    }
 
 
     # Creates new Variable for the passed-in value

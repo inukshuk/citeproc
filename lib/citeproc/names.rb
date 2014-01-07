@@ -88,8 +88,9 @@ module CiteProc
     end
 
     # Names quack sorta like a String
-    def_delegators :to_s, :=~, :===,
-      *String.instance_methods(false).reject { |m| m =~ /^\W|!$|to_s|replace|first|last/ }
+    def_delegators :to_s, :=~, :===, *String.instance_methods(false).reject { |m|
+      m.to_s =~ /^[\W_]|[!=_]$|^(to_s|inspect|replace|first|last|dup|clone)$/
+    }
 
     # Delegate bang! methods to each field's value
     String.instance_methods(false).each do |m|

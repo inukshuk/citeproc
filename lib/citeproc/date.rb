@@ -276,12 +276,12 @@ module CiteProc
     end
 
 
-    attr_predicates :circa, :season, :literal, :'date-parts'
-
     # Make Date behave like a regular Ruby Date
-    def_delegators :to_ruby,
-      *::Date.instance_methods(false).reject { |m| m.to_s =~ /^to_s$|^inspect$|start$|^\W|uncertain|season/ }
+    def_delegators :to_ruby, *::Date.instance_methods(false).reject { |m|
+      m.to_s =~ /^[\W_]|[!=_]$|^(to_s|inspect|dup|clone|change)$/
+    }
 
+    attr_predicates :circa, :season, :literal, :'date-parts'
 
     def initialize(value = {})
       super

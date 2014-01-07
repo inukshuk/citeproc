@@ -2,22 +2,22 @@ require 'spec_helper'
 
 module CiteProc
   describe Variable do
-    
+
     describe '.new' do
       it { should be_an_instance_of(Variable) }
-      
+
       it 'is empty by default' do
         Variable.new.should be_empty
       end
-      
+
       it 'equals an empty string (==) by default' do
         Variable.new.should == ''
       end
-      
+
       it 'matches an empty pattern by default' do
         Variable.new.should =~ /^$/
       end
-      
+
       it 'accepts a string value' do
         Variable.new('test').should == 'test'
       end
@@ -25,10 +25,10 @@ module CiteProc
       it 'accepts a numeric value' do
         Variable.new(23).should == '23'
       end
-      
+
       it 'accepts a floating point value' do
         Variable.new(23.12).should == '23.12'
-      end      
+      end
     end
 
     describe '.fields' do
@@ -50,41 +50,41 @@ module CiteProc
         Variable.fields[:numbers].should_not be_empty
         Variable.fields[:number].should_not be_empty
       end
-      
+
       it 'accepts either string or symbol input' do
         Variable.fields[:names].should equal Variable.fields['names']
-      end  
+      end
     end
-    
+
     describe '.types' do
       it 'given a field name returns the corresponding type' do
         Variable.types.values_at(:author, :issued, :abstract, :issue).should == [:names, :date, :text, :number]
       end
-      
+
       it 'accepts either string or symbol input' do
         Variable.types.should have_key(:author)
         Variable.types['author'].should equal Variable.types[:author]
       end
     end
-    
+
     describe '#to_s' do
       it 'displays the value' do
         Variable.new('test').to_s.should == 'test'
       end
     end
-    
+
     describe '#to_i' do
       it 'returns zero by default' do
         Variable.new.to_i.should == 0
       end
-      
+
       context 'when the value is numeric' do
         %w{ -23 -1 0 1 23 }.each do |value|
           it "returns the integer value (#{value})" do
             Variable.new(value).to_i.should equal(value.to_i)
           end
         end
-        
+
         it 'returns only the first numeric value if there are several' do
           Variable.new('testing 1, 2, 3...').to_i.should == 1
         end
@@ -95,24 +95,24 @@ module CiteProc
       it 'returns zero by default' do
         Variable.new.to_f.should == 0.0
       end
-      
+
       context 'when the value is numeric' do
         %w{ -23.2 -1.45 0.2 1.733 23 }.each do |value|
           it "returns the integer value (#{value})" do
             Variable.new(value).to_f.should == value.to_f
           end
         end
-        
+
         it 'returns only the first numeric value if there are several' do
           Variable.new('testing 1, 2, 3...').to_f.should == 1.0
         end
-        
+
         it 'works with dot and comma separators' do
           Variable.new('1,23').to_f.should == Variable.new('1.23').to_f
         end
       end
     end
-    
+
     describe '#numeric?' do
       it 'returns false by default' do
         Variable.new.should_not be_numeric
@@ -127,28 +127,28 @@ module CiteProc
         it 'returns true (integer initialized)' do
           Variable.new(23).should be_numeric
         end
-      end 
+      end
 
       context 'variable does not contain a number' do
         it 'returns false for strings' do
           Variable.new('test').should_not be_numeric
         end
       end
-      
+
       context 'variable contains numbers but is not numeric' do
         it 'returns false for strings' do
           Variable.new('23rd test').should_not be_numeric
           Variable.new('23rd, 24th & 25th edition').should_not be_numeric
         end
       end
-      
+
       context 'variable contains multiple numbers' do
         it 'returns true for simple ranges' do
           Variable.new('23-24').should be_numeric
           Variable.new('23 - 24').should be_numeric
           Variable.new('23-  24').should be_numeric
         end
-        
+
         it 'returns true for simple lists' do
           Variable.new('23,24').should be_numeric
           Variable.new('23 , 24').should be_numeric
@@ -156,14 +156,14 @@ module CiteProc
           Variable.new('23 ,24').should be_numeric
           Variable.new('23 ,24,25 , 26, 27').should be_numeric
         end
-        
+
         it 'returns true for complex lists' do
           Variable.new('23rd, 24th & 25th').should be_numeric
           Variable.new('X23, A2-49th & 25th & A1, B2').should be_numeric
         end
       end
     end
-    
+
     describe '#strip_markup' do
       let(:greeting) { '<h1>hello<b> world</b></h1>' }
       it 'returns a string stripped of html tags' do
@@ -184,13 +184,13 @@ module CiteProc
         v.should == 'hello world'
       end
     end
-    
-    
+
+
     describe 'sorting' do
     end
-    
+
     describe '#to_json' do
     end
-    
+
   end
 end

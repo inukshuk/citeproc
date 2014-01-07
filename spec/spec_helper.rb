@@ -1,6 +1,11 @@
 begin
   require 'simplecov'
-  require 'debugger'
+
+  if RUBY_ENGINE == 'rbx'
+    require 'rubinius/debugger'
+  else
+    require 'debugger'
+  end
 rescue LoadError
   # ignore
 end

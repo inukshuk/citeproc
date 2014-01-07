@@ -3,6 +3,8 @@ gemspec
 
 group :debug do
   gem 'debugger', '~>1.6', :platform => :mri
+  gem 'rubinius-compiler', '~>2.0', :platform => :rbx
+  gem 'rubinius-debugger', '~>2.0', :platform => :rbx
 end
 
 group :optional do

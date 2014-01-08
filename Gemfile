@@ -2,9 +2,10 @@ source 'https://rubygems.org'
 gemspec
 
 group :debug do
-  gem 'debugger', '~>1.6', :platform => :mri
-  gem 'rubinius-compiler', '~>2.0', :platform => :rbx
-  gem 'rubinius-debugger', '~>2.0', :platform => :rbx
+  gem 'ruby-debug', :require => false, :platform => :jruby
+  gem 'debugger', '~>1.6', :require => false, :platform => :mri
+  gem 'rubinius-compiler', '~>2.0', :require => false, :platform => :rbx
+  gem 'rubinius-debugger', '~>2.0', :require => false, :platform => :rbx
 end
 
 group :optional do
@@ -20,9 +21,7 @@ group :optional do
   gem 'guard-rspec', '~>4.2'
   gem 'guard-cucumber', '~>1.4'
 
-  gem 'redcarpet', '~>3.0', :platform => :mri
-
-  gem 'unicode', '~>0.4', :platforms => [:mri, :mswin]
+  gem 'unicode', '~>0.4', :platforms => [:ruby, :mswin, :mingw]
 end
 
 group :development do
@@ -33,6 +32,7 @@ end
 
 group :extra do
   gem 'yard', '~>0.8', :platforms => :ruby
+  gem 'redcarpet', '~>3.0', :platform => :mri
 end
 
 platform :rbx do

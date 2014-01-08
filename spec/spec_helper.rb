@@ -1,7 +1,15 @@
 begin
   require 'simplecov'
+rescue LoadError
+  # ignore
+end
 
-  if RUBY_ENGINE == 'rbx'
+begin
+  case
+  when RUBY_PLATFORM < 'java'
+    require 'debug'
+    Debugger.start
+  when defined?(RUBY_ENGINE) && RUBY_ENGINE == 'rbx'
     require 'rubinius/debugger'
   else
     require 'debugger'
@@ -9,6 +17,7 @@ begin
 rescue LoadError
   # ignore
 end
+
 
 $:.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $:.unshift(File.dirname(__FILE__))

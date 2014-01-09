@@ -408,7 +408,7 @@ module CiteProc
       #
       # @raise [ParseError] if the string cannot be parsed.
       def parse!(names)
-        new Namae.parse!(names)
+        new Namae.parse!(names).map(&:to_h)
       rescue
         raise ParseError, $!.message
       end

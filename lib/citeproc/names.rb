@@ -480,7 +480,9 @@ module CiteProc
           @value << Name.new(value)
         when value.respond_to?(:to_s)
           begin
-            @value.concat Namae.parse!(value.to_s)
+            @value.concat Namae.parse!(value.to_s).map { |namae|
+              Name.new namae.to_h
+            }
           rescue
             raise TypeError, $!.message
           end

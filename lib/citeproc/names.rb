@@ -197,7 +197,7 @@ module CiteProc
     # Use short form for printing the name
     # @return [self]
     def short_form!
-      options[:form] = :short
+      options[:form] = 'short'
       self
     end
 
@@ -209,7 +209,7 @@ module CiteProc
     # Use long form for printing the name
     # @return [self]
     def long_form!
-      options[:form] = :long
+      options[:form] = 'long'
       self
     end
 
@@ -632,7 +632,7 @@ module CiteProc
       case
       when truncate?
         [names[0...max_names].join(delimiter), options[:'et-al']].join(truncated_delimiter)
-      when length < 2
+      when length < 3
         names.join(last_delimiter)
       else
         [names[0...-1].join(delimiter), names[-1]].join(last_delimiter)

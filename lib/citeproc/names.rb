@@ -408,7 +408,7 @@ module CiteProc
       #
       # @raise [ParseError] if the string cannot be parsed.
       def parse!(names)
-        new Namae.parse!(names).map(&:to_h)
+        new Namae.parse!(names)
       rescue
         raise ParseError, $!.message
       end
@@ -480,9 +480,7 @@ module CiteProc
           @value << Name.new(value)
         when value.respond_to?(:to_s)
           begin
-            @value.concat Namae.parse!(value.to_s).map { |namae|
-              Name.new namae.to_h
-            }
+            @value.concat Namae.parse!(value.to_s).map { |n| Name.new n }
           rescue
             raise TypeError, $!.message
           end

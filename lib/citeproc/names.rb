@@ -171,7 +171,7 @@ module CiteProc
     # Sets the name to use sort-order. The reverse of {#display_order!}.
     # @return [self]
     def sort_order!(toggle = true)
-      options[:'name-as-sort-order'] = toggle
+      options[:'name-as-sort-order'] = !!toggle
       self
     end
 

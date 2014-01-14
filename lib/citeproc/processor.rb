@@ -1,4 +1,3 @@
-
 module CiteProc
   
   class Processor
@@ -10,7 +9,7 @@ module CiteProc
     @defaults = {
       :locale => 'en-US',
       :style  => 'chicago-author-date',
-      :engine => 'citeproc-js',
+      :engine => 'citeproc-ruby',
       :format => 'html'
     }.freeze
 

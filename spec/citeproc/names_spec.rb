@@ -160,7 +160,7 @@ module CiteProc
         end
 
         it 'german names are romanesque' do
-          Name.new(:given => 'Firedrich', :family => 'Hölderlin').should be_romanesque
+          Name.new(:given => 'Friedrich', :family => 'Hölderlin').should be_romanesque
         end
 
         it 'french names are romanesque' do

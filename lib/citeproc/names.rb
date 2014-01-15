@@ -218,6 +218,17 @@ module CiteProc
       !!options[:'initialize-with'] && personal? && romanesque?
     end
 
+    def initialize_with
+      options[:'initialize-with'].to_s
+    end
+
+    def initials
+      return unless initials?
+    end
+
+    def initials_of(string)
+    end
+
     def demote_non_dropping_particle?
       always_demote_non_dropping_particle? ||
         !!(sort_order? && options[:'demote-non-dropping-particle'] =~ /^sort(-only)?$/i)

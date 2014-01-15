@@ -22,6 +22,8 @@ group :optional do
   gem 'guard-cucumber', '~>1.4'
 
   gem 'unicode', '~>0.4', :platforms => [:ruby, :mswin, :mingw]
+
+  gem 'citeproc-ruby', :git => 'https://github.com/inukshuk/citeproc-ruby.git'
 end
 
 group :development do

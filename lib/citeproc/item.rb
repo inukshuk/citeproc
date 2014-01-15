@@ -94,6 +94,8 @@ module CiteProc
     alias original_read_attribute read_attribute
     alias read_attribute observable_read_attribute
 
+    # Update [] alias!
+    alias [] read_attribute
 
     # @param name [Symbol] the name of the variable
     #

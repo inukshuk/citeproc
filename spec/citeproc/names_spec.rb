@@ -117,8 +117,13 @@ module CiteProc
 
       end
 
-      describe 'initials' do
+      describe '#initials' do
         let(:name) { Name.new(nil, :'initialize-with' => '. ') }
+
+        it 'returns the given name initials' do
+          name.given = 'Edgar Allen'
+          name.initials.should == 'E. A.'
+        end
 
         describe 'private helpers' do
           it '#initials_of initializes the given string' do
@@ -158,11 +163,11 @@ module CiteProc
         describe '.new' do
 
           it 'accepts a symbolized hash' do
-            Name.new(:family => 'Doe').to_s.should == 'Doe'
+            Name.new(:family => 'Doe').format.should == 'Doe'
           end
 
           it 'accepts a stringified hash' do
-            Name.new('family' => 'Doe').to_s.should == 'Doe'
+            Name.new('family' => 'Doe').format.should == 'Doe'
           end
 
         end
@@ -172,7 +177,7 @@ module CiteProc
       describe '#dup' do
 
         it 'returns a new name copied by value' do
-          poe.dup.upcase!.to_s.should_not == poe.to_s
+          poe.dup.upcase!.format.should_not == poe.format
         end
 
       end
@@ -228,11 +233,11 @@ module CiteProc
       describe 'in-place manipulation (bang! methods)' do
 
         it 'delegates to string for family name' do
-          plato.swapcase!.to_s.should == 'pLATO'
+          plato.swapcase!.format.should == 'pLATO'
         end
 
         it 'delegates to string for given name' do
-          humboldt.gsub!(/^Alex\w*/, 'Wilhelm').to_s.should == 'Wilhelm von Humboldt'
+          humboldt.gsub!(/^Alex\w*/, 'Wilhelm').format.should == 'Wilhelm von Humboldt'
         end
 
         it 'delegates to string for dropping particle' do
@@ -244,7 +249,7 @@ module CiteProc
         end
 
         it 'delegates to string for suffix' do
-          frank.sub!(/jr./i, 'Sr.').to_s.should == 'Frank G. Bennett, Sr.'
+          frank.sub!(/jr./i, 'Sr.').format.should == 'Frank G. Bennett, Sr.'
         end
 
         it 'returns the name object' do
@@ -254,68 +259,68 @@ module CiteProc
       end
 
 
-      describe '#to_s' do
+      describe '#format' do
 
         it 'returns an empty string by default' do
-          Name.new.to_s.should be_empty
+          Name.new.format.should be_empty
         end
 
         it 'returns the last name if only last name is set' do
-          Name.new(:family => 'Doe').to_s.should == 'Doe'
+          Name.new(:family => 'Doe').format.should == 'Doe'
         end
 
         it 'returns the first name if only the first name is set' do
-          Name.new(:given => 'John').to_s.should == 'John'
+          Name.new(:given => 'John').format.should == 'John'
         end
 
         it 'prints japanese names using static ordering' do
-          japanese.to_s.should == '穂積 陳重'
+          japanese.format.should == '穂積 陳重'
         end
 
         it 'returns the literal if the name is a literal' do
-          Name.new(:literal => 'GNU/Linux').to_s == 'GNU/Linux'
+          Name.new(:literal => 'GNU/Linux').format == 'GNU/Linux'
         end
 
         it 'returns the name in display order by default' do
-          Name.new(:family => 'Doe', :given => 'John').to_s.should == 'John Doe'
+          Name.new(:family => 'Doe', :given => 'John').format.should == 'John Doe'
         end
 
         it 'returns the name in sort order if the sort order option is active' do
-          Name.new(:family => 'Doe', :given => 'John').sort_order!.to_s.should == 'Doe, John'
+          Name.new(:family => 'Doe', :given => 'John').sort_order!.format.should == 'Doe, John'
         end
 
         it 'returns the full given name' do
-          saunders.to_s.should == 'John Bertrand de Cusance Morant Saunders'
+          saunders.format.should == 'John Bertrand de Cusance Morant Saunders'
         end
 
         it 'includes dropping particles' do
-          humboldt.to_s.should == 'Alexander von Humboldt'
+          humboldt.format.should == 'Alexander von Humboldt'
         end
 
         it 'includes non dropping particles' do
-          van_gogh.to_s.should == 'Vincent van Gogh'
+          van_gogh.format.should == 'Vincent van Gogh'
         end
 
         it 'includes suffices' do
-          jr.to_s.should == 'James Stephens Jr.'
+          jr.format.should == 'James Stephens Jr.'
         end
 
         it 'uses the comma suffix option' do
-          frank.to_s.should == 'Frank G. Bennett, Jr.'
+          frank.format.should == 'Frank G. Bennett, Jr.'
         end
 
         it 'prints unicode characters' do
-          utf.to_s.should == "Gérard de la Martinière III"
+          utf.format.should == "Gérard de la Martinière III"
         end
 
         it 'prints russian names normally' do
-          dostoyevksy.to_s.should == 'Фёдор Михайлович Достоевский'
+          dostoyevksy.format.should == 'Фёдор Михайлович Достоевский'
         end
 
         describe 'when static ordering is active' do
 
           it 'always prints the family name first' do
-            poe.static_order!.to_s.should == 'Poe Edgar Allen'
+            poe.static_order!.format.should == 'Poe Edgar Allen'
           end
 
         end
@@ -323,51 +328,51 @@ module CiteProc
         describe 'when the sort order option is active' do
 
           it 'returns an empty string by default' do
-            Name.new.sort_order!.to_s.should be_empty
+            Name.new.sort_order!.format.should be_empty
           end
 
           it 'returns the last name if only last name is set' do
-            Name.new({:family => 'Doe'}, { :'name-as-sort-order' => true }).to_s.should == 'Doe'
+            Name.new({:family => 'Doe'}, { :'name-as-sort-order' => true }).format.should == 'Doe'
           end
 
           it 'returns the first name if only the first name is set' do
-            Name.new(:given => 'John').sort_order!.to_s.should == 'John'
+            Name.new(:given => 'John').sort_order!.format.should == 'John'
           end
 
           it 'prints japanese names using static ordering' do
-            japanese.sort_order!.to_s.should == '穂積 陳重'
+            japanese.sort_order!.format.should == '穂積 陳重'
           end
 
           it 'returns the literal if the name is a literal' do
-            Name.new(:literal => 'GNU/Linux').sort_order!.to_s == 'GNU/Linux'
+            Name.new(:literal => 'GNU/Linux').sort_order!.format == 'GNU/Linux'
           end
 
           it 'uses comma for suffix if comma suffix is set' do
-            frank.sort_order!.to_s.should == 'Bennett, Frank G., Jr.'
+            frank.sort_order!.format.should == 'Bennett, Frank G., Jr.'
           end
 
           it 'also uses comma for suffix if comma suffix is *not* set' do
-            jr.sort_order!.to_s.should == 'Stephens, James, Jr.'
+            jr.sort_order!.format.should == 'Stephens, James, Jr.'
           end
 
           it 'for normal names it prints them as "family, given"' do
-            poe.sort_order!.to_s.should == 'Poe, Edgar Allen'
+            poe.sort_order!.format.should == 'Poe, Edgar Allen'
           end
 
           it 'particles come after given name by default' do
-            van_gogh.sort_order!.to_s.should == 'van Gogh, Vincent'
+            van_gogh.sort_order!.format.should == 'van Gogh, Vincent'
           end
 
           it 'particles come after given name if demote option is active' do
-            van_gogh.sort_order!.demote_particle!.to_s.should == 'Gogh, Vincent van'
+            van_gogh.sort_order!.demote_particle!.format.should == 'Gogh, Vincent van'
           end
 
           it 'dropping particles come after given name' do
-            humboldt.sort_order!.to_s.should == 'Humboldt, Alexander von'
+            humboldt.sort_order!.format.should == 'Humboldt, Alexander von'
           end
 
           it 'by default if all parts are set they are returned as "particle family, first dropping-particle, suffix"' do
-            utf.sort_order!.to_s.should == 'la Martinière, Gérard de, III'
+            utf.sort_order!.format.should == 'la Martinière, Gérard de, III'
           end
 
         end

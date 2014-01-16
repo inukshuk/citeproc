@@ -237,7 +237,7 @@ module CiteProc
     end
 
     def initialize_existing_only?
-      !!options[:initialize]
+      options.key?(:initialize) && !options[:initialize]
     end
 
     def initialize_without_hyphen?
@@ -304,8 +304,12 @@ module CiteProc
       sort_order_downcase <=> other.sort_order_downcase
     end
 
-    # @return [String] the name formatted according to the current options
     def to_s
+      [given, family].compact_join(' ')
+    end
+
+    # @return [String] the name formatted according to the current options
+    def format
       case
       when literal?
         literal.to_s
@@ -712,7 +716,7 @@ module CiteProc
 
     # @return [String] the names in a BibTeX-compatible format
     def to_bibtex
-      map { |n| n.dup.sort_order! }.join(' and ')
+      map { |n| n.dup.sort_order!.format }.join(' and ')
     end
 
     # @return [Array<Hash>] the list of names converted to hash objects

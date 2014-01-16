@@ -143,7 +143,6 @@ module CiteProc
       !empty? && !literal?
     end
 
-
     # A name is `romanesque' if it contains only romanesque characters. This
     # should be the case for the majority of names written in latin- or
     # greek-based script. It will be false, for example, for names written
@@ -249,16 +248,20 @@ module CiteProc
       options[:'initialize-with-hyphen'] = false
     end
 
+    alias original_given given
+
     def initials
       case
       when !initials?
-        given
+        original_given
       when initialize_existing_only?
-        existing_initials_of given
+        existing_initials_of original_given
       else
-        initials_of given
+        initials_of original_given
       end
     end
+
+    alias given initials
 
 
     def demote_non_dropping_particle?

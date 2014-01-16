@@ -248,16 +248,14 @@ module CiteProc
       options[:'initialize-with-hyphen'] = false
     end
 
-    alias original_given given
-
     def initials
       case
       when !initials?
-        original_given
+        attributes[:given]
       when initialize_existing_only?
-        existing_initials_of original_given
+        existing_initials_of attributes[:given]
       else
-        initials_of original_given
+        initials_of attributes[:given]
       end
     end
 

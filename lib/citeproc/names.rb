@@ -150,7 +150,7 @@ module CiteProc
     #
     # @return [Boolean] whether or not the name is romanesque
     def romanesque?
-      !!([original_given, family].join.gsub(Variable.markup, '') =~ Name.romanesque)
+      !!([given, family].join.gsub(Variable.markup, '') =~ Name.romanesque)
     end
 
     alias byzantine? romanesque?
@@ -248,16 +248,14 @@ module CiteProc
       options[:'initialize-with-hyphen'] = false
     end
 
-    alias original_given given
-
-    def given
+    def initials
       case
       when !initials?
-        original_given
+        given
       when initialize_existing_only?
-        existing_initials_of original_given
+        existing_initials_of given
       else
-        initials_of original_given
+        initials_of given
       end
     end
 
@@ -312,19 +310,19 @@ module CiteProc
       when literal?
         literal.to_s
       when static_order?
-        [family, given].compact.join(' ')
+        [family, initials].compact.join(' ')
       when !short_form?
         case
         when !sort_order?
-          [[given, dropping_particle, particle, family].compact_join(' '),
+          [[initials, dropping_particle, particle, family].compact_join(' '),
             suffix].compact_join(comma_suffix? ? comma : ' ')
 
         when !demote_particle?
-          [[particle, family].compact_join(' '), [given,
+          [[particle, family].compact_join(' '), [initials,
             dropping_particle].compact_join(' '), suffix].compact_join(comma)
 
         else
-          [family, [given, dropping_particle, particle].compact_join(' '),
+          [family, [initials, dropping_particle, particle].compact_join(' '),
             suffix].compact_join(comma)
         end
       else

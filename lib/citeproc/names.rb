@@ -150,7 +150,7 @@ module CiteProc
     #
     # @return [Boolean] whether or not the name is romanesque
     def romanesque?
-      !!([given, family].join.gsub(Variable.markup, '') =~ Name.romanesque)
+      !!([original_given, family].join.gsub(Variable.markup, '') =~ Name.romanesque)
     end
 
     alias byzantine? romanesque?
@@ -248,17 +248,18 @@ module CiteProc
       options[:'initialize-with-hyphen'] = false
     end
 
+    alias original_given given
+
     def initials
       case
       when !initials?
-        attributes[:given]
+        original_given
       when initialize_existing_only?
-        existing_initials_of attributes[:given]
+        existing_initials_of original_given
       else
-        initials_of attributes[:given]
+        initials_of original_given
       end
     end
-
     alias given initials
 
 

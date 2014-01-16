@@ -250,7 +250,7 @@ module CiteProc
 
     alias original_given given
 
-    def initials
+    def given
       case
       when !initials?
         original_given
@@ -260,8 +260,6 @@ module CiteProc
         initials_of original_given
       end
     end
-    alias given initials
-
 
     def demote_non_dropping_particle?
       always_demote_non_dropping_particle? ||

@@ -53,6 +53,8 @@ module CiteProc
       :'name-as-sort-order' => false,
       :'demote-non-dropping-particle' => :never,
       :'sort-separator' => ', ',
+      :initialize => true,
+      :'initialize-with-hyphen' => true,
       :'initialize-with' => nil
     }.freeze
 
@@ -122,6 +124,19 @@ module CiteProc
       @options = other.options.dup
     end
 
+
+    # Resets the object's options to the default settings.
+    # @return [self]
+    def reset!
+      @options = Name.defaults.dup
+    end
+
+    # Returns a copy of the name object with all options
+    # reset to their default settings.
+    # @return [Name] a copy of the name with default options
+    def reset
+      dup.reset!
+    end
 
     # @return [Boolean] whether or not the Name looks like it belongs to a person
     def personal?
@@ -222,12 +237,29 @@ module CiteProc
       options[:'initialize-with'].to_s
     end
 
-    def initials
-      return unless initials?
+    def initialize_existing_only?
+      !!options[:initialize]
     end
 
-    def initials_of(string)
+    def initialize_without_hyphen?
+      !options[:'initialize-with-hyphen']
     end
+
+    def initialize_without_hyphen!
+      options[:'initialize-with-hyphen'] = false
+    end
+
+    def initials
+      case
+      when !initials?
+        given
+      when initialize_existing_only?
+        existing_initials_of given
+      else
+        initials_of given
+      end
+    end
+
 
     def demote_non_dropping_particle?
       always_demote_non_dropping_particle? ||
@@ -336,6 +368,36 @@ module CiteProc
 
     attr_reader :sort_prefix
 
+    def initials_of(string)
+      string = string.dup
+
+      string.gsub!(/([[:upper:]])[^[:upper:]\s-]*\s*/, "\\1#{initialize_with}")
+
+      initialize_hyphen!(string)
+
+      string.strip!
+      string
+    end
+
+    def initialize_hyphen!(string)
+      if initialize_without_hyphen?
+        string.tr!('-', '')
+      else
+        string.gsub!(/\s*-/, '-')
+      end
+    end
+
+    def existing_initials_of(string)
+      string = string.dup
+
+      string.gsub!(/([[:upper:]])([[:upper:]])/, '\1 \2')
+      string.gsub!(/\b([[:upper:]])\b[^[:alpha:]-]*/, "\\1#{initialize_with}")
+
+      initialize_hyphen!(string)
+
+      string.strip!
+      string
+    end
   end
 
 

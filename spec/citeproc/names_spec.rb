@@ -117,6 +117,42 @@ module CiteProc
 
       end
 
+      describe 'initials' do
+        let(:name) { Name.new(nil, :'initialize-with' => '. ') }
+
+        describe 'private helpers' do
+          it '#initials_of initializes the given string' do
+            name.send(:initials_of, 'James T.').should == 'J. T.'
+            name.send(:initials_of, 'JT').should == 'J. T.'
+            name.send(:initials_of, 'James T').should == 'J. T.'
+            name.send(:initials_of, 'Jean-Luc').should == 'J.-L.'
+            name.send(:initials_of, 'Vérité Äpfel').should == 'V. Ä.'
+
+            name.initialize_without_hyphen!
+            name.send(:initials_of, 'Jean-Luc').should == 'J. L.'
+
+            name.options[:'initialize-with'] = '.'
+            name.send(:initials_of, 'James T.').should == 'J.T.'
+            name.send(:initials_of, 'James T').should == 'J.T.'
+            name.send(:initials_of, 'Jean-Luc').should == 'J.L.'
+
+            name.options[:'initialize-with-hyphen'] = true
+            name.send(:initials_of, 'Jean-Luc').should == 'J.-L.'
+          end
+
+          it '#initialize_existing_only initializes only current initials' do
+            name.send(:existing_initials_of, 'James T. Kirk').should == 'James T. Kirk'
+            name.send(:existing_initials_of, 'James T.Kirk').should == 'James T. Kirk'
+            name.send(:existing_initials_of, 'James T').should == 'James T.'
+            name.send(:existing_initials_of, 'Jean-Luc').should == 'Jean-Luc'
+            name.send(:existing_initials_of, 'J.-L.M.').should == 'J.-L. M.'
+            name.send(:existing_initials_of, 'J-L').should == 'J.-L.'
+            name.send(:existing_initials_of, 'J-LM').should == 'J.-L. M.'
+            name.send(:existing_initials_of, 'JT').should == 'J. T.'
+          end
+        end
+      end
+
       describe 'constructing' do
 
         describe '.new' do

@@ -25,7 +25,7 @@ module CiteProc
       def default
         @default ||= autodetect or warn 'no citeproc engine found'
       end
-      
+
       # Returns the engine class for the given name or nil. If no suitable
       # class is found and a block is given, executes the block and returns
       # the result. The list of available engines will be passed to the block.
@@ -66,7 +66,7 @@ module CiteProc
 
       def priority
         @priority ||= 0
-      end      
+      end
     end
 
     attr_accessor :processor
@@ -102,6 +102,10 @@ module CiteProc
     end
 
     def update_uncited_items
+      raise NotImplementedByEngine
+    end
+
+    def render
       raise NotImplementedByEngine
     end
 

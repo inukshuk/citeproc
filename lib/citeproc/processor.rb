@@ -113,6 +113,10 @@ module CiteProc
       engine.bibliography(Selector.new(*arguments, &block))
     end
 
+    def render(*arguments)
+      engine.render(*arguments)
+    end
+
     def inspect
       "#<CiteProc::Processor style=#{style.name.inspect} locale=#{locale.name.inspect} items=[#{items.length}]>"
     end

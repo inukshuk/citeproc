@@ -33,7 +33,15 @@ Start rendering you references with any CSL style!
     # bibtex-ruby gem.
     cp.import BibTeX.open('./references.bib').to_citeproc
 
+    # Now you are ready for rendering; the processor API
+    # provides three main rendering methods: `process',
+    # `append', or `bibliography'.
 
+    # For simple one-off renditions, you can also call
+    # `render' in bibliography or citation mode:
+    cp.render :bibliography, id: 'knuth'
+
+    cp.render :citation, id: 'knuth', locator: '23'
 
 CSL Styles and Locales
 ----------------------

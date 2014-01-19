@@ -93,8 +93,8 @@ module CiteProc
       engine.bibliography(Selector.new(*arguments, &block))
     end
 
-    def render(*arguments)
-      engine.render(CitationData.new(arguments.flatten(1)))
+    def render(mode, *arguments)
+      engine.render(mode, CitationData.new(arguments.flatten(1)))
     end
 
     def inspect

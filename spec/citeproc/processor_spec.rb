@@ -17,7 +17,7 @@ module CiteProc
       end
 
       it 'register the item with its id' do
-        expect { p.register(palefire) }.to change { p.has_key?(:palefire) }
+        expect { p.register(palefire) }.to change { p.has_key?('palefire') }
       end
 
     end
@@ -25,7 +25,7 @@ module CiteProc
     describe '#<<' do
 
       it 'registers the passed in item' do
-        expect { p << palefire }.to change { p.has_key?(:palefire) }
+        expect { p << palefire }.to change { p.has_key?('palefire') }
       end
 
       it 'returns the processor' do

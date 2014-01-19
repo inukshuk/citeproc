@@ -33,16 +33,16 @@ module CiteProc
     end
 
     def [](id)
-      items[id.to_sym]
+      items[id.to_s]
     end
 
     def []=(id, item)
-      items[id.to_sym] = Item(item)
+      items[id.to_s] = Item(item)
     end
 
     def register(item)
       item = Item(item)
-      items[item.to_sym] = item
+      items[item.id.to_s] = item
     rescue => e
       raise "failed to register item #{item.inspect}: #{e.message}"
     end
@@ -61,7 +61,7 @@ module CiteProc
           argument.each { |item| register(item) }
         when Hash
           argument.each do |id, item|
-            id, item = id.to_sym, Item(item)
+            id, item = id.to_s, Item(item)
 
             if items.key?(id) && block_given?
               items[id] = yield items[id], item

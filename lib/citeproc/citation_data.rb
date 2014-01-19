@@ -66,7 +66,7 @@ module CiteProc
 
     # @return [String] a human-readable representation of the citation item
     def inspect
-      "#<CiteProc::CitationItem #{id.to_s.inspect}, #{locator.to_s.inspect}>"
+      "#<CiteProc::CitationItem #{[id, locator].compact.map(&:inspect).join(', ')}>"
     end
 
   end
@@ -132,7 +132,7 @@ module CiteProc
 
       case other
       when String, /^\s*\{/
-        other = MulitJson.decode(other, :symbolize_keys => true)
+        other = JSON.parse(other, :symbolize_names => true)
       when Hash
         # do nothing
       when Array

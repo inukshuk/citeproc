@@ -78,7 +78,7 @@ module CiteProc
     ensure
       # notify engine
     end
-
+    alias import update
 
 
     def process(*arguments)
@@ -94,9 +94,8 @@ module CiteProc
     end
 
     def render(*arguments)
-      engine.render(*arguments)
+      engine.render(CitationData.new(arguments.flatten(1)))
     end
-
 
     def inspect
       "#<CiteProc::Processor style=#{options[:style].inspect} locale=#{options[:locale].inspect} items=[#{items.length}]>"

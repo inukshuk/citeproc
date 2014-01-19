@@ -96,15 +96,15 @@ module CiteProc
       raise NotImplementedByEngine
     end
 
+    def render
+      raise NotImplementedByEngine
+    end
+
     def update_items
       raise NotImplementedByEngine
     end
 
     def update_uncited_items
-      raise NotImplementedByEngine
-    end
-
-    def render
       raise NotImplementedByEngine
     end
 

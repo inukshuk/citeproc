@@ -18,12 +18,12 @@ module CiteProc
       :indent => 0,
       :align => false
     }.freeze
-    
-    
+
+
     # citeproc-js and csl attributes are often inconsistent or difficult
     # to use as symbols/method names, so we're using different names at the
     # cost of making conversion to and from the json format more difficult
-    
+
     @cp2rb = {
       'maxoffset' => :offset,
       'entryspacing' => :entry_spacing,
@@ -31,12 +31,12 @@ module CiteProc
       'hangingindent' => :indent,
       'second-field-align' => :align
     }
-    
+
     @rb2cp = @cp2rb.invert.freeze
     @cp2rb.freeze
-    
+
     class << self
-      
+
       # @!attribute [r] defaults
       # @example Default Formatting Options
       #   {
@@ -77,7 +77,7 @@ module CiteProc
       attr_reader :defaults
 
       attr_reader :cp2rb, :rb2cp
-      
+
       # Create a new Bibliography from the passed-in string or array, or nil
       # if the input cannot be parsed.
       def create(input)
@@ -85,49 +85,49 @@ module CiteProc
       rescue
         nil
       end
-      
+
       # Create a new Bibliography from the passed-in string or array. Raises
       # ParseError if the input cannot be parsed.
       def create!(input)
         case
         when input.is_a?(String)
           create!(::JSON.parse(input))
-          
+
         when input.is_a?(Array) && input.length == 2
           options, references = input
 
           new do |b|
             b.concat(references)
             b.errors.concat(options.fetch('bibliography_errors', []))
-            
+
             b.prefix, b.suffix = options['bibstart'], options['bibend']
-            
+
             (options.keys & cp2rb.keys).each do |k|
               b.options[cp2rb[k]] = options[k]
             end
           end
-        
+
         else
           raise ParseError, "failed to create Bibliography from #{input.inspect}"
         end
       end
-      
+
     end
-    
+
     include Comparable
     include Enumerable
-        
+
     extend Forwardable
 
     # @!attribute [r] refrences
     # @return [Array<String>] the list of references
     attr_reader :references
-    
+
     # @!attribute [r] options
     # @see .defaults
     # @return [Hash] the current formatting options
     attr_reader :options
-    
+
     # @!attribute [r] errors
     # @todo not implemented yet
     # @return [Array<String>] a list of errors
@@ -152,15 +152,15 @@ module CiteProc
         self
       end
     end
-    
-    
+
+
     def initialize(options = {})
       @options = Bibliography.defaults.merge(options)
       @errors, @references = [], []
-      
+
       yield self if block_given?
     end
-    
+
     def initialize_copy(other)
       @options = other.options.dup
       @errors, @references = other.errors.dup, other.references.dup
@@ -169,13 +169,13 @@ module CiteProc
     def has_errors?
       !errors.empty?
     end
-    
+
     alias errors? has_errors?
-    
+
     def join(connector = "\n")
       [prefix, references.join(connector), suffix].compact.join
     end
-    
+
     def each
       if block_given?
         references.each(&Proc.new)
@@ -184,7 +184,7 @@ module CiteProc
         to_enum
       end
     end
-    
+
     def <=>(other)
       return nil unless other.respond_to?(:references)
       references <=> other.references
@@ -195,29 +195,29 @@ module CiteProc
           [Bibliography.rb2cp[k] || k.to_s, v]
         }.flatten]
     end
-    
+
     def to_citeproc
       [
-        citeproc_options.merge({    
+        citeproc_options.merge({
           'bibstart' => prefix,
           'bibend' => suffix,
           'bibliography_errors' => errors
         }),
-        
+
         references
-        
+
       ]
     end
-    
+
     def to_json
       ::JSON.dump(to_citeproc)
     end
-    
+
     # @return [String] a human-readable representation of the bibliography
     def inspect
       "#<CiteProc::Bibliography @references=[#{references.length}], @errors=[#{errors.length}]>"
     end
-    
+
   end
-  
+
 end

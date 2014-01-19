@@ -200,6 +200,7 @@ module CiteProc
 
     include Attributes
 
+
     alias attributes value
     protected :value, :attributes
 
@@ -292,6 +293,14 @@ module CiteProc
       @value = other.value.deep_copy
     end
 
+    def marshal_dump
+      to_citeproc
+    end
+
+    def marshal_load(value)
+      replace(value)
+    end
+
     def merge(other)
       super
       convert_parts!
@@ -342,7 +351,7 @@ module CiteProc
 
     # @return [Array<DateParts>]
     def date_parts
-      @value[:'date-parts'] ||= []
+      value[:'date-parts'] ||= []
     end
 
     alias parts  date_parts
@@ -442,14 +451,14 @@ module CiteProc
     # Marks the date as uncertain
     # @return [self]
     def uncertain!
-      @value[:circa] = true
+      value[:circa] = true
       self
     end
 
     # Marks the date as a certain date
     # @return [self]
     def certain!
-      @value[:circa] = false
+      value[:circa] = false
       self
     end
 
@@ -479,7 +488,7 @@ module CiteProc
 
     # @return [Hash] a hash representation of the date.
     def to_citeproc
-      cp = @value.stringify_keys
+      cp = value.stringify_keys
 
       # Convert (or suppress empty) date-parts
       if parts.all?(&:empty?)

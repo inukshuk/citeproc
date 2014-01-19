@@ -20,8 +20,6 @@ module CiteProc
     attr_reader :options, :items
     attr_writer :engine
 
-    def_delegators :@locale, :language, :region
-
     def_delegators :@items, :key?, :value?, :has_key?, :has_value?,
       :include?, :member?, :length, :empty?
 
@@ -32,24 +30,6 @@ module CiteProc
 
     def engine
       @engine ||= Engine.autodetect(options).new(self)
-    end
-
-    def style
-      @style || load_style
-    end
-
-    def locale
-      @locale || load_locale
-    end
-
-    def load_style(new_style = nil)
-      options[:style] = new_style unless new_style.nil?
-      @style = Style.open(options[:style])
-    end
-
-    def load_locale(new_locale = nil)
-      options[:locale] = new_locale unless new_locale.nil?
-      @locale = Locale.open(options[:locale])
     end
 
     def [](id)
@@ -117,9 +97,9 @@ module CiteProc
       engine.render(*arguments)
     end
 
-    def inspect
-      "#<CiteProc::Processor style=#{style.name.inspect} locale=#{locale.name.inspect} items=[#{items.length}]>"
-    end
 
+    def inspect
+      "#<CiteProc::Processor style=#{options[:style].inspect} locale=#{options[:locale].inspect} items=[#{items.length}]>"
+    end
   end
 end

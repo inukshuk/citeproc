@@ -71,8 +71,7 @@ module CiteProc
 
     attr_accessor :processor
 
-    def_delegators :@processor, :options, :abbreviations, :style, :locale,
-      :items, :language, :region, :abbreviate
+    def_delegators :@processor, :options, :abbreviations, :items, :abbreviate
 
     def initialize(processor = nil)
       @processor = processor

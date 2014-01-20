@@ -121,8 +121,11 @@ module CiteProc
         let(:name) { Name.new(nil, :'initialize-with' => '. ') }
 
         it 'returns the given name initials' do
-          name.given = 'Edgar Allen'
+          name.given = 'Edgar A'
           name.initials.should == 'E. A.'
+
+          name.options[:initialize] = 'false'
+          name.initials.should == 'Edgar A.'
         end
 
         describe 'private helpers' do

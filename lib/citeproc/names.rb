@@ -237,7 +237,7 @@ module CiteProc
     end
 
     def initialize_existing_only?
-      options.key?(:initialize) && !options[:initialize]
+      options[:initialize].to_s == 'false'
     end
 
     def initialize_without_hyphen?

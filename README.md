@@ -8,16 +8,15 @@ in the [citeproc-ruby](https://rubygems/gems/citeproc-ruby) gem.
 
 [![Build Status](https://secure.travis-ci.org/inukshuk/citeproc.png)](http://travis-ci.org/inukshuk/citeproc)
 [![Coverage Status](https://coveralls.io/repos/inukshuk/citeproc/badge.png?branch=master)](https://coveralls.io/r/inukshuk/citeproc?branch=master)
-[CiteProc](http://rubydoc.info/gems/citeproc/)
+[![Dependency Status](https://gemnasium.com/inukshuk/citeproc.png)](https://gemnasium.com/inukshuk/citeproc)
 
 [![Build Status](https://secure.travis-ci.org/inukshuk/citeproc-ruby.png)](http://travis-ci.org/inukshuk/citeproc-ruby)
 [![Coverage Status](https://coveralls.io/repos/inukshuk/citeproc-ruby/badge.png?branch=master)](https://coveralls.io/r/inukshuk/citeproc-ruby?branch=master)
-[CiteProc-Ruby](http://rubydoc.info/gems/citeproc-ruby/)
+[![Dependency Status](https://gemnasium.com/inukshuk/citeproc-ruby.png)](https://gemnasium.com/inukshuk/citeproc-ruby)
 
 [![Build Status](https://secure.travis-ci.org/inukshuk/csl-ruby.png)](http://travis-ci.org/inukshuk/csl-ruby)
 [![Coverage Status](https://coveralls.io/repos/inukshuk/csl-ruby/badge.png?branch=master)](https://coveralls.io/r/inukshuk/csl-ruby?branch=master)
-[CSL-Ruby](http://rubydoc.info/gems/csl/)
-
+[![Dependency Status](https://gemnasium.com/inukshuk/csl-ruby.png)](https://gemnasium.com/inukshuk/csl-ruby)
 
 Quickstart
 ----------
@@ -84,6 +83,12 @@ Start rendering you references with any CSL style!
     # You can also render citations on the fly.
     cp.render :citation, id: 'knuth', locator: '23'
     #-> (Knuth, 1968, p. 23)
+
+Documentation
+-------------
+* [CiteProc Documentation](http://rubydoc.info/gems/citeproc/)
+* [CiteProc-Ruby API Documentation](http://rubydoc.info/gems/citeproc-ruby/)
+* [CSL-Ruby API Documentation](http://rubydoc.info/gems/csl/)
 
 CSL Styles and Locales
 ----------------------

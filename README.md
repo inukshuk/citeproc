@@ -6,17 +6,17 @@ a dedicated processor engine is required; a pure Ruby engine is available
 in the [citeproc-ruby](https://rubygems/gems/citeproc-ruby) gem.
 
 
-* [CiteProc](http://rubydoc.info/gems/citeproc/)
-  [![Build Status](https://secure.travis-ci.org/inukshuk/citeproc.png)](http://travis-ci.org/inukshuk/citeproc)
-  [![Coverage Status](https://coveralls.io/repos/inukshuk/citeproc/badge.png?branch=master)](https://coveralls.io/r/inukshuk/citeproc?branch=master)
+[![Build Status](https://secure.travis-ci.org/inukshuk/citeproc.png)](http://travis-ci.org/inukshuk/citeproc)
+[![Coverage Status](https://coveralls.io/repos/inukshuk/citeproc/badge.png?branch=master)](https://coveralls.io/r/inukshuk/citeproc?branch=master)
+[CiteProc](http://rubydoc.info/gems/citeproc/)
 
-* [CiteProc-Ruby](http://rubydoc.info/gems/citeproc-ruby/)
-  [![Build Status](https://secure.travis-ci.org/inukshuk/citeproc-ruby.png)](http://travis-ci.org/inukshuk/citeproc-ruby)
-  [![Coverage Status](https://coveralls.io/repos/inukshuk/citeproc-ruby/badge.png?branch=master)](https://coveralls.io/r/inukshuk/citeproc-ruby?branch=master)
+[![Build Status](https://secure.travis-ci.org/inukshuk/citeproc-ruby.png)](http://travis-ci.org/inukshuk/citeproc-ruby)
+[![Coverage Status](https://coveralls.io/repos/inukshuk/citeproc-ruby/badge.png?branch=master)](https://coveralls.io/r/inukshuk/citeproc-ruby?branch=master)
+[CiteProc-Ruby](http://rubydoc.info/gems/citeproc-ruby/)
 
-* [CSL-Ruby](http://rubydoc.info/gems/csl/)
-  [![Build Status](https://secure.travis-ci.org/inukshuk/csl-ruby.png)](http://travis-ci.org/inukshuk/csl-ruby)
-  [![Coverage Status](https://coveralls.io/repos/inukshuk/csl-ruby/badge.png?branch=master)](https://coveralls.io/r/inukshuk/csl-ruby?branch=master)
+[![Build Status](https://secure.travis-ci.org/inukshuk/csl-ruby.png)](http://travis-ci.org/inukshuk/csl-ruby)
+[![Coverage Status](https://coveralls.io/repos/inukshuk/csl-ruby/badge.png?branch=master)](https://coveralls.io/r/inukshuk/csl-ruby?branch=master)
+[CSL-Ruby](http://rubydoc.info/gems/csl/)
 
 
 Quickstart

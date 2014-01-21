@@ -33,6 +33,10 @@ end
 require 'cucumber/rake/task'
 Cucumber::Rake::Task.new(:cucumber)
 
+require 'coveralls/rake/task'
+Coveralls::RakeTask.new
+task :test_with_coveralls => [:spec, :cucumber, 'coveralls:push']
+
 task :release do |t|
   system "gem build citeproc.gemspec"
   system "git tag #{CiteProc::VERSION}"

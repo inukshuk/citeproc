@@ -14,9 +14,6 @@ group :optional do
 
   gem 'bibtex-ruby', '~>3.0', :require => 'bibtex'
 
-  gem 'simplecov', '~>0.8', :require => false
-  gem 'rubinius-coverage', :platform => :rbx
-
   gem 'guard', '~>2.2'
   gem 'guard-rspec', '~>4.2'
   gem 'guard-cucumber', '~>1.4'
@@ -30,6 +27,9 @@ group :development do
   gem 'rake'
   gem 'cucumber'
   gem 'rspec'
+  gem 'simplecov', '~>0.8', :require => false
+  gem 'rubinius-coverage', :platform => :rbx
+  gem 'coveralls', :require => false
 end
 
 group :extra do

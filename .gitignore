@@ -7,3 +7,4 @@ coverage
 *.swp
 .bundle
 .ruby-version
+test

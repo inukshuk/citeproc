@@ -52,3 +52,5 @@ begin
 rescue LoadError => e
   # ignore
 end
+
+require './tasks/test'

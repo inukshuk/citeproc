@@ -53,7 +53,7 @@ module CiteProc
     end
 
     def update(*arguments)
-      arguments.flatten(1).each do |argument|
+      arguments.each do |argument|
         case argument
         when Item
           register(argument)

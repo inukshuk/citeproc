@@ -19,3 +19,4 @@ rescue LoadError
 end
 
 require 'citeproc'
+require 'csl/styles'

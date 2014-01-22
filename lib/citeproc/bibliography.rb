@@ -133,14 +133,21 @@ module CiteProc
     # @return [Array<String>] a list of errors
     attr_reader :errors
 
-    # @!attribute prefix
+    # @!attribute header
     # @return [String] content included before the reference list
-    attr_accessor :prefix, :suffix
+    attr_accessor :header
+
+    # @!attribute footer
+    # @return [String] content included after the reference list
+    attr_accessor :footer
+
+    # @!attribute prefix
+    # @return [String] content included before each reference
+    attr_accessor :prefix
 
     # @!attribute suffix
-    # @return [String] content included after the reference list
+    # @return [String] content included after each reference
     attr_accessor :suffix
-
 
     # Bibliographies quack sorta like an Array
     def_delegators :@references, :length, :empty?, :[], :include?, :index
@@ -173,7 +180,19 @@ module CiteProc
     alias errors? has_errors?
 
     def join(connector = "\n")
-      [prefix, references.join(connector), suffix].compact.join
+      [
+        header,
+
+        references.map { |r|
+          [prefix, r, suffix].compact.join('')
+        }.join(connector),
+
+        footer
+      ].compact.join(connector)
+    end
+
+    def to_s
+      join
     end
 
     def each

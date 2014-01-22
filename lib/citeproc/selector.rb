@@ -84,7 +84,7 @@ module CiteProc
     end
 
     def skip?(item)
-      if custom_matcher?
+      if custom_matcher? || skip_conditions.empty?
         false # skips are ignored for custom matchers
       else
         skip_conditions.each_pair.all? do |field, value|

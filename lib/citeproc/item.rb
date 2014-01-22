@@ -84,6 +84,13 @@ module CiteProc
     end
 
 
+    # @returns [CitationItem] a citation item for this item
+    def cite
+      CitationItem.new :id => id do |c|
+        c.data = self
+      end
+    end
+
     def observable_read_attribute(key)
       value = original_read_attribute(key)
     ensure

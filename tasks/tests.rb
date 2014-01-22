@@ -1,18 +1,28 @@
+require 'rake'
+require 'json'
+
+module CSL
+  module TestSuite
+
+    module_function
+
+    def load(file)
+      JSON.parse(File.open(file, 'r:UTF-8').read)
+    end
+
+    def tags_for(json, feature)
+      tags = []
+
+      tags << "@#{json['mode']}"
+      tags << "@#{feature}"
+
+      tags
+    end
+
+  end
+end
+
 namespace :test do
-  require 'json'
-
-  def load(file)
-    JSON.parse File.open(file, 'r:UTF-8').read
-  end
-
-  def tags_for(json, feature)
-    tags = []
-
-    tags << "@#{json['mode']}"
-    tags << "@#{feature}"
-
-    tags
-  end
 
   desc 'Fetch the citeproc-test repository and generate the JSON test files'
   task :init => [:clean] do
@@ -28,7 +38,7 @@ namespace :test do
   desc 'Delete all generated CSL feature tests'
   task :clear do
     Dir['features/**/*'].sort.reverse.each do |path|
-      unless path =~ /features\/support/
+      unless path =~ /features\/(support|step_definitions)/
         if File.directory?(path)
           system "rmdir #{path}"
         else
@@ -47,9 +57,9 @@ namespace :test do
       system "mkdir features/#{feature}"
 
       features[feature].each do |file|
-        json, filename = load(file), File.basename(file, '.json').split(/_/, 2)[-1]
+        json, filename = CSL::TestSuite.load(file), File.basename(file, '.json').split(/_/, 2)[-1]
 
-        tags = tags_for(json, feature)
+        tags = CSL::TestSuite.tags_for(json, feature)
         name = filename.gsub(/(\p{Ll})(\p{Lu})/, '\1 \2')
 
         if json['mode'] == 'bibliography' && !json['bibsection'] && !json['bibentries']
@@ -64,18 +74,23 @@ namespace :test do
             out << "    \"\"\"\n"
 
             json['csl'].each_line do |line|
-              out << '    ' << line << "\n"
+              out << '    ' << line
             end
             out << "    \"\"\"\n"
 
-            #out << "    And the following input:\n"
-            #out << "    \"\"\"\n"
+            out << "    And the following input:\n"
+            out << "    \"\"\"\n"
+            out << "    " << JSON.dump(json['input']) << "\n"
+            out << "    \"\"\"\n"
 
-            #json['input'].each_line do |line|
-            #  out << '    ' << line << "\n"
-            #end
+            out << "    When I render the bibliography\n"
 
-            #out << "    \"\"\"\n"
+            out << "    Then the result should be:\n"
+            out << "    \"\"\"\n"
+            json['result'].each_line do |line|
+              out << '    ' << line
+            end
+            out << "\n    \"\"\"\n"
           end
         end
       end

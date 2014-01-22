@@ -72,10 +72,19 @@ module CiteProc
       it 'converts none matcher to exclude' do
         Selector.new(:none => { :a => 'b' }).to_citeproc.should == { 'exclude' => [{ 'field' => 'a', 'value' => 'b' }]}
       end
-
-
     end
 
+    describe '#matches?' do
+      it 'always matches by default' do
+        Selector.new.matches?(nil).should be_true
+      end
+    end
+
+    describe '#skip?' do
+      it 'never skips when by default' do
+        Selector.new.skip?(nil).should be_false
+      end
+    end
   end
 
 end

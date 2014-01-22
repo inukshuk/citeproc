@@ -21,6 +21,7 @@ group :optional do
   gem 'unicode', '~>0.4', :platforms => [:ruby, :mswin, :mingw]
 
   gem 'citeproc-ruby', :git => 'https://github.com/inukshuk/citeproc-ruby.git'
+  gem 'csl', :git => 'https://github.com/inukshuk/csl-ruby.git'
 end
 
 group :development do
@@ -30,6 +31,7 @@ group :development do
   gem 'simplecov', '~>0.8', :require => false
   gem 'rubinius-coverage', :platform => :rbx
   gem 'coveralls', :require => false
+  gem 'csl-styles', '~>1.0.1', :require => false
 end
 
 group :extra do

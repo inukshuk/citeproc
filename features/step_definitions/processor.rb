@@ -1,5 +1,5 @@
 Given(/^the following style:$/) do |string|
-  @style = CSL::Style.parse(string)
+  @style = CSL::Style.parse!(string)
 end
 
 Given(/^the following input:$/) do |string|

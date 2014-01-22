@@ -76,7 +76,7 @@ namespace :test do
             json['csl'].each_line do |line|
               out << '    ' << line
             end
-            out << "    \"\"\"\n"
+            out << "\n    \"\"\"\n"
 
             out << "    And the following input:\n"
             out << "    \"\"\"\n"

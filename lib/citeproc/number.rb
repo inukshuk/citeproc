@@ -2,7 +2,7 @@ module CiteProc
   # A CiteProc Variable used for numeric values.
   class Number < Variable
 
-	  MAX_ROMAN = 5000
+    MAX_ROMAN = 5000
 
     FACTORS = [
       ['m', 1000], ['cm', 900], ['d', 500], ['cd', 400],
@@ -11,12 +11,12 @@ module CiteProc
       ['i',    1]
     ].freeze
 
-		class << self
-			def pluralize?(string)
-				/\S\s*[,&-]\s*\S|\df/ === string
-			end
-			
-			# @param number [#to_i] the number to convert
+    class << self
+      def pluralize?(string)
+        /\S\s*[,&-–]\s*\S|\df/ === string
+      end
+
+      # @param number [#to_i] the number to convert
       # @return [String] roman equivalent of the passed-in number
       def romanize(number)
         number, roman = number.to_i, ''
@@ -30,7 +30,7 @@ module CiteProc
 
         roman
       end
-		end
+    end
   end
 
 end

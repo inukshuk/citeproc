@@ -9,6 +9,7 @@ group :debug do
 end
 
 group :optional do
+  gem 'nokogiri', '~>1.6'
   gem 'chronic', '~>0.10'
   gem 'edtf', '~>2.0'
 

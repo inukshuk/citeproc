@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module CiteProc
   # A CiteProc Variable used for numeric values.
   class Number < Variable

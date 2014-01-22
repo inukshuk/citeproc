@@ -58,6 +58,7 @@ module CiteProc
 
     def initialize(attributes = nil)
       merge(attributes)
+      yield self if block_given?
     end
 
     def initialize_copy(other)

@@ -60,7 +60,7 @@ namespace :test do
         json, filename = CSL::TestSuite.load(file), File.basename(file, '.json').split(/_/, 2)[-1]
 
         tags = CSL::TestSuite.tags_for(json, feature)
-        name = filename.gsub(/(\p{Ll})(\p{Lu})/, '\1 \2')
+        name = filename.gsub(/([[:lower:]])([[:upper:]])/, '\1 \2')
 
         if json['mode'] == 'bibliography' && !json['bibsection'] && !json['bibentries']
           File.open("features/#{feature}/#{filename}.feature", 'w:UTF-8') do |out|

@@ -7,7 +7,7 @@ Given(/^the following input:$/) do |string|
 end
 
 When(/^I render the bibliography$/) do
-  cp = CiteProc::Processor.new :style => @style
+  cp = CiteProc::Processor.new :style => @style, :format => 'html'
   cp.import @input
 
   bib = cp.bibliography

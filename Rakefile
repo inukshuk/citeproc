@@ -53,4 +53,4 @@ rescue LoadError => e
   # ignore
 end
 
-require './tasks/tests'
+require './tasks/testsuite'

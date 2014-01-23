@@ -4,17 +4,25 @@ require 'json'
 module CSL
   module TestSuite
 
+    NON_STANDARD = %{
+      quotes_PunctuationWithInnerQuote
+    }
+
     module_function
 
     def load(file)
       JSON.parse(File.open(file, 'r:UTF-8').read)
     end
 
-    def tags_for(json, feature)
+    def tags_for(json, feature, name)
       tags = []
 
       tags << "@#{json['mode']}"
       tags << "@#{feature}"
+
+      if NON_STANDARD.include? "#{feature}_#{name}"
+        tags << '@non-standard'
+      end
 
       tags
     end
@@ -57,18 +65,17 @@ namespace :test do
       system "mkdir features/#{feature}"
 
       features[feature].each do |file|
-        json, filename = CSL::TestSuite.load(file), File.basename(file, '.json').split(/_/, 2)[-1]
+        json, name = CSL::TestSuite.load(file), File.basename(file, '.json').split(/_/, 2)[-1]
 
-        tags = CSL::TestSuite.tags_for(json, feature)
-        name = filename.gsub(/([[:lower:]])([[:upper:]])/, '\1 \2')
+        tags = CSL::TestSuite.tags_for(json, feature, name)
 
         if json['mode'] == 'bibliography' && !json['bibsection'] && !json['bibentries']
-          File.open("features/#{feature}/#{filename}.feature", 'w:UTF-8') do |out|
-            out << "Feature: #{feature} #{name}\n"
+          File.open("features/#{feature}/#{name}.feature", 'w:UTF-8') do |out|
+            out << "Feature: #{feature}\n"
             out << "  As a CSL cite processor hacker\n"
             out << "  I want the test #{File.basename(file, '.json')} to pass\n\n"
             out << "  " << tags.join(' ') << "\n"
-            out << "  Scenario: #{name}\n"
+            out << "  Scenario: #{name.gsub(/([[:lower:]])([[:upper:]])/, '\1 \2')}\n"
 
             out << "    Given the following style:\n"
             out << "    \"\"\"\n"

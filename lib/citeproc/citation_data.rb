@@ -69,7 +69,7 @@ module CiteProc
       suppressed.include?(variable.to_s)
     end
 
-    def suppress(*variables)
+    def suppress!(*variables)
       variables.flatten.each do |variable|
         suppressed << variable.to_s
       end

@@ -93,6 +93,8 @@ module CiteProc
 
     def observable_read_attribute(key)
       value = original_read_attribute(key)
+      return if suppressed?(key)
+      value
     ensure
       changed
       notify_observers :read, key, value
@@ -165,6 +167,25 @@ module CiteProc
       else
         enum_for :each_value
       end
+    end
+
+    def suppressed?(key)
+      suppressed.include?(key.to_s)
+    end
+
+    def suppress!(*keys)
+      keys.flatten.each do |key|
+        suppressed << key.to_s
+      end
+
+      suppressed.sort!
+      suppressed.uniq!
+
+      self
+    end
+
+    def suppressed
+      @suppressed ||= []
     end
 
     def <=>(other)

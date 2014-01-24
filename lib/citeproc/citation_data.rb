@@ -65,25 +65,6 @@ module CiteProc
       @attributes = other.attributes.deep_copy
     end
 
-    def suppressed?(variable)
-      suppressed.include?(variable.to_s)
-    end
-
-    def suppress!(*variables)
-      variables.flatten.each do |variable|
-        suppressed << variable.to_s
-      end
-
-      suppressed.sort!
-      suppressed.uniq!
-
-      self
-    end
-
-    def suppressed
-      @suppressed ||= []
-    end
-
     # @return [String] a human-readable representation of the citation item
     def inspect
       "#<CiteProc::CitationItem #{[id, locator].compact.map(&:inspect).join(', ')}>"

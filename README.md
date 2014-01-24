@@ -90,6 +90,18 @@ Documentation
 * [CiteProc-Ruby API Documentation](http://rubydoc.info/gems/citeproc-ruby/)
 * [CSL-Ruby API Documentation](http://rubydoc.info/gems/csl/)
 
+Optional Dependencies
+---------------------
+CiteProc-Ruby tries to minimize hard dependencies for increased compatibility.
+You can speed up the XML parsing by installing
+[Nokogiri](https://rubygems.org/gems/nokogiri); otherwise the REXML from the
+Ruby standard library will be used.
+
+Similarly, you can install either of the gems
+[EDTF](https://rubygems.org/gems/edtf) or
+[Chronic](https://rubygems.org/gems/chronic) to support a wide range of
+additional inputs for date variables.
+
 CSL Styles and Locales
 ----------------------
 You can load CSL styles and locales by passing a respective XML string, file

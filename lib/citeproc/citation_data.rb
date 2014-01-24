@@ -6,6 +6,7 @@ module CiteProc
   # containing the actual bibliographic data.
   class CitationItem
 
+    extend Forwardable
     include Attributes
 
     @labels = [
@@ -55,6 +56,8 @@ module CiteProc
       :'near-note', :unsorted
 
     attr_accessor :data
+
+    def_delegators :@data, :suppressed?, :suppress!
 
     def initialize(attributes = nil)
       merge(attributes)

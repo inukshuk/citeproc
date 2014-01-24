@@ -12,7 +12,7 @@ When(/^I render the bibliography$/) do
 
   bib = cp.bibliography
 
-  bib.errors?.should be_false
+  bib.errors.should == []
 
   bib.header = '<div class="csl-bib-body">'
   bib.footer = '</div>'

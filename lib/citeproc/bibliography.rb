@@ -26,10 +26,10 @@ module CiteProc
 
     @cp2rb = {
       'maxoffset' => :offset,
-      'entryspacing' => :entry_spacing,
-      'linespacing' => :line_spacing,
-      'hangingindent' => :indent,
-      'second-field-align' => :align
+      'entryspacing' => :'entry-spacing',
+      'linespacing' => :'line-spacing',
+      'hangingindent' => :'hanging-indent',
+      'second-field-align' => :'second-field-align'
     }
 
     @rb2cp = @cp2rb.invert.freeze
@@ -54,19 +54,19 @@ module CiteProc
       #     # string should use this value to calculate and apply a suitable
       #     # indentation length.
       #
-      #     :entry_spacing => 1,
+      #     :'entry-spacing' => 1,
       #     # An integer representing the spacing between entries in the
       #     # bibliography.
       #
-      #     :line_spacing => 1,
+      #     :'line-spacing' => 1,
       #     # An integer representing the spacing between the lines within
       #     # each bibliography entry.
       #
-      #     :indent => 0,
+      #     :'hanging-indent' => 0,
       #     # The number of em-spaces to apply in hanging indents within the
       #     # bibliography.
       #
-      #     :align => false
+      #     :'second-field-align' => false
       #     # When the second-field-align CSL option is set, this returns
       #     # either "flush" or "margin". The calling application should
       #     # align text in the bibliography output as described by the CSL

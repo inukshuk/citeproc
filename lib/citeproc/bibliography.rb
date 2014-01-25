@@ -13,8 +13,8 @@ module CiteProc
 
     @defaults = {
       :offset => 0,
-      :entry_spacing => 0,
-      :line_spacing => 0,
+      :entry_spacing => 1,
+      :line_spacing => 1,
       :indent => 0,
       :align => false
     }.freeze
@@ -54,11 +54,11 @@ module CiteProc
       #     # string should use this value to calculate and apply a suitable
       #     # indentation length.
       #
-      #     :entry_spacing => 0,
+      #     :entry_spacing => 1,
       #     # An integer representing the spacing between entries in the
       #     # bibliography.
       #
-      #     :line_spacing => 0,
+      #     :line_spacing => 1,
       #     # An integer representing the spacing between the lines within
       #     # each bibliography entry.
       #
@@ -80,8 +80,8 @@ module CiteProc
 
       # Create a new Bibliography from the passed-in string or array, or nil
       # if the input cannot be parsed.
-      def create(input)
-        create!(input)
+      def create(input, &block)
+        create!(input, &block)
       rescue
         nil
       end
@@ -92,6 +92,9 @@ module CiteProc
         case
         when input.is_a?(String)
           create!(::JSON.parse(input))
+
+        when input.is_a?(Hash)
+          create!([input])
 
         when input.is_a?(Array) && input.length == 2
           options, references = input
@@ -105,6 +108,8 @@ module CiteProc
             (options.keys & cp2rb.keys).each do |k|
               b.options[cp2rb[k]] = options[k]
             end
+
+            yield b if block_given?
           end
 
         else

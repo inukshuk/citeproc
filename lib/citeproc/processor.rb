@@ -17,14 +17,14 @@ module CiteProc
       attr_reader :defaults
     end
 
-    attr_reader :options, :items
+    attr_reader :options, :items, :data
     attr_writer :engine
 
     def_delegators :@items, :key?, :value?, :has_key?, :has_value?,
       :include?, :member?, :length, :empty?
 
     def initialize(options = {})
-      @options, @items = Processor.defaults.merge(options), {}
+      @options, @items, @data = Processor.defaults.merge(options), {}, []
       yield self if block_given?
     end
 
@@ -37,12 +37,18 @@ module CiteProc
     end
 
     def []=(id, item)
-      items[id.to_s] = Item(item)
+      item = Item(item)
+      item.id = id
+
+      register(items)
     end
 
     def register(item)
       item = Item(item)
+
+      data << item
       items[item.id.to_s] = item
+
     rescue => e
       raise "failed to register item #{item.inspect}: #{e.message}"
     end

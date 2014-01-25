@@ -514,7 +514,8 @@ module CiteProc
 
     def <=>(other)
       case other
-      when Date
+      when CiteProc::Date
+        return nil if season? || other.season?
         parts <=> other.parts
       when ::Date
         parts <=> [other]

@@ -33,6 +33,23 @@ module CiteProc
         roman
       end
     end
+
+    def <=>(other)
+      case
+      when other.nil?
+        1
+      when numeric?
+        if other.respond_to?(:to_i)
+          to_i <=> other.to_i
+        else
+          nil
+        end
+      when other.is_a?(Variable) || other.is_a?(String)
+        to_s <=> other.to_s
+      else
+        nil
+      end
+    end
   end
 
 end

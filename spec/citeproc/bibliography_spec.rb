@@ -62,7 +62,7 @@ module CiteProc
         b.should be_a(Bibliography)
         b.should have(2).references
         b.should_not have_errors
-        b.options[:align].should be true
+        b.options[:'second-field-align'].should be true
       end
 
     end

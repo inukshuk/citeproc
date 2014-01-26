@@ -38,7 +38,7 @@ module CiteProc
 
     def []=(id, item)
       item = Item(item)
-      item.id = id
+      item.id = id.to_s
 
       register(items)
     end

@@ -23,16 +23,16 @@ module CiteProc
     def write_attribute(key, value)
       attributes[filter_key(key)] = filter_value(value, key)
     end
-		alias []= write_attribute
+    alias []= write_attribute
 
-		def attribute?(key)
-			value = read_attribute key
+    def attribute?(key)
+      value = read_attribute key
 
-			return false if value.nil?
-			return false if value.respond_to?(:empty?) && value.empty?
+      return false if value.nil?
+      return false if value.respond_to?(:empty?) && value.empty?
 
-			value.to_s !~ /^(false|no|never)$/i
-		end
+      value.to_s !~ /^(false|no|never)$/i
+    end
 
     def filter_key(key)
       key.to_sym
@@ -173,7 +173,7 @@ module CiteProc
         predicate_id = [method_id, '?'].join
         if predicate && !instance_methods.include?(predicate_id)
           define_method(predicate_id) do
-						attribute?(field)
+            attribute?(field)
           end
 
           has_predicate = ['has_', predicate_id].join

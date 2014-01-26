@@ -188,6 +188,11 @@ module CiteProc
       @suppressed ||= []
     end
 
+    def ==(other)
+      return false unless other.is_a?(Item)
+      id == other.id
+    end
+
     def <=>(other)
       return nil unless other.is_a?(Attributes)
       eql?(other) ? 0 : length <=> other.length

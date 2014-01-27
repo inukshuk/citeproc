@@ -333,6 +333,7 @@ module CiteProc
         [particle, family].compact_join(' ')
       end
     end
+    alias print format
 
     # @return [Array<String>] an ordered array of formatted name parts to be used for sorting
     def sort_order
@@ -369,6 +370,12 @@ module CiteProc
     private
 
     attr_reader :sort_prefix
+
+    def filter_key(key)
+      key = key.to_s.tr('_', '-')
+      key = 'non-dropping-particle' if key == 'particle'
+      super key
+    end
 
     def initials_of(string)
       string = string.dup

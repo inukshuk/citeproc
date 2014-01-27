@@ -215,7 +215,7 @@ module CiteProc
         require date_parser
         @parsers << ::Object.const_get(module_id)
       rescue LoadError
-        warn "failed to load `#{date_parser}' gem"
+        # warn "failed to load `#{date_parser}' gem"
       end
     end
 

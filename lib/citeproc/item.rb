@@ -84,10 +84,13 @@ module CiteProc
     end
 
 
+    # Returns a CitationItem with a copy of this item
+    # attached as data.
+    #
     # @returns [CitationItem] a citation item for this item
     def cite
       CitationItem.new :id => id do |c|
-        c.data = self
+        c.data = dup
       end
     end
 

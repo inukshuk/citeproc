@@ -7,7 +7,8 @@ Given(/^the following input:$/) do |string|
 end
 
 When(/^I render the bibliography$/) do
-  cp = CiteProc::Processor.new :style => @style, :format => 'html'
+  cp = CiteProc::Processor.new :style => @style, :format => 'html',
+    :locale => File.expand_path('../../../spec/fixtures/locales/locales-en-US.xml', __FILE__)
   cp.import @input
 
   bib = cp.bibliography

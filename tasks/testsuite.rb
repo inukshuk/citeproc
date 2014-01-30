@@ -26,7 +26,7 @@ module CSL
       tags << "@#{json['mode']}"
       tags << "@#{feature}"
 
-      if NON_STANDARD.include? "#{feature}_#{name}"
+      if NON_STANDARD.include? "#{feature}_#{name}" || feature == 'display'
         tags << '@non-standard'
       end
 

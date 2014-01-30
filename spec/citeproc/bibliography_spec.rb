@@ -58,7 +58,7 @@ module CiteProc
       JS_END
 
       it 'parses citeproc/json strings' do
-        b = Bibliography.create(js)
+        b = Bibliography.create!(js)
         b.should be_a(Bibliography)
         b.should have(2).references
         b.should_not have_errors

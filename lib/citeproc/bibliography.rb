@@ -13,10 +13,10 @@ module CiteProc
 
     @defaults = {
       :offset => 0,
-      :entry_spacing => 1,
-      :line_spacing => 1,
-      :indent => 0,
-      :align => false
+      :'entry-spacing' => 1,
+      :'line-spacing' => 1,
+      :'hanging-indent' => false,
+      :'second-field-align' => false
     }.freeze
 
 
@@ -62,9 +62,7 @@ module CiteProc
       #     # An integer representing the spacing between the lines within
       #     # each bibliography entry.
       #
-      #     :'hanging-indent' => 0,
-      #     # The number of em-spaces to apply in hanging indents within the
-      #     # bibliography.
+      #     :'hanging-indent' => false,
       #
       #     :'second-field-align' => false
       #     # When the second-field-align CSL option is set, this returns
@@ -100,10 +98,11 @@ module CiteProc
           options, references = input
 
           new do |b|
-            b.concat(references)
+            b.references.concat(references)
+            b.ids.concat(options.fetch('entry_ids', []))
             b.errors.concat(options.fetch('bibliography_errors', []))
 
-            b.prefix, b.suffix = options['bibstart'], options['bibend']
+            b.header, b.footer = options['bibstart'], options['bibend']
 
             (options.keys & cp2rb.keys).each do |k|
               b.options[cp2rb[k]] = options[k]
@@ -128,13 +127,14 @@ module CiteProc
     # @return [Array<String>] the list of references
     attr_reader :references
 
+    attr_reader :ids
+
     # @!attribute [r] options
     # @see .defaults
     # @return [Hash] the current formatting options
     attr_reader :options
 
     # @!attribute [r] errors
-    # @todo not implemented yet
     # @return [Array<String>] a list of errors
     attr_reader :errors
 
@@ -155,28 +155,28 @@ module CiteProc
     attr_accessor :suffix
 
     # Bibliographies quack sorta like an Array
-    def_delegators :@references, :length, :empty?, :[], :include?, :index
+    def_delegators :@references, :length, :empty?
 
-    # Some delegators should return self
-    [:push, :<<, :unshift, :concat].each do |m|
-      define_method(m) do |*arguments, &block|
-        references.send(m, *arguments, &block)
-        self
-      end
-    end
-
+    attr_accessor :connector
 
     def initialize(options = {})
       @options = Bibliography.defaults.merge(options)
-      @errors, @references = [], []
+      @errors, @references, @ids, @connector = [], [], [], "\n"
 
       yield self if block_given?
     end
 
     def initialize_copy(other)
-      @options = other.options.dup
-      @errors, @references = other.errors.dup, other.references.dup
+      @options, @connector = other.options.dup, other.connector.dup
+      @errors, @references, @ids = other.errors.dup, other.references.dup, other.ids.dup
     end
+
+    def push(id, reference)
+      ids << id
+      references << reference
+      self
+    end
+    alias << push
 
     def has_errors?
       !errors.empty?
@@ -184,7 +184,19 @@ module CiteProc
 
     alias errors? has_errors?
 
-    def join(connector = "\n")
+    def entry_spacing
+      options[:'entry-spacing'].to_f
+    end
+
+    def line_spacing
+      options[:'line-spacing'].to_f
+    end
+
+    def hanging_indent?
+      options[:'hanging_indent']
+    end
+
+    def join()
       [
         header,
 

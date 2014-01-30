@@ -73,6 +73,8 @@ module CiteProc
     # @return the name's formatting options
     attr_reader :options
 
+    attr_reader :sort_prefix
+
     attr_predicates :'comma-suffix', :'static-ordering', :multi, *@parts
 
     # Aliases
@@ -368,8 +370,6 @@ module CiteProc
     end
 
     private
-
-    attr_reader :sort_prefix
 
     def filter_key(key)
       key = key.to_s.tr('_', '-')

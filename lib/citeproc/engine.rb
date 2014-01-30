@@ -42,6 +42,8 @@ module CiteProc
 
       # Returns the best available engine class or nil.
       def autodetect(options = {})
+        load('citeproc-ruby') if subclasses.empty?
+
         subclasses.detect { |e|
           !options.has_key?(:engine) || e.name == options[:engine] and
           !options.has_key?(:name) || e.name == options[:name]

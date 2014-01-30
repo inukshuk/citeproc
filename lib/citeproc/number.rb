@@ -15,7 +15,7 @@ module CiteProc
 
     class << self
       def pluralize?(string)
-        /\S\s*[,&-–]\s*\S|\df/ === string
+        /\S[\s,&–-]\S|\df/ === string
       end
 
       # @param number [#to_i] the number to convert

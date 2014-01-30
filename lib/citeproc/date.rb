@@ -273,13 +273,12 @@ module CiteProc
       end
 
       alias now today
-
     end
 
 
     # Make Date behave like a regular Ruby Date
     def_delegators :to_ruby, *::Date.instance_methods(false).reject { |m|
-      m.to_s =~ /^[\W_]|[!=_]$|^(to_s|inspect|dup|clone|change)$/
+      m.to_s =~ /^[\W_]|[!=_]$|^(to_s|inspect|dup|clone|change)$|^(marshal|season|year|month|day|certain|uncertain)/
     }
 
     attr_predicates :circa, :season, :literal, :'date-parts'
@@ -348,6 +347,8 @@ module CiteProc
 
       self
     end
+
+    remove_method :date_parts
 
     # @return [Array<DateParts>]
     def date_parts

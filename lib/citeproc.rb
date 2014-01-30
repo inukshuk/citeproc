@@ -73,5 +73,3 @@ CiteProc::Converters.class_eval do
   end
 
 end
-
-require 'citeproc/ruby'

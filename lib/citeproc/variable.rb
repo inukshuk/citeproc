@@ -134,7 +134,7 @@ module CiteProc
       *::String.instance_methods(false).select {|m| m.to_s =~ /!$/ }
 
     def_delegators :to_s, :=~, :===, *String.instance_methods(false).reject { |m|
-      m.to_s =~ /^[\W_]|[!=_]$|^(to_s|inspect|replace|first|last|dup|clone)$/
+      m.to_s =~ /^[\W_]|[!=_]$|^(to_s|inspect|replace|first|last|dup|clone|to_f|to_i)$/
     }
 
 

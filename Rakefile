@@ -14,14 +14,18 @@ require 'citeproc/version'
 
 
 desc 'Run an IRB session with CiteProc loaded'
-task :console, [:script] do |t,args|
-  ARGV.clear
-
-  require 'irb'
+task :console do
+  require 'pry'
   require 'citeproc'
 
-  IRB.conf[:SCRIPT] = args.script
-  IRB.start
+  Pry.start
+end
+
+task :check_warnings do
+  $VERBOSE = true
+  require 'citeproc'
+
+  puts CiteProc::VERSION
 end
 
 require 'rspec/core'

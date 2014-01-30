@@ -19,6 +19,8 @@ group :optional do
   gem 'guard-rspec', '~>4.2'
   gem 'guard-cucumber', '~>1.4'
 
+  gem 'pry'
+
   gem 'unicode', '~>0.4', :platforms => [:ruby, :mswin, :mingw]
 
   gem 'citeproc-ruby', :git => 'https://github.com/inukshuk/citeproc-ruby.git'

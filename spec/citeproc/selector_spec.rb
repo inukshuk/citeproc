@@ -35,21 +35,21 @@ module CiteProc
       # it 'fails if the hash contains more than two elements'
       # it 'fails if the hash contains unknown keys'
 
-      it 'accepts a citeproc json style hash'
-      # it 'accepts a json object (select)' do
-      #         Selector.new(
-      #            "select" => [
-      #               {
-      #                  "field" => "type",
-      #                  "value" => "book"
-      #               },
-      #               {  "field" => "categories",
-      #                   "value" => "1990s"
-      #               }
-      #            ]
-      #         ).conditions.should have(2).items
-      #       end
+      # it 'accepts a citeproc json style hash'
 
+      it 'accepts a json object (select)' do
+        Selector.new(
+          "select" => [
+            {
+              "field" => "type",
+              "value" => "book"
+            },
+            {  "field" => "categories",
+               "value" => "1990s"
+            }
+          ]
+        ).conditions.should have(2).items
+      end
     end
 
     describe '#to_proc' do

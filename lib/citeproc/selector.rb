@@ -28,6 +28,8 @@ module CiteProc
       else
         unless attributes.nil? || attributes.empty?
           attributes.symbolize_keys.each_pair do |key, conditions|
+            conditions = convert_conditions(conditions) if conditions.is_a?(Array)
+
             case key
             when :all, :any, :none
               @type = key
@@ -46,7 +48,6 @@ module CiteProc
           end
         end
       end
-
     end
 
     def initialize_copy(other)
@@ -122,6 +123,11 @@ module CiteProc
       Selector.matcher[type] || :all?
     end
 
+    # Converts a CiteProc-JS style conditions list into
+    # a conditions Hash.
+    def convert_conditions(conditions)
+      Hash[conditions.map { |c| [c['field'], c['value']] }]
+    end
 
   end
 

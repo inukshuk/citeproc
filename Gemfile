@@ -11,7 +11,7 @@ end
 group :optional do
   gem 'nokogiri', '~>1.6'
   gem 'chronic', '~>0.10', :require => false
-  gem 'edtf', '~>2.0'
+  gem 'edtf', '~>2.1'
 
   gem 'bibtex-ruby', '~>3.0', :require => 'bibtex'
 

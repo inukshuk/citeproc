@@ -13,7 +13,6 @@ module CiteProc
       it 'can be instantiated' do
         subject.should_not be nil
       end
-
     end
 
   end

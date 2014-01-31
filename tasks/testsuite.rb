@@ -12,6 +12,11 @@ module CSL
       name_ParticleCaps2                          # capitalizes particle of first name
       parallel_HackedChicago                      # combines legal cases
       parallel_Bibliography                       # ---
+      magic_SecondFieldAlign                      #
+      magic_CitationLabelInBibliography           # Citation labels
+      locale_TermInSort                           # MLZ
+      label_EditorTranslator1                     # ?
+      display_SecondFieldAlignMigratePunctuation  # format
     }
 
     module_function
@@ -99,9 +104,9 @@ namespace :test do
             out << "    " << JSON.dump(json['input']) << "\n"
             out << "    \"\"\"\n"
 
-            out << "    When I render the bibliography\n"
+            out << "    When I render the entire bibliography\n"
 
-            out << "    Then the result should be:\n"
+            out << "    Then the bibliography should be:\n"
             out << "    \"\"\"\n"
             json['result'].each_line do |line|
               out << '    ' << line

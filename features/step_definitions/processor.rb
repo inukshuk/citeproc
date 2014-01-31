@@ -6,24 +6,16 @@ Given(/^the following input:$/) do |string|
   @input = JSON.parse(string)
 end
 
-When(/^I render the bibliography$/) do
-  cp = CiteProc::Processor.new :style => @style, :format => 'html',
-    :locale => File.expand_path('../../../spec/fixtures/locales/locales-en-US.xml', __FILE__)
-  cp.import @input
+When(/^I render the entire bibliography$/) do
+  @input.should_not be_nil
 
-  bib = cp.bibliography
+  processor.import @input
+  @bibliography = processor.bibliography
 
-  bib.errors.should == []
-
-  bib.header = '<div class="csl-bib-body">'
-  bib.footer = '</div>'
-
-  bib.prefix = '  <div class="csl-entry">'
-  bib.suffix = '</div>'
-
-  @result = bib.join
+  @bibliography.errors.should == []
 end
 
-Then(/^the result should be:$/) do |string|
-  @result.should == string
+Then(/^the bibliography should be:$/) do |string|
+  string.gsub!(/\n\s*/m, '') # strip newlines
+  @bibliography.join.should == string
 end

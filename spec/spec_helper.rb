@@ -27,3 +27,19 @@ require 'tempfile'
 
 require 'rspec'
 require 'citeproc'
+require 'citeproc/ruby'
+
+require 'csl'
+require 'csl/styles'
+
+module Fixtures
+	PATH = File.expand_path('../fixtures', __FILE__)
+
+	Dir[File.join(PATH, '*.rb')].each do |fixture|
+		require fixture
+	end
+end
+
+RSpec.configure do |config|
+  config.include(Fixtures)
+end

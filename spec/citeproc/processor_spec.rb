@@ -2,13 +2,15 @@ require 'spec_helper'
 
 module CiteProc
   describe Processor do
-    before { Class.new(Engine) }
-
     let(:p) { Processor.new }
+
     let(:palefire) { Item.new(:id => 'palefire', :type => :book, :title => 'Pale Fire') }
     let(:despair) { Item.new(:id => 'despair', :type => :book, :title => 'Despair') }
 
     it { should_not be nil }
+
+    it { p.engine.should_not be nil }
+    it { p.engine.name.should == 'citeproc-ruby' }
 
     describe '#register' do
 
@@ -85,7 +87,9 @@ module CiteProc
 
       describe 'when no items have been processed' do
 
-        it 'returns an empty bibliography'
+        it 'returns an empty bibliography' do
+          p.bibliography.should be_empty
+        end
 
         # it 'returns a bibliography of all registered items if invoked with :all'
 

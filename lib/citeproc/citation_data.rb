@@ -164,7 +164,12 @@ module CiteProc
 
     def each
       if block_given?
-        items.each(&Proc.new)
+        if sorted?
+          sorted_items.each(&Proc.new)
+        else
+          items.each(&Proc.new)
+        end
+
         self
       else
         to_enum
@@ -173,6 +178,15 @@ module CiteProc
 
     def processed?
       !!id
+    end
+
+    def sorted?
+      !sorted_items.empty?
+    end
+
+    def sort!(&block)
+      @sorted_items = items.sort(&block)
+      self
     end
 
     def index

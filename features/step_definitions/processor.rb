@@ -39,3 +39,7 @@ Then(/^the bibliography's options should match:$/) do |table|
   @bibliography.options.values_at(*headers).should == expected
 end
 
+Then(/^the result should be:$/) do |string|
+  @result.should == string
+end
+

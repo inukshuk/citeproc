@@ -6,14 +6,14 @@ module CiteProc
     def initialize(message, original = $!)
       @original = original
 			super(message)
-    end    
+    end
   end
-  
+
 	ParseError = Class.new(Error)
-		
+
   EngineError = Class.new(Error)
-  
+
   NotImplementedByEngine = Class.new(Error)
-  
+
   RenderingError = Class.new(Error)
 end

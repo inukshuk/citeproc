@@ -58,7 +58,8 @@ module CiteProc
 
     attr_accessor :data
 
-    def_delegators :@data, :suppressed?, :suppress!, :english?, :en?
+    def_delegators :@data, :suppressed?, :suppress!,
+      :language, :english?, :en?
 
     def initialize(attributes = nil)
       merge(attributes)

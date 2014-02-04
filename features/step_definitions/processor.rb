@@ -9,6 +9,11 @@ Given(/^the following input:$/) do |string|
   processor.import @input
 end
 
+Given(/^the following abbreviations:$/) do |string|
+  processor.abbreviations = JSON.parse(string)
+  processor.abbreviations[:default].should_not be_empty
+end
+
 When(/^I render the entire bibliography$/) do
   @bibliography = processor.bibliography
   @bibliography.errors.should == []
@@ -27,9 +32,14 @@ Then(/^the bibliography should be:$/) do |string|
   @bibliography.join.should == string
 end
 
+When(/^I cite the following items:$/) do |string|
+  @results = JSON.parse(string).map do |item|
+    processor.process(item)
+  end
+end
+
 When(/^I cite all items$/) do
-  items = Hash[@input.map { |i| ['id', i['id']] }]
-  @result = processor.process items
+  @result = processor.process @input.map { |i| { 'id' => i['id'] } }
 end
 
 Then(/^the bibliography's options should match:$/) do |table|
@@ -37,6 +47,10 @@ Then(/^the bibliography's options should match:$/) do |table|
   expected = table.rows[0]
 
   @bibliography.options.values_at(*headers).should == expected
+end
+
+Then(/^the results should be:$/) do |table|
+  @results.should == table.raw.map(&:first)
 end
 
 Then(/^the result should be:$/) do |string|

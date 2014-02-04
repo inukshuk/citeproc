@@ -10,7 +10,8 @@ module CiteProc
       :locale => 'en-US',
       :style  => 'chicago-author-date',
       :engine => 'citeproc-ruby',
-      :format => 'html'
+      :format => 'html',
+      :allow_locale_overrides => false
     }.freeze
 
     class << self

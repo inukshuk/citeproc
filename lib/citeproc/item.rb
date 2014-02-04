@@ -132,6 +132,20 @@ module CiteProc
       read_attribute name
     end
 
+    def language
+      unobservable_read_attribute(:language)
+    end
+
+    # An Item is interpreted as being English unless it has
+    # an attribute 'language' set to something other than 'en'.
+    #
+    # @return [Boolean] whether or not this is an English Item
+    def english?
+      lang = language
+      lang.nil? || lang == 'en'
+    end
+    alias en? english?
+
     # Calls a block once for each field in the item, passing the field's
     # name-value pair as parameters.
     #
@@ -154,7 +168,6 @@ module CiteProc
         to_enum
       end
     end
-
     alias each_pair each
 
     # Calls a block once for each field in the item, passing the field's

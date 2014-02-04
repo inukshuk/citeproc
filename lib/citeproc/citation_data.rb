@@ -8,6 +8,7 @@ module CiteProc
 
     extend Forwardable
     include Attributes
+    include Comparable
 
     @labels = [
       :book, :chapter, :column, :figure, :folio, :issue, :line, :note, :opus,
@@ -57,7 +58,7 @@ module CiteProc
 
     attr_accessor :data
 
-    def_delegators :@data, :suppressed?, :suppress!
+    def_delegators :@data, :suppressed?, :suppress!, :english?, :en?
 
     def initialize(attributes = nil)
       merge(attributes)
@@ -66,6 +67,11 @@ module CiteProc
 
     def initialize_copy(other)
       @attributes = other.attributes.deep_copy
+    end
+
+    def <=>(other)
+      return unless other.respond_to?(:data)
+      data <=> other.data
     end
 
     # @return [String] a human-readable representation of the citation item

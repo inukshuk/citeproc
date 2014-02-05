@@ -11,6 +11,7 @@ module CiteProc
       :style  => 'chicago-author-date',
       :engine => 'citeproc-ruby',
       :format => 'html',
+      :sort_case_sensitivity => false,
       :allow_locale_overrides => false
     }.freeze
 

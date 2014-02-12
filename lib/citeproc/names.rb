@@ -378,6 +378,7 @@ module CiteProc
     end
 
     def initials_of(string)
+      return unless string
       string = string.dup
 
       string.gsub!(/([[:upper:]])[^[:upper:]\s-]*\s*/, "\\1#{initialize_with}")
@@ -397,6 +398,7 @@ module CiteProc
     end
 
     def existing_initials_of(string)
+      return unless string
       string = string.dup
 
       string.gsub!(/([[:upper:]])([[:upper:]])/, '\1 \2')

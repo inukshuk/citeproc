@@ -24,7 +24,7 @@ module CiteProc
         (2..3).include?(arguments.length)
 
 			arguments.unshift(namespace || :default) if arguments.length < 3
-			@abbreviations.deep_fetch(*arguments)
+			abbreviations.deep_fetch(*arguments)
 		end
 		alias abbrev abbreviate
 

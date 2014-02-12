@@ -90,6 +90,7 @@ namespace :test do
     end
   end
 
+  desc 'Convert the processor tests to Cucumber features'
   task :convert => [:clear] do
     features = Dir['test/processor-tests/machines/*.json'].group_by { |path|
       File.basename(path).split(/_/, 2)[0]

@@ -22,7 +22,7 @@ Quickstart
 ----------
 Install CiteProc-Ruby and all official CSL styles (optional).
 
-    $ [sudo] gem install citeproc
+    $ [sudo] gem install citeproc-ruby
     $ [sudo] gem install csl-styles
 
 Start rendering you references with any CSL style!
@@ -75,7 +75,7 @@ Start rendering you references with any CSL style!
     # Note that we have picked 'text' as the output format;
     # if we want to make us of richer output formats we
     # can switch to HTML instead:
-    cp.engine.renderer.format = 'html'
+    cp.engine.format = 'html'
 
     cp.render :bibliography, id: 'knuth'
     #-> Knuth, Donald. (1968). <i>The art of computer programming</i> (Vol. 1). Boston: Addison-Wesley.

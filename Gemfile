@@ -23,8 +23,8 @@ group :optional do
 
   gem 'unicode', '~>0.4', :platforms => [:ruby, :mswin, :mingw]
 
-  gem 'citeproc-ruby', :git => 'https://github.com/inukshuk/citeproc-ruby.git'
-  gem 'csl', :git => 'https://github.com/inukshuk/csl-ruby.git'
+  gem 'citeproc-ruby', :github => 'inukshuk/citeproc-ruby'
+  #gem 'csl', :github => 'inukshuk/csl-ruby'
 end
 
 group :development do

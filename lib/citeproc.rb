@@ -13,6 +13,12 @@ require 'citeproc/version'
 # CiteProc processes bibliographic data and formats it according to a style
 # defined in CSL (Citation Style Language).
 #
+# @author Sylvester Keil
+#
+# Copyright 2009-2014 Sylvester Keil. All rights reserved.
+#
+# Copyright 2012 President and Fellows of Harvard College.
+#
 module CiteProc
 
   module Converters

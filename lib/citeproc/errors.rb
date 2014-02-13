@@ -9,11 +9,12 @@ module CiteProc
     end
   end
 
-	ParseError = Class.new(Error)
+  class ParseError < Error; end
 
-  EngineError = Class.new(Error)
+  class EngineError < Error; end
 
-  NotImplementedByEngine = Class.new(Error)
+  class NotImplementedError < Error; end
 
-  RenderingError = Class.new(Error)
+  class RenderingError < Error; end
+
 end

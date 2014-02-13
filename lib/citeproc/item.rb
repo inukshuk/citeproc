@@ -90,8 +90,8 @@ module CiteProc
     # If given, number is added as the item's
     # citation-number variable.
     #
-    # @params [Fixnum] number the item's citation-number
-    # @returns [CitationItem] a citation item for this item
+    # @param number [Fixnum] the item's citation-number
+    # @return [CitationItem] a citation item for this item
     def cite(number = nil)
       CitationItem.new :id => id do |c|
         c.data = dup

@@ -97,8 +97,16 @@ module CiteProc
       engine.append(CitationData.new(arguments.flatten(1)))
     end
 
-    def bibliography(*arguments, &block)
-      engine.bibliography(Selector.new(*arguments, &block))
+    # Generates a bibliography for all items matching the passed-in
+    # selector conditions or block.
+    # 
+    # @example
+    #   processor.bibliography all: { type: 'book' }
+    #   #-> renders bibliography for all books 
+    #
+    # @return [Bibliography] the bibliography
+    def bibliography(attributes = nil, &block)
+      engine.bibliography(Selector.new(attributes, &block))
     end
 
     def render(mode, *arguments)

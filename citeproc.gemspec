@@ -4,13 +4,6 @@ $:.unshift lib unless $:.include?(lib)
 
 require 'citeproc/version'
 
-EXCLUDES = %w{
-  .coveralls.yml
-  .gitignore
-  .travis.yml
-  citeproc.gemspec
-}
-
 Gem::Specification.new do |s|
   s.name        = 'citeproc'
   s.version     = CiteProc::VERSION.dup
@@ -33,7 +26,13 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency('namae', '~>0.8')
 
-  s.files        = `git ls-files`.split("\n") - EXCLUDES
+  s.files        = `git ls-files`.split("\n") - %w{
+    .coveralls.yml
+    .gitignore
+    .travis.yml
+    citeproc.gemspec
+  }
+
   s.test_files   = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables  = []
   s.require_path = 'lib'

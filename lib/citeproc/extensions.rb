@@ -104,7 +104,7 @@ class Hash
   warn "citeproc: re-defining Hash#deep_copy, this may cause conflicts with other libraries" if method_defined?(:deep_copy)
   include CiteProc::Extensions::DeepCopy
 
-  warn "citeproc: re-defining Hash#deep_copy, this may cause conflicts with other libraries" if method_defined?(:deep_fetch)
+  warn "citeproc: re-defining Hash#deep_fetch, this may cause conflicts with other libraries" if method_defined?(:deep_fetch)
   include CiteProc::Extensions::DeepFetch
 
   include CiteProc::Extensions::SymbolizeKeys unless method_defined?(:symbolize_keys)

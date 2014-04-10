@@ -26,6 +26,11 @@ module CiteProc
     end
     
     describe '#abbreviate' do
+      it 'looks up abbreviations in the default namespace by default' do
+        subject.abbreviate(:title, 'foo').should == nil
+        subject.abbreviations[:default][:title] = { 'foo' => 'bar' }
+        subject.abbreviate(:title, 'foo').should == 'bar'
+      end
     end
     
   end

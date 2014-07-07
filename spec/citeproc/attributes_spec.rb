@@ -33,18 +33,18 @@ module CiteProc
       end
     
       it 'generates no other setters' do
-        lambda { A.new.some_other_value }.should raise_error
+        expect { A.new.some_other_value }.to raise_error
       end
     end
   
     describe '#merge' do    
     
       it 'merges non-existent values from other object' do
-        A.new.merge(other)[:foo].should == 'bar'
+        expect(A.new.merge(other)[:foo]).to eq('bar')
       end
     
       it 'does not overwrite existing values when merging other object' do
-        instance.merge(other)[:bar].should == 'foo'
+        expect(instance.merge(other)[:bar]).to eq('foo')
       end
     
     end

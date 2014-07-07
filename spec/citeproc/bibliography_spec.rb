@@ -10,29 +10,29 @@ module CiteProc
     describe '#to_citeproc conversion' do
 
       it 'returns an array' do
-        subject.to_citeproc.should be_a(Array)
+        expect(subject.to_citeproc).to be_a(Array)
       end
 
       it 'returns exactly two elements' do
-        subject.to_citeproc.should have(2).elements
+        expect(subject.to_citeproc.size).to eq(2)
       end
 
       it 'returns formatting options as the first element' do
-        subject.to_citeproc.first.should be_a(Hash)
+        expect(subject.to_citeproc.first).to be_a(Hash)
       end
 
       describe 'the formatting options' do
         let(:options) { subject.to_citeproc[0] }
 
         it 'contains a the error list' do
-          options.should have_key('bibliography_errors')
-          options['bibliography_errors'].should be_empty
+          expect(options).to have_key('bibliography_errors')
+          expect(options['bibliography_errors']).to be_empty
         end
 
       end
 
       it 'returns the list of references as the second element' do
-        subject.to_citeproc.last.should be_a(Array)
+        expect(subject.to_citeproc.last).to be_a(Array)
       end
 
     end
@@ -59,10 +59,10 @@ module CiteProc
 
       it 'parses citeproc/json strings' do
         b = Bibliography.create!(js)
-        b.should be_a(Bibliography)
-        b.should have(2).references
-        b.should_not have_errors
-        b.options[:'second-field-align'].should be true
+        expect(b).to be_a(Bibliography)
+        expect(b.references.size).to eq(2)
+        expect(b).not_to have_errors
+        expect(b.options[:'second-field-align']).to be true
       end
 
     end

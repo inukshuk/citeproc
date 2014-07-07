@@ -4,14 +4,14 @@ module CiteProc
   describe Engine do
 
     it 'cannot be instantiated' do
-      lambda { Engine.new }.should raise_error(NoMethodError)
+      expect { Engine.new }.to raise_error(NoMethodError)
     end
 
     describe 'subclasses' do
       let(:subject) { Class.new(Engine).new }
 
       it 'can be instantiated' do
-        subject.should_not be nil
+        expect(subject).not_to be nil
       end
     end
 

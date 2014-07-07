@@ -75,44 +75,44 @@ module CiteProc
       describe 'formatting options' do
 
         it 'does not always demote particle by default' do
-          Name.new.always_demote_particle?.should be false
-          Name.new.always_demote_non_dropping_particle?.should be false
+          expect(Name.new.always_demote_particle?).to be false
+          expect(Name.new.always_demote_non_dropping_particle?).to be false
         end
 
         it 'does not demote particle by default' do
-          Name.new.demote_particle?.should be false
-          Name.new.demote_non_dropping_particle?.should be false
+          expect(Name.new.demote_particle?).to be false
+          expect(Name.new.demote_non_dropping_particle?).to be false
         end
 
         it 'does not demote particle in sort order by default' do
-          Name.new.sort_order!.demote_particle?.should be false
-          Name.new.sort_order!.demote_non_dropping_particle?.should be false
+          expect(Name.new.sort_order!.demote_particle?).to be false
+          expect(Name.new.sort_order!.demote_non_dropping_particle?).to be false
         end
 
         it 'always demotes particle if option is set' do
-          Name.new({}, :'demote-non-dropping-particle' => 'display-and-sort').always_demote_particle?.should be true
-          Name.new({}, :'demote-non-dropping-particle' => 'display-and-sort').always_demote_non_dropping_particle?.should be true
+          expect(Name.new({}, :'demote-non-dropping-particle' => 'display-and-sort').always_demote_particle?).to be true
+          expect(Name.new({}, :'demote-non-dropping-particle' => 'display-and-sort').always_demote_non_dropping_particle?).to be true
         end
 
         it 'demotes particle in sort order if option is set to sort-only' do
-          Name.new({}, :'demote-non-dropping-particle' => 'display-and-sort').sort_order!.demote_particle?.should be true
+          expect(Name.new({}, :'demote-non-dropping-particle' => 'display-and-sort').sort_order!.demote_particle?).to be true
         end
 
         it 'never demotes particle by default' do
-          Name.new.never_demote_particle?.should be true
-          Name.new.never_demote_non_dropping_particle?.should be true
+          expect(Name.new.never_demote_particle?).to be true
+          expect(Name.new.never_demote_non_dropping_particle?).to be true
         end
 
         it 'is not in sort order by default' do
-          Name.new.sort_order?.should be false
+          expect(Name.new.sort_order?).to be false
         end
 
         it 'uses the long form by default' do
-          Name.new.should be_long_form
+          expect(Name.new).to be_long_form
         end
 
         it 'does not use short form by default' do
-          Name.new.should_not be_short_form
+          expect(Name.new).not_to be_short_form
         end
 
       end
@@ -122,41 +122,41 @@ module CiteProc
 
         it 'returns the given name initials' do
           name.given = 'Edgar A'
-          name.initials.should == 'E. A.'
+          expect(name.initials).to eq('E. A.')
 
           name.options[:initialize] = 'false'
-          name.initials.should == 'Edgar A.'
+          expect(name.initials).to eq('Edgar A.')
         end
 
         describe 'private helpers' do
           it '#initials_of initializes the given string' do
-            name.send(:initials_of, 'James T.').should == 'J. T.'
-            name.send(:initials_of, 'JT').should == 'J. T.'
-            name.send(:initials_of, 'James T').should == 'J. T.'
-            name.send(:initials_of, 'Jean-Luc').should == 'J.-L.'
-            name.send(:initials_of, 'Vérité Äpfel').should == 'V. Ä.'
+            expect(name.send(:initials_of, 'James T.')).to eq('J. T.')
+            expect(name.send(:initials_of, 'JT')).to eq('J. T.')
+            expect(name.send(:initials_of, 'James T')).to eq('J. T.')
+            expect(name.send(:initials_of, 'Jean-Luc')).to eq('J.-L.')
+            expect(name.send(:initials_of, 'Vérité Äpfel')).to eq('V. Ä.')
 
             name.initialize_without_hyphen!
-            name.send(:initials_of, 'Jean-Luc').should == 'J. L.'
+            expect(name.send(:initials_of, 'Jean-Luc')).to eq('J. L.')
 
             name.options[:'initialize-with'] = '.'
-            name.send(:initials_of, 'James T.').should == 'J.T.'
-            name.send(:initials_of, 'James T').should == 'J.T.'
-            name.send(:initials_of, 'Jean-Luc').should == 'J.L.'
+            expect(name.send(:initials_of, 'James T.')).to eq('J.T.')
+            expect(name.send(:initials_of, 'James T')).to eq('J.T.')
+            expect(name.send(:initials_of, 'Jean-Luc')).to eq('J.L.')
 
             name.options[:'initialize-with-hyphen'] = true
-            name.send(:initials_of, 'Jean-Luc').should == 'J.-L.'
+            expect(name.send(:initials_of, 'Jean-Luc')).to eq('J.-L.')
           end
 
           it '#initialize_existing_only initializes only current initials' do
-            name.send(:existing_initials_of, 'James T. Kirk').should == 'James T. Kirk'
-            name.send(:existing_initials_of, 'James T.Kirk').should == 'James T. Kirk'
-            name.send(:existing_initials_of, 'James T').should == 'James T.'
-            name.send(:existing_initials_of, 'Jean-Luc').should == 'Jean-Luc'
-            name.send(:existing_initials_of, 'J.-L.M.').should == 'J.-L. M.'
-            name.send(:existing_initials_of, 'J-L').should == 'J.-L.'
-            name.send(:existing_initials_of, 'J-LM').should == 'J.-L. M.'
-            name.send(:existing_initials_of, 'JT').should == 'J. T.'
+            expect(name.send(:existing_initials_of, 'James T. Kirk')).to eq('James T. Kirk')
+            expect(name.send(:existing_initials_of, 'James T.Kirk')).to eq('James T. Kirk')
+            expect(name.send(:existing_initials_of, 'James T')).to eq('James T.')
+            expect(name.send(:existing_initials_of, 'Jean-Luc')).to eq('Jean-Luc')
+            expect(name.send(:existing_initials_of, 'J.-L.M.')).to eq('J.-L. M.')
+            expect(name.send(:existing_initials_of, 'J-L')).to eq('J.-L.')
+            expect(name.send(:existing_initials_of, 'J-LM')).to eq('J.-L. M.')
+            expect(name.send(:existing_initials_of, 'JT')).to eq('J. T.')
           end
         end
       end
@@ -166,11 +166,11 @@ module CiteProc
         describe '.new' do
 
           it 'accepts a symbolized hash' do
-            Name.new(:family => 'Doe').format.should == 'Doe'
+            expect(Name.new(:family => 'Doe').format).to eq('Doe')
           end
 
           it 'accepts a stringified hash' do
-            Name.new('family' => 'Doe').format.should == 'Doe'
+            expect(Name.new('family' => 'Doe').format).to eq('Doe')
           end
 
         end
@@ -180,7 +180,7 @@ module CiteProc
       describe '#dup' do
 
         it 'returns a new name copied by value' do
-          poe.dup.upcase!.format.should_not == poe.format
+          expect(poe.dup.upcase!.format).not_to eq(poe.format)
         end
 
       end
@@ -188,31 +188,31 @@ module CiteProc
       describe 'script awareness' do
 
         it 'english names are romanesque' do
-          frank.should be_romanesque
+          expect(frank).to be_romanesque
         end
 
         it 'ancient greek names are romanesque' do
-          aristotle.should be_romanesque
+          expect(aristotle).to be_romanesque
         end
 
         it 'russian names are romanesque' do
-          dostoyevksy.should be_romanesque
+          expect(dostoyevksy).to be_romanesque
         end
 
         it 'japanese names are not romanesque' do
-          japanese.should_not be_romanesque
+          expect(japanese).not_to be_romanesque
         end
 
         it 'german names are romanesque' do
-          Name.new(:given => 'Friedrich', :family => 'Hölderlin').should be_romanesque
+          expect(Name.new(:given => 'Friedrich', :family => 'Hölderlin')).to be_romanesque
         end
 
         it 'french names are romanesque' do
-          utf.should be_romanesque
+          expect(utf).to be_romanesque
         end
 
         it 'markup does not interfere with romanesque test' do
-          markup.should be_romanesque
+          expect(markup).to be_romanesque
         end
 
       end
@@ -220,15 +220,15 @@ module CiteProc
       describe 'literals' do
 
         it 'is a literal if the literal attribute is set' do
-          Name.new(:literal => 'GNU/Linux').should be_literal
+          expect(Name.new(:literal => 'GNU/Linux')).to be_literal
         end
 
         it 'is not literal by default' do
-          Name.new.should_not be_literal
+          expect(Name.new).not_to be_literal
         end
 
         it 'is literal even if other name parts are set' do
-          Name.new(:family => 'Tux', :literal => 'GNU/Linux').should be_literal
+          expect(Name.new(:family => 'Tux', :literal => 'GNU/Linux')).to be_literal
         end
 
       end
@@ -236,27 +236,27 @@ module CiteProc
       describe 'in-place manipulation (bang! methods)' do
 
         it 'delegates to string for family name' do
-          plato.swapcase!.format.should == 'pLATO'
+          expect(plato.swapcase!.format).to eq('pLATO')
         end
 
         it 'delegates to string for given name' do
-          humboldt.gsub!(/^Alex\w*/, 'Wilhelm').format.should == 'Wilhelm von Humboldt'
+          expect(humboldt.gsub!(/^Alex\w*/, 'Wilhelm').format).to eq('Wilhelm von Humboldt')
         end
 
         it 'delegates to string for dropping particle' do
-          humboldt.upcase!.dropping_particle.should == 'VON'
+          expect(humboldt.upcase!.dropping_particle).to eq('VON')
         end
 
         it 'delegates to string for non dropping particle' do
-          van_gogh.upcase!.non_dropping_particle.should == 'VAN'
+          expect(van_gogh.upcase!.non_dropping_particle).to eq('VAN')
         end
 
         it 'delegates to string for suffix' do
-          frank.sub!(/jr./i, 'Sr.').format.should == 'Frank G. Bennett, Sr.'
+          expect(frank.sub!(/jr./i, 'Sr.').format).to eq('Frank G. Bennett, Sr.')
         end
 
         it 'returns the name object' do
-          poe.upcase!.should be_a(Name)
+          expect(poe.upcase!).to be_a(Name)
         end
 
       end
@@ -265,19 +265,19 @@ module CiteProc
       describe '#format' do
 
         it 'returns an empty string by default' do
-          Name.new.format.should be_empty
+          expect(Name.new.format).to be_empty
         end
 
         it 'returns the last name if only last name is set' do
-          Name.new(:family => 'Doe').format.should == 'Doe'
+          expect(Name.new(:family => 'Doe').format).to eq('Doe')
         end
 
         it 'returns the first name if only the first name is set' do
-          Name.new(:given => 'John').format.should == 'John'
+          expect(Name.new(:given => 'John').format).to eq('John')
         end
 
         it 'prints japanese names using static ordering' do
-          japanese.format.should == '穂積 陳重'
+          expect(japanese.format).to eq('穂積 陳重')
         end
 
         it 'returns the literal if the name is a literal' do
@@ -285,45 +285,45 @@ module CiteProc
         end
 
         it 'returns the name in display order by default' do
-          Name.new(:family => 'Doe', :given => 'John').format.should == 'John Doe'
+          expect(Name.new(:family => 'Doe', :given => 'John').format).to eq('John Doe')
         end
 
         it 'returns the name in sort order if the sort order option is active' do
-          Name.new(:family => 'Doe', :given => 'John').sort_order!.format.should == 'Doe, John'
+          expect(Name.new(:family => 'Doe', :given => 'John').sort_order!.format).to eq('Doe, John')
         end
 
         it 'returns the full given name' do
-          saunders.format.should == 'John Bertrand de Cusance Morant Saunders'
+          expect(saunders.format).to eq('John Bertrand de Cusance Morant Saunders')
         end
 
         it 'includes dropping particles' do
-          humboldt.format.should == 'Alexander von Humboldt'
+          expect(humboldt.format).to eq('Alexander von Humboldt')
         end
 
         it 'includes non dropping particles' do
-          van_gogh.format.should == 'Vincent van Gogh'
+          expect(van_gogh.format).to eq('Vincent van Gogh')
         end
 
         it 'includes suffices' do
-          jr.format.should == 'James Stephens Jr.'
+          expect(jr.format).to eq('James Stephens Jr.')
         end
 
         it 'uses the comma suffix option' do
-          frank.format.should == 'Frank G. Bennett, Jr.'
+          expect(frank.format).to eq('Frank G. Bennett, Jr.')
         end
 
         it 'prints unicode characters' do
-          utf.format.should == "Gérard de la Martinière III"
+          expect(utf.format).to eq("Gérard de la Martinière III")
         end
 
         it 'prints russian names normally' do
-          dostoyevksy.format.should == 'Фёдор Михайлович Достоевский'
+          expect(dostoyevksy.format).to eq('Фёдор Михайлович Достоевский')
         end
 
         describe 'when static ordering is active' do
 
           it 'always prints the family name first' do
-            poe.static_order!.format.should == 'Poe Edgar Allen'
+            expect(poe.static_order!.format).to eq('Poe Edgar Allen')
           end
 
         end
@@ -331,19 +331,19 @@ module CiteProc
         describe 'when the sort order option is active' do
 
           it 'returns an empty string by default' do
-            Name.new.sort_order!.format.should be_empty
+            expect(Name.new.sort_order!.format).to be_empty
           end
 
           it 'returns the last name if only last name is set' do
-            Name.new({:family => 'Doe'}, { :'name-as-sort-order' => true }).format.should == 'Doe'
+            expect(Name.new({:family => 'Doe'}, { :'name-as-sort-order' => true }).format).to eq('Doe')
           end
 
           it 'returns the first name if only the first name is set' do
-            Name.new(:given => 'John').sort_order!.format.should == 'John'
+            expect(Name.new(:given => 'John').sort_order!.format).to eq('John')
           end
 
           it 'prints japanese names using static ordering' do
-            japanese.sort_order!.format.should == '穂積 陳重'
+            expect(japanese.sort_order!.format).to eq('穂積 陳重')
           end
 
           it 'returns the literal if the name is a literal' do
@@ -351,31 +351,31 @@ module CiteProc
           end
 
           it 'uses comma for suffix if comma suffix is set' do
-            frank.sort_order!.format.should == 'Bennett, Frank G., Jr.'
+            expect(frank.sort_order!.format).to eq('Bennett, Frank G., Jr.')
           end
 
           it 'also uses comma for suffix if comma suffix is *not* set' do
-            jr.sort_order!.format.should == 'Stephens, James, Jr.'
+            expect(jr.sort_order!.format).to eq('Stephens, James, Jr.')
           end
 
           it 'for normal names it prints them as "family, given"' do
-            poe.sort_order!.format.should == 'Poe, Edgar Allen'
+            expect(poe.sort_order!.format).to eq('Poe, Edgar Allen')
           end
 
           it 'particles come after given name by default' do
-            van_gogh.sort_order!.format.should == 'van Gogh, Vincent'
+            expect(van_gogh.sort_order!.format).to eq('van Gogh, Vincent')
           end
 
           it 'particles come after given name if demote option is active' do
-            van_gogh.sort_order!.demote_particle!.format.should == 'Gogh, Vincent van'
+            expect(van_gogh.sort_order!.demote_particle!.format).to eq('Gogh, Vincent van')
           end
 
           it 'dropping particles come after given name' do
-            humboldt.sort_order!.format.should == 'Humboldt, Alexander von'
+            expect(humboldt.sort_order!.format).to eq('Humboldt, Alexander von')
           end
 
           it 'by default if all parts are set they are returned as "particle family, first dropping-particle, suffix"' do
-            utf.sort_order!.format.should == 'la Martinière, Gérard de, III'
+            expect(utf.sort_order!.format).to eq('la Martinière, Gérard de, III')
           end
 
         end
@@ -385,52 +385,52 @@ module CiteProc
       describe '#sort_order' do
 
         it 'returns only a single token for literal names' do
-          Name.new(:literal => 'ACME Corp.').sort_order.should have(1).element
+          expect(Name.new(:literal => 'ACME Corp.').sort_order.size).to eq(1)
         end
 
         it 'strips leading "the" off literal names' do
-          Name.new(:literal => 'The ACME Corp.').sort_order[0].should == 'ACME Corp.'
+          expect(Name.new(:literal => 'The ACME Corp.').sort_order[0]).to eq('ACME Corp.')
         end
 
         it 'strips leading "a" off literal names' do
-          Name.new(:literal => 'A Company').sort_order[0].should == 'Company'
+          expect(Name.new(:literal => 'A Company').sort_order[0]).to eq('Company')
         end
 
         it 'strips leading "an" off literal names' do
-          Name.new(:literal => 'an ACME Corp.').sort_order[0].should == 'ACME Corp.'
+          expect(Name.new(:literal => 'an ACME Corp.').sort_order[0]).to eq('ACME Corp.')
         end
 
         it 'strips leading "l\'" off literal names' do
-          Name.new(:literal => "L'Augustine").sort_order[0].should == 'Augustine'
+          expect(Name.new(:literal => "L'Augustine").sort_order[0]).to eq('Augustine')
         end
 
         it 'always returns four tokens for non literal names' do
-          poe.sort_order.should have(4).elements
-          joe.sort_order.should have(4).elements
-          aristotle.sort_order.should have(4).elements
-          utf.sort_order.should have(4).elements
-          frank.sort_order.should have(4).elements
-          japanese.sort_order.should have(4).elements
+          expect(poe.sort_order.size).to eq(4)
+          expect(joe.sort_order.size).to eq(4)
+          expect(aristotle.sort_order.size).to eq(4)
+          expect(utf.sort_order.size).to eq(4)
+          expect(frank.sort_order.size).to eq(4)
+          expect(japanese.sort_order.size).to eq(4)
         end
 
         it 'demotes non dropping particles if option is set' do
-          van_gogh.demote_particle!.sort_order.should == ['Gogh', 'van', 'Vincent', '']
+          expect(van_gogh.demote_particle!.sort_order).to eq(['Gogh', 'van', 'Vincent', ''])
         end
 
         it 'does not demote non dropping particles by default' do
-          van_gogh.sort_order.should == ['van Gogh', '', 'Vincent', '']
+          expect(van_gogh.sort_order).to eq(['van Gogh', '', 'Vincent', ''])
         end
 
         it 'does not demote non dropping particles by default but dropping particles are demoted' do
-          utf.sort_order.should == ['la Martinière', 'de', 'Gérard', 'III']
+          expect(utf.sort_order).to eq(['la Martinière', 'de', 'Gérard', 'III'])
         end
 
         it 'demotes dropping particles' do
-          humboldt.sort_order.should == ['Humboldt', 'von', 'Alexander', '']
+          expect(humboldt.sort_order).to eq(['Humboldt', 'von', 'Alexander', ''])
         end
 
         it 'combines non dropping particles with family name if option demote-non-dropping-particles is not active' do
-          van_gogh.never_demote_particle!.sort_order.should == ['van Gogh', '', 'Vincent', '']
+          expect(van_gogh.never_demote_particle!.sort_order).to eq(['van Gogh', '', 'Vincent', ''])
         end
 
       end
@@ -438,7 +438,7 @@ module CiteProc
       describe 'sorting' do
 
         it 'sorts by sort order by default' do
-          [poe, utf, joe, plato].sort.should == [joe, plato, utf, poe]
+          expect([poe, utf, joe, plato].sort).to eq([joe, plato, utf, poe])
         end
 
       end
@@ -458,43 +458,43 @@ module CiteProc
       describe 'constructing' do
 
         it 'accepts a single name' do
-          lambda { Names.new(joe) }.should_not raise_error
+          expect { Names.new(joe) }.not_to raise_error
         end
 
         it 'accepts a single name as hash' do
-          Names.new(:given => 'Jim').should have(1).names
+          expect(Names.new(:given => 'Jim').names.size).to eq(1)
         end
 
         it 'accepts two names' do
-          Names.new(joe, poe).should have(2).names
+          expect(Names.new(joe, poe).names.size).to eq(2)
         end
 
         it 'accepts two names as hash' do
-          Names.new({:given => 'Jim'}, {:family => 'Jameson'}).should have(2).names
+          expect(Names.new({:given => 'Jim'}, {:family => 'Jameson'}).names.size).to eq(2)
         end
 
         it 'accepts an array of names' do
-          Names.new([joe, poe]).should have(2).names
+          expect(Names.new([joe, poe]).names.size).to eq(2)
         end
 
       end
 
       describe 'parsing' do
         it 'accepts a single name as a string' do
-          Names.parse('Edgar A. Poe').should have(1).names
+          expect(Names.parse('Edgar A. Poe').names.size).to eq(1)
         end
 
         it 'accepts multiple names as a string' do
-          Names.parse('Edgar A. Poe and Hawthorne, Nathaniel and Herman Melville').should have(3).names
+          expect(Names.parse('Edgar A. Poe and Hawthorne, Nathaniel and Herman Melville').names.size).to eq(3)
         end
 
         it 'parses the passed-in family names' do
-          Names.parse('Edgar A. Poe and Hawthorne, Nathaniel and Herman Melville').map { |n|
-            n.values_at(:family) }.flatten.should == %w{ Poe Hawthorne Melville }
+          expect(Names.parse('Edgar A. Poe and Hawthorne, Nathaniel and Herman Melville').map { |n|
+            n.values_at(:family) }.flatten).to eq(%w{ Poe Hawthorne Melville })
         end
 
         it '#parse returns nil on error' do
-          Names.parse(23).should be_nil
+          expect(Names.parse(23)).to be_nil
         end
 
         it '#parse! raises an error on bad input' do
@@ -506,11 +506,11 @@ module CiteProc
       describe '#strip_markup' do
 
         it 'strips markup off string representation' do
-          Names.new(markup).strip_markup.should == utf.to_s
+          expect(Names.new(markup).strip_markup).to eq(utf.to_s)
         end
 
         it 'when using the bang! version, strips markup off each name part' do
-          Names.new(markup).strip_markup![0].should == utf
+          expect(Names.new(markup).strip_markup![0]).to eq(utf)
         end
 
 
@@ -518,7 +518,7 @@ module CiteProc
 
       describe 'bang! methods' do
         it 'delegate to the individual names and return self' do
-          Names.new(poe, plato, joe).upcase!.map(&:given).should == ['EDGAR ALLEN', 'PLATO', 'JOE']
+          expect(Names.new(poe, plato, joe).upcase!.map(&:given)).to eq(['EDGAR ALLEN', 'PLATO', 'JOE'])
         end
       end
 
@@ -528,34 +528,34 @@ module CiteProc
 
         describe "##{setter}" do
           it 'sets the delimiter precedes last option accordingly' do
-            Names.new.send(setter).send(predicate).should == true
+            expect(Names.new.send(setter).send(predicate)).to eq(true)
           end
         end
       end
 
       describe '#delimiter_precedes_last' do
         it 'returns false by default' do
-          Names.new(joe).should_not be_delimiter_precedes_last
+          expect(Names.new(joe)).not_to be_delimiter_precedes_last
         end
 
         it 'returns false by default for a single name' do
-          Names.new(joe).should_not be_delimiter_precedes_last
+          expect(Names.new(joe)).not_to be_delimiter_precedes_last
         end
 
         it 'returns false by default for two names' do
-          Names.new(joe, poe).should_not be_delimiter_precedes_last
+          expect(Names.new(joe, poe)).not_to be_delimiter_precedes_last
         end
 
         it 'returns true for two names when option set to always' do
-          Names.new(joe, poe).delimiter_always_precedes_last!.should be_delimiter_precedes_last
+          expect(Names.new(joe, poe).delimiter_always_precedes_last!).to be_delimiter_precedes_last
         end
 
         it 'returns true by default for three names' do
-          Names.new(joe, poe, plato).should be_delimiter_precedes_last
+          expect(Names.new(joe, poe, plato)).to be_delimiter_precedes_last
         end
 
         it 'returns false for three names when option set to :never' do
-          Names.new(joe, poe, plato).delimiter_never_precedes_last!.should_not be_delimiter_precedes_last
+          expect(Names.new(joe, poe, plato).delimiter_never_precedes_last!).not_to be_delimiter_precedes_last
         end
       end
 
@@ -563,13 +563,13 @@ module CiteProc
 
         describe 'when there is only a single name' do
           it 'prints the name in sort order' do
-            Names.new(poe).to_bibtex.should == 'Poe, Edgar Allen'
+            expect(Names.new(poe).to_bibtex).to eq('Poe, Edgar Allen')
           end
         end
 
         describe 'when there are two or more names' do
           it 'prints the names in sort order connected with the word "and"' do
-            Names.new(poe, plato, humboldt).to_bibtex.should == 'Poe, Edgar Allen and Plato and Humboldt, Alexander von'
+            expect(Names.new(poe, plato, humboldt).to_bibtex).to eq('Poe, Edgar Allen and Plato and Humboldt, Alexander von')
           end
         end
 
@@ -585,57 +585,57 @@ module CiteProc
           end
 
           it 'prints only the et-al-use-first names' do
-            gang_of_four.to_s.should match(/gamma.+helm/i)
-            gang_of_four.to_s.should_not match(/johnson|vlissides/i)
+            expect(gang_of_four.to_s).to match(/gamma.+helm/i)
+            expect(gang_of_four.to_s).not_to match(/johnson|vlissides/i)
           end
 
           it 'adds et-al at the end' do
-            gang_of_four.to_s.should end_with('FOO')
+            expect(gang_of_four.to_s).to end_with('FOO')
           end
 
           it 'adds the delimiter before et-al when multiple names are printed' do
-            gang_of_four.to_s.should end_with(', FOO')
+            expect(gang_of_four.to_s).to end_with(', FOO')
           end
 
           it 'does not add the delimiter before et-al when only one name is printed' do
             gang_of_four.options[:'et-al-use-first'] = 1
-            gang_of_four.to_s.should_not end_with(', FOO')
+            expect(gang_of_four.to_s).not_to end_with(', FOO')
           end
 
         end
 
         it 'squeezes multiple whitespace between delimiter and connector' do
-          Names.new(poe, humboldt, van_gogh, joe).to_s.should_not match(/\s{2}/)
+          expect(Names.new(poe, humboldt, van_gogh, joe).to_s).not_to match(/\s{2}/)
         end
       end
 
       describe '#each' do
         it 'returns an enumerator when no block given' do
-          gang_of_four.each.should respond_to(:each)
+          expect(gang_of_four.each).to respond_to(:each)
         end
       end
 
       describe '#to_citeproc' do
         it 'returns a list of hashes' do
-          gang_of_four.to_citeproc.map(&:class).uniq.should == [Hash]
+          expect(gang_of_four.to_citeproc.map(&:class).uniq).to eq([Hash])
         end
       end
 
       describe 'sorting' do
         it 'accepts other Names instance' do
-          (Names.new(poe, plato) <=> Names.new(plato)).should equal(1)
-          (Names.new(plato) <=> Names.new(poe, plato)).should equal(-1)
+          expect(Names.new(poe, plato) <=> Names.new(plato)).to equal(1)
+          expect(Names.new(plato) <=> Names.new(poe, plato)).to equal(-1)
         end
 
         it 'accepts other list of names' do
-          (Names.new(poe, plato) <=> [plato]).should equal(1)
-          (Names.new(plato) <=> [poe, plato]).should equal(-1)
+          expect(Names.new(poe, plato) <=> [plato]).to equal(1)
+          expect(Names.new(plato) <=> [poe, plato]).to equal(-1)
         end
       end
 
       describe '#inspect' do
         it 'returns a string' do
-          gang_of_four.inspect.should be_a(String)
+          expect(gang_of_four.inspect).to be_a(String)
         end
       end
 

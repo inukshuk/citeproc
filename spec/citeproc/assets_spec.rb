@@ -30,40 +30,40 @@ module CiteProc
 			end
 
 			it 'should not be open by default' do
-				Style.new.should_not be_open
+				expect(Style.new).not_to be_open
 			end
 			
 			describe '.open' do  
 
 				it 'accepts an absolute file name' do
-					Style.open(@file.path).to_s.should == "asset content\n"
+					expect(Style.open(@file.path).to_s).to eq("asset content\n")
 				end
 
 				it 'accepts a file name' do
-					Style.open(@name).to_s.should == "asset content\n"
+					expect(Style.open(@name).to_s).to eq("asset content\n")
 				end
 
 				it 'accepts a file name without extension' do
-					Style.open(@name.sub(/#{@extension}$/,'')).to_s.should == "asset content\n"
+					expect(Style.open(@name.sub(/#{@extension}$/,'')).to_s).to eq("asset content\n")
 				end
 
 
 				it 'accepts an io object' do
-					Style.open(@file.open).to_s.should == "asset content\n"
+					expect(Style.open(@file.open).to_s).to eq("asset content\n")
 				end
 
 				it 'returns the given string if it looks like XML' do
-					Style.open('<b>foo bar!</b>').to_s.should == '<b>foo bar!</b>'
+					expect(Style.open('<b>foo bar!</b>').to_s).to eq('<b>foo bar!</b>')
 				end
 			end
 
       describe '.extend_name' do
         it 'adds the default extension if the file does not already end with it' do
-          Style.extend_name(@name.sub(/#{@extension}$/,'')).should == @name
+          expect(Style.extend_name(@name.sub(/#{@extension}$/,''))).to eq(@name)
         end
         
         it 'does not add the default extension if the file already ends with it' do
-          Style.extend_name(@name).should == @name
+          expect(Style.extend_name(@name)).to eq(@name)
         end
       end
       

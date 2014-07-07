@@ -9,8 +9,8 @@ module CiteProc
 
     it { should_not be nil }
 
-    it { p.engine.should_not be nil }
-    it { p.engine.name.should == 'citeproc-ruby' }
+    it { expect(p.engine).not_to be nil }
+    it { expect(p.engine.name).to eq('citeproc-ruby') }
 
     describe '#register' do
 
@@ -31,7 +31,7 @@ module CiteProc
       end
 
       it 'returns the processor' do
-        (p << palefire).should be_equal(p)
+        expect(p << palefire).to be_equal(p)
       end
 
     end
@@ -40,7 +40,7 @@ module CiteProc
 
       describe 'when there is no item with the passed-in id' do
         it 'returns nil' do
-          p[:palefire].should be nil
+          expect(p[:palefire]).to be nil
         end
       end
 
@@ -48,7 +48,7 @@ module CiteProc
         before(:each) { p.register(palefire) }
 
         it 'returns the item' do
-          p[:palefire].should equal(palefire)
+          expect(p[:palefire]).to equal(palefire)
         end
       end
     end
@@ -65,11 +65,11 @@ module CiteProc
 
       describe 'when passed a hash' do
         it 'registers the value with the key as id' do
-          p.update(:foo => palefire)[:foo].should equal(palefire)
+          expect(p.update(:foo => palefire)[:foo]).to equal(palefire)
         end
 
         it 'converts the value to an item' do
-          p.update(:foo => { :title => 'The Story of Foo' })[:foo].should be_a(Item)
+          expect(p.update(:foo => { :title => 'The Story of Foo' })[:foo]).to be_a(Item)
         end
       end
 
@@ -88,7 +88,7 @@ module CiteProc
       describe 'when no items have been processed' do
 
         it 'returns an empty bibliography' do
-          p.bibliography.should be_empty
+          expect(p.bibliography).to be_empty
         end
 
         # it 'returns a bibliography of all registered items if invoked with :all'

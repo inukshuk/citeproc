@@ -25,25 +25,25 @@ module CiteProc
       it { should be_empty }
 
       it 'has not been processed by default' do
-        CitationData.new.should_not be_processed
+        expect(CitationData.new).not_to be_processed
       end
 
       describe '.new' do
 
         it 'accepts a citeproc hash' do
           d = CitationData.new(hash)
-          d.should be_footnote
-          d.should_not be_empty
-          d[0].should be_a(CitationItem)
-          d.index.should == 1
+          expect(d).to be_footnote
+          expect(d).not_to be_empty
+          expect(d[0]).to be_a(CitationItem)
+          expect(d.index).to eq(1)
         end
 
         it 'accepts an array of items' do
-          CitationData.new([CitationItem.new(:id => 'id')]).should have(1).items
+          expect(CitationData.new([CitationItem.new(:id => 'id')]).items.size).to eq(1)
         end
 
         it 'accepts an array of hashes' do
-          CitationData.new([{:id => 'id'}])[0].should be_a(CitationItem)
+          expect(CitationData.new([{:id => 'id'}])[0]).to be_a(CitationItem)
         end
 
       end
@@ -51,7 +51,7 @@ module CiteProc
       describe '#to_citeproc' do
 
         it 'returns empty an empty/default citation data element by default' do
-          CitationData.new.to_citeproc.should == { 'citationItems' => [], 'properties' => { 'noteIndex' => 0}}
+          expect(CitationData.new.to_citeproc).to eq({ 'citationItems' => [], 'properties' => { 'noteIndex' => 0}})
         end
 
 
@@ -67,7 +67,7 @@ module CiteProc
       describe '.new' do
 
         it 'accepts a hash as input' do
-          CitationItem.new(:label => 'chapter').should have_label
+          expect(CitationItem.new(:label => 'chapter')).to have_label
         end
 
       end
@@ -75,15 +75,15 @@ module CiteProc
       describe '#to_citeproc' do
 
         it 'returns empty citation data by default' do
-          CitationItem.new.to_citeproc.should == {}
+          expect(CitationItem.new.to_citeproc).to eq({})
         end
 
         it 'returns a hash with stringified keys' do
-          CitationItem.new(:type => :article).to_citeproc.should have_key('type')
+          expect(CitationItem.new(:type => :article).to_citeproc).to have_key('type')
         end
 
         it 'returns a hash with stringified values' do
-          CitationItem.new(:type => :article).to_citeproc.should have_value('article')
+          expect(CitationItem.new(:type => :article).to_citeproc).to have_value('article')
         end
 
       end

@@ -11,8 +11,8 @@ module CiteProc
         let(:abbrev) { Hash[:foo, :bar] }
         it 'uses the hash as the new set of abbreviations' do
           subject.abbreviations = abbrev
-          subject.abbreviations.should == abbrev
-          subject.abbreviations.should_not equal(abbrev)
+          expect(subject.abbreviations).to eq(abbrev)
+          expect(subject.abbreviations).not_to equal(abbrev)
         end
       end
       
@@ -20,16 +20,16 @@ module CiteProc
         let(:abbrev) { '{"foo":"bar"}' }
         it 'uses the hash as the new set of abbreviations' do
           subject.abbreviations = abbrev
-          subject.abbreviations.should == Hash[:foo,'bar']
+          expect(subject.abbreviations).to eq(Hash[:foo,'bar'])
         end
       end
     end
     
     describe '#abbreviate' do
       it 'looks up abbreviations in the default namespace by default' do
-        subject.abbreviate(:title, 'foo').should == nil
+        expect(subject.abbreviate(:title, 'foo')).to eq(nil)
         subject.abbreviations[:default][:title] = { 'foo' => 'bar' }
-        subject.abbreviate(:title, 'foo').should == 'bar'
+        expect(subject.abbreviate(:title, 'foo')).to eq('bar')
       end
     end
     

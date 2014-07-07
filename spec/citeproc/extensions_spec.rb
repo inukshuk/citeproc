@@ -5,29 +5,29 @@ describe Hash do
   
 
   describe '#deep_copy' do
-    it { hash.should respond_to(:deep_copy) }
+    it { expect(hash).to respond_to(:deep_copy) }
 
     it 'returns a copy equal to the hash' do
-      hash.deep_copy.should == hash
+      expect(hash.deep_copy).to eq(hash)
     end
     
     it 'returns a copy that is not identical to the hash' do
-      hash.deep_copy.should_not equal(hash)
+      expect(hash.deep_copy).not_to equal(hash)
     end
     
     it 'returns a deep copy' do
-      hash.deep_copy[:a].should == hash[:a]
-      hash.deep_copy[:a].should_not equal(hash[:a])
-      hash.deep_copy[:a][:b].should == hash[:a][:b]
-      hash.deep_copy[:a][:b].should_not equal(hash[:a][:b])
-      hash.deep_copy[:a][:b][:c].should == hash[:a][:b][:c]
+      expect(hash.deep_copy[:a]).to eq(hash[:a])
+      expect(hash.deep_copy[:a]).not_to equal(hash[:a])
+      expect(hash.deep_copy[:a][:b]).to eq(hash[:a][:b])
+      expect(hash.deep_copy[:a][:b]).not_to equal(hash[:a][:b])
+      expect(hash.deep_copy[:a][:b][:c]).to eq(hash[:a][:b][:c])
     end
 
     context 'when given nested arrays' do
       let(:hash) {{:a => [[1,2]]}}
       it 'it returns a deep copy' do
-        hash.deep_copy[:a].should == hash[:a]
-        hash.deep_copy[:a].should_not equal(hash[:a])
+        expect(hash.deep_copy[:a]).to eq(hash[:a])
+        expect(hash.deep_copy[:a]).not_to equal(hash[:a])
       end
       
     end
@@ -43,13 +43,13 @@ describe Hash do
     # end
     
     it 'returns the value of all the arguments applied as keys' do
-      hash.deep_fetch(:a, :b, :c).should == :d
+      expect(hash.deep_fetch(:a, :b, :c)).to eq(:d)
     end
     
     it 'returns nil if any of the values did not exist' do
-      hash.deep_fetch(:x, :b, :c).should be nil
-      hash.deep_fetch(:a, :x, :c).should be nil
-      hash.deep_fetch(:a, :b, :x).should be nil
+      expect(hash.deep_fetch(:x, :b, :c)).to be nil
+      expect(hash.deep_fetch(:a, :x, :c)).to be nil
+      expect(hash.deep_fetch(:a, :b, :x)).to be nil
     end
 
   end
@@ -61,27 +61,27 @@ describe Array do
 	describe '#compact_join' do
 		
 		it 'is equivalent to #join when there are no blank elements' do
-			[1,2,3].compact_join(' ').should == [1,2,3].join(' ')
+			expect([1,2,3].compact_join(' ')).to eq([1,2,3].join(' '))
 		end
 
 		it 'is equivalent to #compact and #join when there are no empty elements' do
-			[1,2,3,nil,nil,4].compact_join(' ').should == [1,2,3,nil,nil,4].compact.join(' ')
+			expect([1,2,3,nil,nil,4].compact_join(' ')).to eq([1,2,3,nil,nil,4].compact.join(' '))
 		end
 	
 		it 'returns an empty string if the array is empty' do
-			[].compact_join(' ').should == ''
+			expect([].compact_join(' ')).to eq('')
 		end
 	
 		it 'returns an empty string if there are only nil elements' do
-			[nil,nil,nil].compact_join(' ').should == ''
+			expect([nil,nil,nil].compact_join(' ')).to eq('')
 		end
 		
 		it 'returns an empty string if there are only empty elements' do
-			['','',''].compact_join(' ').should == ''
+			expect(['','',''].compact_join(' ')).to eq('')
 		end
 
 		it 'returns an empty string if there are only blank elements' do
-			['','',nil,'',nil].compact_join(' ').should == ''
+			expect(['','',nil,'',nil].compact_join(' ')).to eq('')
 		end
 		
 	end

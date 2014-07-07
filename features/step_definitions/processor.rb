@@ -4,32 +4,32 @@ end
 
 Given(/^the following input:$/) do |string|
   @input = JSON.parse(string)
-  @input.should_not be_nil
+  expect(@input).not_to be_nil
 
   processor.import @input
 end
 
 Given(/^the following abbreviations:$/) do |string|
   processor.abbreviations = JSON.parse(string)
-  processor.abbreviations[:default].should_not be_empty
+  expect(processor.abbreviations[:default]).not_to be_empty
 end
 
 When(/^I render the entire bibliography$/) do
   @bibliography = processor.bibliography
-  @bibliography.errors.should == []
+  expect(@bibliography.errors).to eq([])
 end
 
 When(/^I render the following bibliography selection:$/) do |string|
   selection = JSON.parse(string)
-  selection.should_not be_nil
+  expect(selection).not_to be_nil
 
   @bibliography = processor.bibliography(selection)
-  @bibliography.errors.should == []
+  expect(@bibliography.errors).to eq([])
 end
 
 Then(/^the bibliography should be:$/) do |string|
   string.gsub!(/\n\s*/m, '') # strip newlines
-  @bibliography.join.should == string
+  expect(@bibliography.join).to eq(string)
 end
 
 When(/^I cite the following items:$/) do |string|
@@ -46,14 +46,14 @@ Then(/^the bibliography's options should match:$/) do |table|
   headers = table.headers.map(&:to_sym)
   expected = table.rows[0]
 
-  @bibliography.options.values_at(*headers).should == expected
+  expect(@bibliography.options.values_at(*headers)).to eq(expected)
 end
 
 Then(/^the results should be:$/) do |table|
-  @results.should == table.raw.map(&:first)
+  expect(@results).to eq(table.raw.map(&:first))
 end
 
 Then(/^the result should be:$/) do |string|
-  @result.should == string
+  expect(@result).to eq(string)
 end
 

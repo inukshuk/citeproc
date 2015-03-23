@@ -108,6 +108,11 @@ module CiteProc
       notify_observers :read, key, value
     end
 
+    def simulate_read_attribute(key, value)
+      changed
+      notify_observers :read, key, value
+    end
+
     alias original_read_attribute read_attribute
     alias unobservable_read_attribute read_attribute
 

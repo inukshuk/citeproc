@@ -2,10 +2,16 @@ source 'https://rubygems.org'
 gemspec
 
 group :debug do
-  gem 'ruby-debug', :require => false, :platform => :jruby
-  gem 'debugger', '~>1.6', :require => false, :platform => :mri
-  gem 'rubinius-compiler', '~>2.0', :require => false, :platform => :rbx
-  gem 'rubinius-debugger', '~>2.0', :require => false, :platform => :rbx
+  if RUBY_VERSION >= '2.0'
+    gem 'byebug', :require => false, :platforms => :mri
+  else
+    gem 'debugger', :require => false, :platforms => :mri
+  end
+
+  gem 'ruby-debug', :require => false, :platforms => :jruby
+
+  gem 'rubinius-debugger', :require => false, :platforms => :rbx
+  gem 'rubinius-compiler', :require => false, :platforms => :rbx
 end
 
 group :optional do

@@ -12,13 +12,14 @@ begin
     # Debugger.start
   when defined?(RUBY_ENGINE) && RUBY_ENGINE == 'rbx'
     require 'rubinius/debugger'
-  else
+  when RUBY_VERSION < '2.0'
     require 'debugger'
+  else
+    require 'byebug'
   end
 rescue LoadError
   # ignore
 end
-
 
 $:.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $:.unshift(File.dirname(__FILE__))

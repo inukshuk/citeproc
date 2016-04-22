@@ -34,7 +34,7 @@ group :optional do
 end
 
 group :development do
-  gem 'rake'
+  gem 'rake', '~>10.0'
   gem 'cucumber'
   gem 'rspec', '~>3.0'
   gem 'simplecov', '~>0.8', :require => false

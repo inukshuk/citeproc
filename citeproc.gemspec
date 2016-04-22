@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
     A cite processor interface for Citation Style Language (CSL) styles.
     """
 
-  s.license     = 'AGPL'
+  s.license     = 'AGPL-3.0'
   s.date        = Time.now.strftime('%Y-%m-%d')
 
   s.add_runtime_dependency('namae', '~>0.8')

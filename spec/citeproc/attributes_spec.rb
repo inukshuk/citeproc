@@ -23,7 +23,7 @@ module CiteProc
 
     describe '.attr_fields' do
 
-      #       before(:all) do
+      # before(:all) do
       #   A.instance_eval { attr_fields :value, %w[ is-numeric punctuation-mode ] }
       # end
 
@@ -33,7 +33,7 @@ module CiteProc
       end
 
       it 'generates no other setters' do
-        expect { A.new.some_other_value }.to raise_error
+        expect { A.new.some_other_value }.to raise_error(NoMethodError)
       end
     end
 

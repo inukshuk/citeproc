@@ -2,7 +2,6 @@ language: ruby
 bundler_args: --without debug extra
 script: bundle exec rake test_with_coveralls
 rvm:
-  - 2.3
   - 2.2
   - 2.1
   - 2.0

@@ -6,8 +6,8 @@ module CiteProc
 
     let(:select_books) { Selector.new(:all => { :type => :book }) }
 
-    it { should_not be nil }
-    it { should be_empty }
+    it { is_expected.not_to be nil }
+    it { is_expected.to be_empty }
 
 
     it 'should have no skip_condtions by default' do
@@ -76,13 +76,13 @@ module CiteProc
 
     describe '#matches?' do
       it 'always matches by default' do
-        expect(Selector.new.matches?(nil)).to be_true
+        expect(Selector.new.matches?(nil)).to be_truthy
       end
     end
 
     describe '#skip?' do
       it 'never skips when by default' do
-        expect(Selector.new.skip?(nil)).to be_false
+        expect(Selector.new.skip?(nil)).to be_falsey
       end
     end
   end

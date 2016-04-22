@@ -70,7 +70,7 @@ module CiteProc
     describe Name do
 
 
-      it { should_not be_nil }
+      it { is_expected.not_to be_nil }
 
       describe 'formatting options' do
 
@@ -452,8 +452,8 @@ module CiteProc
         Names.parse!('Erich Gamma and Richard Helm and Ralph Johnson and John Vlissides')
       }
 
-      it { should_not be nil }
-      it { should_not be_numeric }
+      it { is_expected.not_to be nil }
+      it { is_expected.not_to be_numeric }
 
       describe 'constructing' do
 

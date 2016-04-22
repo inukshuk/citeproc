@@ -21,8 +21,8 @@ module CiteProc
 
     describe CitationData do
 
-      it { should_not be nil }
-      it { should be_empty }
+      it { is_expected.not_to be nil }
+      it { is_expected.to be_empty }
 
       it 'has not been processed by default' do
         expect(CitationData.new).not_to be_processed
@@ -61,8 +61,8 @@ module CiteProc
 
     describe CitationItem do
 
-      it { should_not be nil }
-      it { should be_empty }
+      it { is_expected.not_to be nil }
+      it { is_expected.to be_empty }
 
       describe '.new' do
 

@@ -4,8 +4,8 @@ module CiteProc
 
   describe Bibliography do
 
-    it { should be_empty }
-    it { should_not have_errors }
+    it { is_expected.to be_empty }
+    it { is_expected.not_to have_errors }
 
     describe '#to_citeproc conversion' do
 

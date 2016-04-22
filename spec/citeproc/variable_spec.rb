@@ -4,7 +4,7 @@ module CiteProc
   describe Variable do
 
     describe '.new' do
-      it { should be_an_instance_of(Variable) }
+      it { is_expected.to be_an_instance_of(Variable) }
 
       it 'is empty by default' do
         expect(Variable.new).to be_empty

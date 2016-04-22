@@ -7,7 +7,7 @@ module CiteProc
     let(:palefire) { Item.new(:id => 'palefire', :type => :book, :title => 'Pale Fire') }
     let(:despair) { Item.new(:id => 'despair', :type => :book, :title => 'Despair') }
 
-    it { should_not be nil }
+    it { is_expected.not_to be nil }
 
     it { expect(p.engine).not_to be nil }
     it { expect(p.engine.name).to eq('citeproc-ruby') }

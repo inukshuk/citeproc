@@ -5,8 +5,8 @@ module CiteProc
 
     class Date
       describe DateParts do
-        it { should_not be_nil }
-        it { should be_empty }
+        it { is_expected.not_to be_nil }
+        it { is_expected.to be_empty }
 
         describe 'sorting' do
           it 'treats [2003] as less than [2003,1]' do
@@ -107,9 +107,9 @@ module CiteProc
     let(:ad50) { Date.create('date-parts' => [[50]]) }
     let(:ad100) { Date.create('date-parts' => [[100]]) }
 
-    it { should_not be nil }
+    it { is_expected.not_to be nil }
 
-    it { should_not be_numeric }
+    it { is_expected.not_to be_numeric }
 
     describe '.new' do
       it 'accepts a hash as input' do

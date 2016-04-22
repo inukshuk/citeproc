@@ -5,7 +5,7 @@ module CiteProc
 
 
     describe '.new' do
-      it { should_not be nil }
+      it { is_expected.not_to be nil }
 
       it 'creates number variables for number fields' do
         expect(Item.new(:edition => 23).edition).to be_a(Number)
@@ -32,7 +32,7 @@ module CiteProc
     end
 
     describe '#empty' do
-      it { should be_empty }
+      it { is_expected.to be_empty }
 
       it 'returns false when there is at least one variable in the item' do
         expect(Item.new(:title => 'foo')).not_to be_empty

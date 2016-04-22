@@ -19,7 +19,7 @@ module CiteProc
 			o
 		end
   
-    it { should_not be_nil }
+    it { is_expected.not_to be_nil }
   
     describe '.attr_fields' do
     

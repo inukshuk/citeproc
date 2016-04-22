@@ -21,10 +21,6 @@ group :optional do
 
   gem 'bibtex-ruby', '~>4.0', :require => 'bibtex'
 
-  gem 'guard', '~>2.2'
-  gem 'guard-rspec', '~>4.2'
-  gem 'guard-cucumber', '~>2.0'
-
   gem 'pry'
 
   gem 'unicode', '~>0.4', :platforms => [:ruby, :mswin, :mingw]
@@ -46,6 +42,9 @@ end
 group :extra do
   gem 'yard', '~>0.8', :platforms => :ruby
   gem 'redcarpet', '~>3.0', :platform => :mri
+  gem 'guard', '~>2.2'
+  gem 'guard-rspec', '~>4.2'
+  gem 'guard-cucumber', '~>2.0'
 end
 
 platform :rbx do

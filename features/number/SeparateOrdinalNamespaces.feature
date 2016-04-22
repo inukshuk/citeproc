@@ -1,0 +1,55 @@
+Feature: number
+  As a CSL cite processor hacker
+  I want the test number_SeparateOrdinalNamespaces to pass
+
+  @citation @number
+  Scenario: Separate Ordinal Namespaces
+    Given the following style:
+    """
+    <style 
+          xmlns="http://purl.org/net/xbiblio/csl"
+          class="note"
+          version="1.0"
+          default-locale="fr-FR">
+      <info>
+        <id />
+        <title />
+        <updated>2009-08-10T04:49:00+09:00</updated>
+      </info>
+      <locale>
+        <terms>
+          <term name="ordinal">.ª</term>
+          <term name="ordinal-01">.ª</term>
+          <term name="ordinal-01" gender-form="masculine">.º</term>
+          <term name="ordinal-01" gender-form="feminine">.ª</term>
+          <term name="ordinal-02" gender-form="masculine">.ºº</term>
+          <term name="issue" gender="masculine">issue</term> <!-- same as locale -->
+          <term name="edition" gender="feminine">edition</term> <!-- same as locale -->
+        </terms>
+      </locale>
+      <citation>
+        <layout delimiter="; ">
+          <group delimiter=", ">
+            <text variable="title"/>
+            <group delimiter=" ">
+              <number variable="edition" form="ordinal"/>
+              <label variable="edition"/>
+            </group>
+            <group delimiter=" ">
+              <number variable="issue" form="ordinal"/>
+              <label variable="issue"/>
+            </group>
+          </group>
+        </layout>
+      </citation>
+    </style>
+    """
+    And the following input:
+    """
+    [{"edition":"1","id":"ITEM-1","issue":"1","title":"With One","type":"book"},{"edition":"2","id":"ITEM-2","issue":"2","title":"With Two","type":"book"},{"edition":"3","id":"ITEM-3","issue":"3","title":"With Three","type":"book"}]
+    """
+    When I cite all items
+    Then the result should be:
+    """
+    With One, 1.<sup>a</sup> edition, 1.<sup>o</sup> issue; With Two, 2.<sup>a</sup> edition, 2.<sup>o</sup><sup>o</sup> issue; With Three, 3.<sup>a</sup> edition, 3.<sup>a</sup> issue
+    """

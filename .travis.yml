@@ -1,9 +1,7 @@
 language: ruby
 bundler_args: --without debug extra
 before_script:
-  - ruby -v
-  - gem -v
-  - bundler -v
+  - gem install bundler
 script: bundle exec rake test_with_coveralls
 rvm:
   - 2.2

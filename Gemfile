@@ -19,11 +19,11 @@ group :optional do
   gem 'chronic', '~>0.10', :require => false
   gem 'edtf', '~>2.1'
 
-  gem 'bibtex-ruby', '~>3.0', :require => 'bibtex'
+  gem 'bibtex-ruby', '~>4.0', :require => 'bibtex'
 
   gem 'guard', '~>2.2'
   gem 'guard-rspec', '~>4.2'
-  gem 'guard-cucumber', '~>1.4'
+  gem 'guard-cucumber', '~>2.0'
 
   gem 'pry'
 

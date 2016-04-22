@@ -3,96 +3,94 @@ require 'spec_helper'
 module CiteProc
   describe Date do
 
-    class Date
-      describe DateParts do
-        it { is_expected.not_to be_nil }
-        it { is_expected.to be_empty }
+    describe Date::DateParts do
+      it { is_expected.not_to be_nil }
+      it { is_expected.to be_empty }
 
-        describe 'sorting' do
-          it 'treats [2003] as less than [2003,1]' do
-            expect(DateParts.new(2003)).to be < DateParts.new(2003,1)
-          end
-
-          it 'treats [1992,9,23] as less than [1993,8,22]' do
-            expect(DateParts.new(1992,9,23)).to be < DateParts.new(1993,8,22)
-          end
-
-          it 'treats [1992,9,23] as less than [1992,10,22]' do
-            expect(DateParts.new(1992,9,23)).to be < DateParts.new(1992,10,22)
-          end
-
-          it 'treats [1992,9,23] as less than [1992,9,24]' do
-            expect(DateParts.new(1992,9,23)).to be < DateParts.new(1992,9,24)
-          end
-
-          it 'treats [-50] as less than [-25]' do
-            expect(DateParts.new(-50)).to be < DateParts.new(-25)
-          end
-
-          it 'treats [-50] as less than [-50,12]' do
-            expect(DateParts.new(-50)).to be < DateParts.new(-50,12)
-          end
-
-          it 'treats [1994,1,23] as less than today' do
-            expect(DateParts.new(1994,1,23)).to be < ::Date.today
-          end
+      describe 'sorting' do
+        it 'treats [2003] as less than [2003,1]' do
+          expect(Date::DateParts.new(2003)).to be < Date::DateParts.new(2003,1)
         end
 
-        describe '#dup' do
-          let(:date) { DateParts.new(1991,8,22) }
-
-          it 'creates a copy that contains the same parts' do
-            expect(date.dup.to_a).to eq([1991,8,22])
-          end
-
-          it 'does not return self' do
-            expect(date.dup).not_to equal(date)
-            expect(date.dup).to eq(date)
-          end
+        it 'treats [1992,9,23] as less than [1993,8,22]' do
+          expect(Date::DateParts.new(1992,9,23)).to be < Date::DateParts.new(1993,8,22)
         end
 
-        describe '#update' do
-          it 'accepts a hash' do
-            expect(DateParts.new.update(:month => 2, :year => 80).to_a).to eq([80,2,nil])
-          end
-
-          it 'accepts an array' do
-            expect(DateParts.new.update([80,2]).to_a).to eq([80,2,nil])
-          end
+        it 'treats [1992,9,23] as less than [1992,10,22]' do
+          expect(Date::DateParts.new(1992,9,23)).to be < Date::DateParts.new(1992,10,22)
         end
 
-        describe '#strftime' do
-          it 'formats the date parts according to the format string' do
-            expect(DateParts.new(1998,2,4).strftime('FOO %0m%0d%y')).to eq('FOO 020498')
-          end
+        it 'treats [1992,9,23] as less than [1992,9,24]' do
+          expect(Date::DateParts.new(1992,9,23)).to be < Date::DateParts.new(1992,9,24)
         end
 
-        describe 'to_citeproc' do
-          it 'returns an empty list by default' do
-            expect(DateParts.new.to_citeproc).to eq([])
-          end
-
-          it 'returns a list with the year if only the year is set' do
-            expect(DateParts.new(2001).to_citeproc).to eq([2001])
-          end
-
-          it 'supports zero parts' do
-            expect(DateParts.new(0,0).to_citeproc).to eq([0,0])
-          end
+        it 'treats [-50] as less than [-25]' do
+          expect(Date::DateParts.new(-50)).to be < Date::DateParts.new(-25)
         end
 
-        describe '#open?' do
-          it 'returns false by default' do
-            expect(DateParts.new).not_to be_open
-          end
+        it 'treats [-50] as less than [-50,12]' do
+          expect(Date::DateParts.new(-50)).to be < Date::DateParts.new(-50,12)
+        end
 
-          it 'returns false for [1999,8,24]' do
-            expect(DateParts.new(1999, 8, 24)).not_to be_open
-          end
+        it 'treats [1994,1,23] as less than today' do
+          expect(Date::DateParts.new(1994,1,23)).to be < ::Date.today
+        end
+      end
 
-          it 'returns true for [0]' do
-            expect(DateParts.new(0)).to be_open
-          end
+      describe '#dup' do
+        let(:date) { Date::DateParts.new(1991,8,22) }
+
+        it 'creates a copy that contains the same parts' do
+          expect(date.dup.to_a).to eq([1991,8,22])
+        end
+
+        it 'does not return self' do
+          expect(date.dup).not_to equal(date)
+          expect(date.dup).to eq(date)
+        end
+      end
+
+      describe '#update' do
+        it 'accepts a hash' do
+          expect(Date::DateParts.new.update(:month => 2, :year => 80).to_a).to eq([80,2,nil])
+        end
+
+        it 'accepts an array' do
+          expect(Date::DateParts.new.update([80,2]).to_a).to eq([80,2,nil])
+        end
+      end
+
+      describe '#strftime' do
+        it 'formats the date parts according to the format string' do
+          expect(Date::DateParts.new(1998,2,4).strftime('FOO %0m%0d%y')).to eq('FOO 020498')
+        end
+      end
+
+      describe 'to_citeproc' do
+        it 'returns an empty list by default' do
+          expect(Date::DateParts.new.to_citeproc).to eq([])
+        end
+
+        it 'returns a list with the year if only the year is set' do
+          expect(Date::DateParts.new(2001).to_citeproc).to eq([2001])
+        end
+
+        it 'supports zero parts' do
+          expect(Date::DateParts.new(0,0).to_citeproc).to eq([0,0])
+        end
+      end
+
+      describe '#open?' do
+        it 'returns false by default' do
+          expect(Date::DateParts.new).not_to be_open
+        end
+
+        it 'returns false for [1999,8,24]' do
+          expect(Date::DateParts.new(1999, 8, 24)).not_to be_open
+        end
+
+        it 'returns true for [0]' do
+          expect(Date::DateParts.new(0)).to be_open
         end
       end
     end

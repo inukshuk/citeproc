@@ -49,5 +49,49 @@ module CiteProc
 
     end
 
+    describe '#attribute?' do
+      it 'return false for unset attribute' do
+        expect(A.new.attribute?(:foo)).to eq(false)
+      end
+
+      it 'return false for empty attribute value' do
+        a = A.new
+        a[:foo]=''
+        expect(a.attribute?(:foo)).to eq(false)
+      end
+
+      it 'return false for attribute value set to string "false"' do
+        a = A.new
+        a[:foo]='false'
+        expect(a.attribute?(:foo)).to eq(false)
+      end
+      it 'return false for attribute value set to string "no"' do
+        a = A.new
+        a[:foo]='no'
+        expect(a.attribute?(:foo)).to eq(false)
+      end
+      it 'return false for attribute value set to string "never"' do
+        a = A.new
+        a[:foo]='never'
+        expect(a.attribute?(:foo)).to eq(false)
+      end
+      it 'return true for attribute with value' do
+        a = A.new
+        a[:foo]='bar'
+        expect(a.attribute?(:foo)).to eq(true)
+      end
+
+      describe 'properly handle usage on Observable objects' do
+        it 'should use unobservable_read_attribute method when available' do
+          a = A.new
+          def a.unobservable_read_attribute(attr)
+            return 'tuna'
+          end
+          expect(a).to receive(:unobservable_read_attribute)
+          a.attribute?(:foo)
+        end
+      end
+    end
+
   end
 end

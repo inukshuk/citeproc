@@ -17,7 +17,11 @@ end
 group :optional do
   gem 'nokogiri', '~>1.6'
   gem 'chronic', '~>0.10', :require => false
-  gem 'edtf', '~>3.0'
+  if RUBY_VERSION >= '2.2.2'
+    gem 'edtf', '~>3.0'
+  else
+    gem 'edtf', '~>2.0'
+  end
 
   gem 'bibtex-ruby', '~>4.0', :require => 'bibtex'
 

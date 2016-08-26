@@ -37,9 +37,13 @@ end
 require 'cucumber/rake/task'
 Cucumber::Rake::Task.new(:cucumber)
 
-require 'coveralls/rake/task'
-Coveralls::RakeTask.new
-task :test_with_coveralls => [:spec, 'coveralls:push']
+begin
+  require 'coveralls/rake/task'
+  Coveralls::RakeTask.new
+  task :test_with_coveralls => [:spec, :cucumber, 'coveralls:push']
+rescue LoadError => e
+  # ignore
+end
 
 task :release do |t|
   system "gem build citeproc.gemspec"

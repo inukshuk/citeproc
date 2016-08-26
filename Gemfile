@@ -37,8 +37,13 @@ group :development do
   gem 'rake', '~>10.0'
   gem 'cucumber'
   gem 'rspec', '~>3.0'
-  gem 'coveralls', :require => false
   gem 'csl-styles', '~>1.0.1', :require => false
+end
+
+group :coverage do
+  gem 'coveralls', :require => false
+  gem 'simplecov', '~>0.8', :require => false
+  gem 'rubinius-coverage', :platform => :rbx
 end
 
 group :extra do
@@ -47,8 +52,6 @@ group :extra do
   gem 'guard', '~>2.2'
   gem 'guard-rspec', '~>4.2'
   gem 'guard-cucumber', '~>2.0'
-  gem 'simplecov', '~>0.8', :require => false
-  gem 'rubinius-coverage', :platform => :rbx
 end
 
 group :rbx do

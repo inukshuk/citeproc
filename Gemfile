@@ -17,13 +17,13 @@ end
 group :optional do
   gem 'nokogiri', '~>1.6'
   gem 'chronic', '~>0.10', :require => false
-  gem 'edtf', '~>2.1'
+  gem 'edtf', '~>3.0'
 
   gem 'bibtex-ruby', '~>4.0', :require => 'bibtex'
 
   gem 'pry'
 
-  gem 'unicode', '~>0.4', :platforms => [:ruby, :mswin, :mingw]
+  gem 'unicode', '>=0.4', '<1.0', :platforms => [:ruby, :mswin, :mingw]
 
   gem 'citeproc-ruby', :github => 'inukshuk/citeproc-ruby'
   #gem 'csl', :github => 'inukshuk/csl-ruby'
@@ -33,8 +33,6 @@ group :development do
   gem 'rake', '~>10.0'
   gem 'cucumber'
   gem 'rspec', '~>3.0'
-  gem 'simplecov', '~>0.8', :require => false
-  gem 'rubinius-coverage', :platform => :rbx
   gem 'coveralls', :require => false
   gem 'csl-styles', '~>1.0.1', :require => false
 end
@@ -45,10 +43,12 @@ group :extra do
   gem 'guard', '~>2.2'
   gem 'guard-rspec', '~>4.2'
   gem 'guard-cucumber', '~>2.0'
+  gem 'simplecov', '~>0.8', :require => false
+  gem 'rubinius-coverage', :platform => :rbx
 end
 
 platform :rbx do
   gem 'rubysl', '~>2.0'
-  gem 'json', '~>1.8'
+  gem 'json', '~>2.0'
   gem 'racc'
 end

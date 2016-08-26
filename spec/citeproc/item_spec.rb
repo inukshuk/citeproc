@@ -75,5 +75,17 @@ module CiteProc
         expect(Item.new(:issued => 1976).dup[:issued].year).to eq(1976)
       end
     end
+
+    describe '#attribute?' do
+      it 'should not trigger an observable read' do
+        obs = Object.new
+        def obs.update
+        end
+        expect(obs).not_to receive(:update)
+        item = Item.new(:issued => 1976)
+        item.add_observer(obs)
+        item.attribute?(:issued)
+      end
+    end
   end
 end

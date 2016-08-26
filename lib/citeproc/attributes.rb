@@ -26,7 +26,13 @@ module CiteProc
     alias []= write_attribute
 
     def attribute?(key)
-      value = read_attribute key
+      # this method is used only for conditional type access.
+      # When included on an object with read observations, don't count this as an observable read
+      if respond_to? :unobservable_read_attribute
+        value = unobservable_read_attribute key
+      else
+        value = read_attribute key
+      end
 
       return false if value.nil?
       return false if value.respond_to?(:empty?) && value.empty?

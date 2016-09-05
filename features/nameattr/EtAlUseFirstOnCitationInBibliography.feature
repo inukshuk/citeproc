@@ -40,6 +40,6 @@ Feature: nameattr
     Then the bibliography should be:
     """
     <div class="csl-bib-body">
-      <div class="csl-entry">John Doe et al.</div>
+      <div class="csl-entry">John Doe, Jane Roe, Richard Snoakes</div>
     </div>
     """

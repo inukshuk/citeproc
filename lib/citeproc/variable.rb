@@ -19,7 +19,7 @@ module CiteProc
 
       :names => %w{
         author collection-editor composer container-author recipient editor
-        editorial-director illustrator interviewer original-author translator
+        editorial-director illustrator interviewer original-author translator director
       },
 
       :number => %w{

@@ -304,6 +304,18 @@ module CiteProc
           expect(van_gogh.format).to eq('Vincent van Gogh')
         end
 
+        it "cuts the given name and preposition (sort_order)" do
+          van_gogh.options[:initialize] = 'true'
+          van_gogh.options[:"initialize-with"] = '.'
+          expect(van_gogh.sort_order!.format).to eq "v. Gogh, V."
+        end
+
+        it "cuts the given name and preposition" do
+          van_gogh.options[:initialize] = 'true'
+          van_gogh.options[:"initialize-with"] = '.'
+          expect(van_gogh.format).to eq "V. v. Gogh"
+        end
+
         it 'includes suffices' do
           expect(jr.format).to eq('James Stephens Jr.')
         end

@@ -35,7 +35,7 @@ module CiteProc
         first-reference-note-number genre ISBN ISSN jurisdiction keyword
         locator medium note original-publisher original-publisher-place
         original-title page page-first PMID PMCID publisher publisher-place
-        references reviewed-author reviewed-title scale section source status
+        references reviewed-title scale section source status
         title title-short URL version year-suffix
       }
     })

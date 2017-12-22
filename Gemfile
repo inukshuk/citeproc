@@ -31,7 +31,4 @@ end
 group :extra do
   gem 'yard'
   gem 'redcarpet', platform: :mri
-  gem 'guard'
-  gem 'guard-rspec'
-  gem 'guard-cucumber'
 end

@@ -20,6 +20,7 @@ group :development do
   gem 'rake'
   gem 'cucumber'
   gem 'rspec'
+  gem 'unicode_utils', require: false unless RUBY_VERSION >= '2.4'
   gem 'csl-styles', '~>1.0.1', require: false
 end
 

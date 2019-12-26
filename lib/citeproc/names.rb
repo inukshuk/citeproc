@@ -689,9 +689,9 @@ module CiteProc
     #
     # @yieldparam name [Name] a name in the list
     # @return [self,Enumerator] self or an enumerator if no block is given
-    def each
+    def each(&block)
       if block_given?
-        names.each(&Proc.new)
+        names.each(&block)
         self
       else
         to_enum

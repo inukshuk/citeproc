@@ -35,9 +35,9 @@ module CiteProc
       end
 
       # Loads the engine with the given name and returns the engine class.
-      def detect!(name)
+      def detect!(name, &block)
         load(name)
-        block_given? ? detect(name, &Proc.new) : detect(name)
+        block_given? ? detect(name, &block) : detect(name)
       end
 
       # Returns the best available engine class or nil.

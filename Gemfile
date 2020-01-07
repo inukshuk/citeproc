@@ -12,7 +12,7 @@ group :optional do
   gem 'edtf'
   gem 'bibtex-ruby', require: 'bibtex'
   gem 'pry'
-  gem 'citeproc-ruby', github: 'inukshuk/citeproc-ruby'
+  gem 'citeproc-ruby' #, github: 'inukshuk/citeproc-ruby'
   #gem 'csl', github: 'inukshuk/csl-ruby'
 end
 

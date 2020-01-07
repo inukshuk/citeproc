@@ -165,9 +165,9 @@ module CiteProc
     # @yieldparam field [Symbol] the field name
     # @yieldparam value [Variable] the value
     # @return [self,Enumerator] the item or an enumerator if no block is given
-    def each
+    def each(&block)
       if block_given?
-        attributes.each_pair(&Proc.new)
+        attributes.each_pair(&block)
         self
       else
         to_enum
@@ -188,9 +188,9 @@ module CiteProc
     #
     # @yieldparam value [Variable] the value
     # @return [self,Enumerator] the item or an enumerator if no block is given
-    def each_value
+    def each_value(&block)
       if block_given?
-        attributes.each_value(&Proc.new)
+        attributes.each_value(&block)
         self
       else
         enum_for :each_value

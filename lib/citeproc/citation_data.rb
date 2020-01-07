@@ -169,12 +169,12 @@ module CiteProc
 
     alias update merge
 
-    def each
+    def each(&block)
       if block_given?
         if sorted?
-          sorted_items.each(&Proc.new)
+          sorted_items.each(&block)
         else
-          items.each(&Proc.new)
+          items.each(&block)
         end
 
         self

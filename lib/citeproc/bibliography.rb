@@ -212,9 +212,9 @@ module CiteProc
       join
     end
 
-    def each
+    def each(&block)
       if block_given?
-        references.each(&Proc.new)
+        references.each(&block)
         self
       else
         to_enum

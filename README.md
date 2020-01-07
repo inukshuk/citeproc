@@ -8,15 +8,12 @@ in the [citeproc-ruby](https://rubygems/gems/citeproc-ruby) gem.
 
 [![Build Status](https://secure.travis-ci.org/inukshuk/citeproc.svg)](http://travis-ci.org/inukshuk/citeproc)
 [![Coverage Status](https://coveralls.io/repos/inukshuk/citeproc/badge.svg?branch=master)](https://coveralls.io/r/inukshuk/citeproc?branch=master)
-[![Dependency Status](https://gemnasium.com/inukshuk/citeproc.svg)](https://gemnasium.com/inukshuk/citeproc)
 
 [![Build Status](https://secure.travis-ci.org/inukshuk/citeproc-ruby.svg)](http://travis-ci.org/inukshuk/citeproc-ruby)
 [![Coverage Status](https://coveralls.io/repos/inukshuk/citeproc-ruby/badge.svg?branch=master)](https://coveralls.io/r/inukshuk/citeproc-ruby?branch=master)
-[![Dependency Status](https://gemnasium.com/inukshuk/citeproc-ruby.svg)](https://gemnasium.com/inukshuk/citeproc-ruby)
 
 [![Build Status](https://secure.travis-ci.org/inukshuk/csl-ruby.svg)](http://travis-ci.org/inukshuk/csl-ruby)
 [![Coverage Status](https://coveralls.io/repos/inukshuk/csl-ruby/badge.svg?branch=master)](https://coveralls.io/r/inukshuk/csl-ruby?branch=master)
-[![Dependency Status](https://gemnasium.com/inukshuk/csl-ruby.svg)](https://gemnasium.com/inukshuk/csl-ruby)
 
 Quickstart
 ----------

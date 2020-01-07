@@ -30,7 +30,6 @@ Gem::Specification.new do |s|
   } - `git ls-files -- {tasks,spec,features}/*`.split("\n")
 
   s.require_path = 'lib'
-  s.has_rdoc     = 'yard'
 end
 
 # vim: syntax=ruby

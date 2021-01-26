@@ -3,7 +3,7 @@ CiteProc
 CiteProc is a cite processor interface and citation data API based on the
 Citation Style Language (CSL) specifications. To actually process citations
 a dedicated processor engine is required; a pure Ruby engine is available
-in the [citeproc-ruby](https://rubygems/gems/citeproc-ruby) gem.
+in the [citeproc-ruby](https://rubygems.org/gems/citeproc-ruby) gem.
 
 
 [![Build Status](https://secure.travis-ci.org/inukshuk/citeproc.svg)](http://travis-ci.org/inukshuk/citeproc)

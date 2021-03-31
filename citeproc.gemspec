@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.homepage    = 'https://github.com/inukshuk/citeproc'
   s.summary     = 'A cite processor interface.'
   s.description = 'A cite processor interface for Citation Style Language (CSL) styles.'
-  s.license     = 'AGPL-3.0'
+  s.licenses     = ['AGPL-3.0','BSD-2-Clause']
   s.date        = Time.now.strftime('%Y-%m-%d')
 
   s.required_ruby_version = '>= 2.3'

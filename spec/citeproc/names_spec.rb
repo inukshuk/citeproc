@@ -11,6 +11,8 @@ module CiteProc
     let(:plato) { Name.new(:given => 'Plato') }
     let(:aristotle) { Name.new(:given => 'Ἀριστοτέλης') }
     let(:dostoyevksy) { Name.new(:given => 'Фёдор Михайлович', :family => 'Достоевский') }
+    let(:saer_decomposed) { Name.new(:family => 'Saer', :given => 'Juan José') }
+    let(:saer_precomposed) { Name.new(:family => 'Saer', :given => 'Juan José') }
 
     let(:utf) { Name.new(
       :given => 'Gérard',
@@ -360,6 +362,18 @@ module CiteProc
 
           it 'for normal names it prints them as "family, given"' do
             expect(poe.sort_order!.format).to eq('Poe, Edgar Allen')
+          end
+
+          context 'with decomposed accents at the end' do
+            it 'prints them as "family, given"' do
+              expect(saer_decomposed.sort_order!.format).to eq('Saer, Juan José')
+            end
+          end
+
+          context 'with precomposed accents at the end' do
+            it 'prints them as "family, given"' do
+              expect(saer_precomposed.sort_order!.format).to eq('Saer, Juan José')
+            end
           end
 
           it 'particles come after given name by default' do

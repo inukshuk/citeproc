@@ -152,7 +152,7 @@ module CiteProc
     #
     # @return [Boolean] whether or not the name is romanesque
     def romanesque?
-      !!([given, family].join.gsub(Variable.markup, '') =~ Name.romanesque)
+      !!([given&.unicode_normalize(:nfc), family&.unicode_normalize(:nfc)].join.gsub(Variable.markup, '') =~ Name.romanesque)
     end
 
     alias byzantine? romanesque?

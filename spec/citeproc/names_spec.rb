@@ -364,15 +364,21 @@ module CiteProc
             expect(poe.sort_order!.format).to eq('Poe, Edgar Allen')
           end
 
-          context 'with decomposed accents at the end' do
-            it 'prints them as "family, given"' do
-              expect(saer_decomposed.sort_order!.format).to eq('Saer, Juan José')
-            end
-          end
-
-          context 'with precomposed accents at the end' do
-            it 'prints them as "family, given"' do
+          context 'with accents at the end of the name' do
+            it 'prints with precomposed accent as "family, given"' do
+              expect(!saer_precomposed.short_form?).to be true
+              expect(!saer_precomposed.demote_particle?).to be true
+              expect(!saer_precomposed.romanesque?).to be false
+              expect(saer_precomposed.static_order?).to be false
               expect(saer_precomposed.sort_order!.format).to eq('Saer, Juan José')
+            end
+
+            it 'prints with decomposed accent as "family, given"' do
+              expect(!saer_decomposed.short_form?).to be true
+              expect(!saer_decomposed.demote_particle?).to be true
+              expect(!saer_decomposed.romanesque?).to be false
+              expect(saer_decomposed.static_order?).to be false
+              expect(saer_decomposed.sort_order!.format).to eq('Saer, Juan José')
             end
           end
 

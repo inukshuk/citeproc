@@ -5,16 +5,6 @@ Citation Style Language (CSL) specifications. To actually process citations
 a dedicated processor engine is required; a pure Ruby engine is available
 in the [citeproc-ruby](https://rubygems.org/gems/citeproc-ruby) gem.
 
-
-[![Build Status](https://secure.travis-ci.org/inukshuk/citeproc.svg)](http://travis-ci.org/inukshuk/citeproc)
-[![Coverage Status](https://coveralls.io/repos/inukshuk/citeproc/badge.svg?branch=master)](https://coveralls.io/r/inukshuk/citeproc?branch=master)
-
-[![Build Status](https://secure.travis-ci.org/inukshuk/citeproc-ruby.svg)](http://travis-ci.org/inukshuk/citeproc-ruby)
-[![Coverage Status](https://coveralls.io/repos/inukshuk/citeproc-ruby/badge.svg?branch=master)](https://coveralls.io/r/inukshuk/citeproc-ruby?branch=master)
-
-[![Build Status](https://secure.travis-ci.org/inukshuk/csl-ruby.svg)](http://travis-ci.org/inukshuk/csl-ruby)
-[![Coverage Status](https://coveralls.io/repos/inukshuk/csl-ruby/badge.svg?branch=master)](https://coveralls.io/r/inukshuk/csl-ruby?branch=master)
-
 Quickstart
 ----------
 Install CiteProc-Ruby and all official CSL styles (optional).

@@ -1,1 +1,1 @@
-default: --format progress --require features --color --tags ~@non-standard
+default: --format progress --require features --color --tags "not @non-standard"

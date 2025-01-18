@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 gemspec
 
 group :debug do
-  gem 'byebug', require: false, platforms: :mri
+  gem 'debug', '>= 1.0.0', require: false, platforms: :mri
   gem 'ruby-debug', require: false, platforms: :jruby
 end
 
@@ -11,7 +11,6 @@ group :optional do
   gem 'chronic', require: false
   gem 'edtf'
   gem 'bibtex-ruby', require: 'bibtex'
-  gem 'pry'
   gem 'citeproc-ruby' #, github: 'inukshuk/citeproc-ruby'
   #gem 'csl', github: 'inukshuk/csl-ruby'
 end
@@ -26,7 +25,7 @@ end
 
 group :coverage do
   gem 'simplecov', require: false
-  gem 'coveralls', require: false if ENV['CI']
+  gem 'simplecov-lcov', require: false
 end
 
 group :extra do

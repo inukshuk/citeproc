@@ -13,11 +13,16 @@ Gem::Specification.new do |s|
   s.homepage    = 'https://github.com/inukshuk/citeproc'
   s.summary     = 'A cite processor interface.'
   s.description = 'A cite processor interface for Citation Style Language (CSL) styles.'
-  s.licenses     = ['AGPL-3.0','BSD-2-Clause']
+  s.licenses     = ['BSD-2-Clause']
   s.date        = Time.now.strftime('%Y-%m-%d')
 
   s.required_ruby_version = '>= 2.3'
-  s.add_runtime_dependency('namae', '~>1.0')
+  s.add_dependency('namae', '~>1.0')
+  s.add_dependency 'date'
+  s.add_dependency 'forwardable'
+  s.add_dependency 'json'
+  s.add_dependency 'observer', '< 1.0'
+  s.add_dependency 'open-uri', '< 1.0'
 
   s.files        = `git ls-files`.split("\n") - %w{
     .coveralls.yml

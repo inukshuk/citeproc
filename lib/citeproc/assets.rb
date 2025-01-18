@@ -22,11 +22,11 @@ module CiteProc
         @asset = input.to_s.dup
       else
         case
-        when File.exists?(input)
+        when File.exist?(input)
           @location = input
-        when File.exists?(self.class.extend_name(input))
+        when File.exist?(self.class.extend_name(input))
           @location = self.class.extend_name(input)
-        when File.exists?(self.class.extend_path(input))
+        when File.exist?(self.class.extend_path(input))
           @location = self.class.extend_path(input)
         else
           @location = input

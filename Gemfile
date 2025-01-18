@@ -20,7 +20,7 @@ group :development do
   gem 'cucumber'
   gem 'rspec'
   gem 'unicode_utils', require: false unless RUBY_VERSION >= '2.4'
-  gem 'csl-styles', '~>1.0.1', require: false
+  gem 'csl-styles', '~>2.0', require: false
 end
 
 group :coverage do

@@ -2,7 +2,7 @@ Feature: decorations
   As a CSL cite processor hacker
   I want the test decorations_Baseline to pass
 
-  @bibliography @decorations
+  @bibliography @decorations @non-standard
   Scenario: Baseline
     Given the following style:
     """

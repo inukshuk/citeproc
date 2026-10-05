@@ -2,7 +2,7 @@ Feature: flipflop
   As a CSL cite processor hacker
   I want the test flipflop_ItalicsWithOkAndTextcase to pass
 
-  @bibliography @flipflop
+  @bibliography @flipflop @non-standard
   Scenario: Italics With Ok And Textcase
     Given the following style:
     """

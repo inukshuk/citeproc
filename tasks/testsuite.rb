@@ -22,7 +22,7 @@ module CSL
       display_SecondFieldAlignMigratePunctuation  # format
       bibsection_Select                           # categories / collection variable
       flipflop_ItalicsWithOk                      # HTML in input
-      flipflow_ItalicsWithOkAndTextcase           # ---
+      flipflop_ItalicsWithOkAndTextcase           # ---
       variables_TitleShortOnShortTitleNoTitle     # converts shortTitle to title-short
       textcase_Uppercase                          # no-case input markup
       textcase_TitleCapitalization                # ---
@@ -32,7 +32,11 @@ module CSL
       textcase_CapitalizeFirst                    # ---
       textcase_CapitalizeAll                      # ---
       textcase_SkipNameParticlesInTitleCase       #
-    }
+      magic_SuperscriptChars                      # converts superscript characters to <sup>
+      bugreports_NumberAffixEscape                # ---
+      decorations_Baseline                        # uses style="baseline"
+      date_DateNoDateNoTest                       # citeproc-js error message
+    }.scan(/^\s*(\S+)/).flatten
 
     module_function
 
@@ -47,11 +51,9 @@ module CSL
       tags << "@#{feature}"
 
       tags << '@bibsection' if json['bibsection']
-      tags << '@bibentries' if json['bibentries']
-      tags << '@citations' if json['citations']
       tags << '@citation-items' if json['citation_items']
 
-      if NON_STANDARD.include? "#{feature}_#{name}" || feature == 'display'
+      if NON_STANDARD.include? "#{feature}_#{name}"
         tags << '@non-standard'
       end
 
@@ -99,6 +101,9 @@ namespace :test do
       features[feature].each do |file|
         json, name = CSL::TestSuite.load(file), File.basename(file, '.json').split(/_/, 2)[-1]
 
+        # Citations and bibentries inputs are not supported
+        next if json['citations'] || json['bibentries']
+
         tags = CSL::TestSuite.tags_for(json, feature, name)
 
         # Apply some filters
@@ -132,19 +137,8 @@ namespace :test do
             out << "    \"\"\"\n"
           end
 
-          if json['bibentries']
-            out << "    And the following items have been cited:\n"
-            out << "    \"\"\"\n"
-            out << "    " << JSON.dump(json['bibentries'][-1]) << "\n"
-            out << "    \"\"\"\n"
-          end
-
           case json['mode']
           when 'citation'
-            if json['citations'] # TODO
-              out << "    And I have a citations input\n"
-            end
-
             if json['citation_items']
               out << "    When I cite the following items:\n"
               out << "    \"\"\"\n"

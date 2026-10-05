@@ -2,7 +2,7 @@ Feature: bugreports
   As a CSL cite processor hacker
   I want the test bugreports_NumberAffixEscape to pass
 
-  @citation @bugreports
+  @citation @bugreports @non-standard
   Scenario: Number Affix Escape
     Given the following style:
     """

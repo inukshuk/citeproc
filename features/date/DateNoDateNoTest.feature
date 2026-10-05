@@ -2,7 +2,7 @@ Feature: date
   As a CSL cite processor hacker
   I want the test date_DateNoDateNoTest to pass
 
-  @citation @date
+  @citation @date @non-standard
   Scenario: Date No Date No Test
     Given the following style:
     """

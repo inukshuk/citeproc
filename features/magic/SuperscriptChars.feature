@@ -2,7 +2,7 @@ Feature: magic
   As a CSL cite processor hacker
   I want the test magic_SuperscriptChars to pass
 
-  @citation @magic
+  @citation @magic @non-standard
   Scenario: Superscript Chars
     Given the following style:
     """

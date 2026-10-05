@@ -279,7 +279,7 @@ module CiteProc
         end
 
         it 'prints japanese names using static ordering' do
-          expect(japanese.format).to eq('穂積 陳重')
+          expect(japanese.format).to eq('穂積陳重')
         end
 
         it 'returns the literal if the name is a literal' do
@@ -345,7 +345,7 @@ module CiteProc
           end
 
           it 'prints japanese names using static ordering' do
-            expect(japanese.sort_order!.format).to eq('穂積 陳重')
+            expect(japanese.sort_order!.format).to eq('穂積陳重')
           end
 
           it 'returns the literal if the name is a literal' do

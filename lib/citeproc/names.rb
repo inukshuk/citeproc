@@ -321,7 +321,7 @@ module CiteProc
       when literal?
         literal.to_s
       when static_order?
-        [family, initials].compact.join(' ')
+        [family, initials].compact.join(romanesque? ? ' ' : '')
       when !short_form?
         case
         when !sort_order?

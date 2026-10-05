@@ -19,18 +19,17 @@ module CiteProc
       end
 
       # @param number [#to_i] the number to convert
-      # @return [String] roman equivalent of the passed-in number
+      # @return [String, Integer] roman equivalent of the passed-in number;
+      #   the number itself if it is out of range
       def romanize(number)
-        number, roman = number.to_i, ''
+        number = number.to_i
 
-        return number unless number > 0 || number < MAX_ROMAN
+        return number unless number > 0 && number < MAX_ROMAN
 
-        FACTORS.each do |code, factor|
+        FACTORS.map { |code, factor|
           count, number = number.divmod(factor)
-          roman << (code * count)
-        end
-
-        roman
+          code * count
+        }.join
       end
     end
 

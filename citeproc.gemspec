@@ -24,17 +24,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'observer', '< 1.0'
   s.add_dependency 'open-uri', '< 1.0'
 
-  s.files        = `git ls-files`.split("\n") - %w{
-    .document
-    .gitignore
-    .rspec
-    .simplecov
-    .yardopts
-    Gemfile
-    Rakefile
-    citeproc.gemspec
-    cucumber.yml
-  } - `git ls-files -- {.github,tasks,spec,features}/*`.split("\n")
+  s.files        = `git ls-files -- lib`.split("\n") + %w[BSDL README.md]
 
   s.require_path = 'lib'
 end

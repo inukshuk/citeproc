@@ -35,5 +35,5 @@ Feature: name
     When I cite all items
     Then the result should be:
     """
-    <span style="font-variant:small-caps;">Fontaine</span> (Jean de <span style="font-variant:small-caps;">La</span>)
+    <span style="font-variant:small-caps;">La Fontaine</span> (Jean de)
     """

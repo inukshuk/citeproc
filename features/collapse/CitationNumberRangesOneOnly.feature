@@ -2,7 +2,7 @@ Feature: collapse
   As a CSL cite processor hacker
   I want the test collapse_CitationNumberRangesOneOnly to pass
 
-  @bibliography @collapse @citations
+  @bibliography @collapse @citation-items
   Scenario: Citation Number Ranges One Only
     Given the following style:
     """

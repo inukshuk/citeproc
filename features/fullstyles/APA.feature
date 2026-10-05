@@ -352,7 +352,7 @@ Feature: fullstyles
     """
     And the following input:
     """
-    [{"author":[{"family":"Oblinger","given":"Dan Gerry","isInstitution":""},{"family":"Oblinger","given":"Susan Mary","isInstitution":""}],"id":3,"issued":{"date-parts":[[2009]]},"multi":{"_keys":{}},"title":"Bookie","type":"book"}]
+    [{"author":[{"family":"Oblinger","given":"Dan Gerry"},{"family":"Oblinger","given":"Susan Mary"}],"id":3,"issued":{"date-parts":[[2009]]},"title":"Bookie","type":"book"}]
     """
     When I cite all items
     Then the result should be:

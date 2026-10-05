@@ -42,7 +42,7 @@ Feature: disambiguate
     """
     And the following input:
     """
-    [{"author":[{"family":"Asthma","given":"Albert","static-ordering":false}],"id":"ITEM-1","issued":{"date-parts":[["1990"]]},"title":"Book A","type":"book"},{"editor":[{"family":"Asthma","given":"Albert","static-ordering":false}],"id":"ITEM-2","issued":{"date-parts":[["1990"]]},"title":"Book B","type":"book"}]
+    [{"author":[{"family":"Asthma","given":"Albert"}],"id":"ITEM-1","issued":{"date-parts":[["1990"]]},"title":"Book A","type":"book"},{"editor":[{"family":"Asthma","given":"Albert"}],"id":"ITEM-2","issued":{"date-parts":[["1990"]]},"title":"Book B","type":"book"}]
     """
     When I cite the following items:
     """

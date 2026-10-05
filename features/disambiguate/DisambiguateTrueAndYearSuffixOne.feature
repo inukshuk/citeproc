@@ -1,0 +1,74 @@
+Feature: disambiguate
+  As a CSL cite processor hacker
+  I want the test disambiguate_DisambiguateTrueAndYearSuffixOne to pass
+
+  @citation @disambiguate @citation-items
+  Scenario: Disambiguate True And Year Suffix One
+    Given the following style:
+    """
+    <?xml version="1.0" encoding="utf-8"?>
+    <style xmlns="http://purl.org/net/xbiblio/csl" class="in-text" version="1.0" demote-non-dropping-particle="sort-only" default-locale="en-GB">
+      <info>
+        <title>zzz</title>
+        <id>http://www.zotero.org/styles/zzz</id>
+        <link href="http://www.zotero.org/styles/zzz" rel="self"/>
+        <author>
+          <name>zzz</name>
+          <email>zzz@gmail.com</email>
+        </author>
+        <category citation-format="author-date"/>
+        <category field="humanities"/>
+        <updated>2012-06-29T00:00:00+00:00</updated>
+        <summary>The University College London version of Harvard author-date style</summary>
+        <link href="http://www.ucl.ac.uk/art-history/current_students/writing-guide/" rel="documentation"/>
+        <rights>This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 License: http://creativecommons.org/licenses/by-sa/3.0/</rights>
+      </info>
+      <macro name="author-short">
+        <names variable="author">
+          <name form="short" and="text" delimiter=", " initialize-with=". "/>
+          <substitute>
+            <names variable="editor"/>
+            <names variable="translator"/>
+            <choose>
+              <if type="bill book graphic legal_case legislation motion_picture report song" match="any">
+                <text variable="title" form="short" font-style="italic"/>
+              </if>
+              <else>
+                <text variable="title" form="short" quotes="true"/>
+              </else>
+            </choose>
+          </substitute>
+        </names>
+      </macro>
+      <macro name="year-date">
+        <date variable="issued">
+          <date-part name="year"/>
+        </date>
+        <text variable="year-suffix"/>
+      </macro>
+      <citation et-al-min="3" et-al-use-first="1" disambiguate-add-year-suffix="true">
+        <layout>
+          <group delimiter=", ">
+            <text macro="author-short"/>
+    		<choose>
+    		   <if disambiguate="true">
+    		        <text variable="title"/>
+    		   </if>
+    		</choose>
+    		<text macro="year-date"/>
+          </group>
+        </layout>
+      </citation>
+    </style>
+    """
+    And the following input:
+    """
+    [{"author":[{"family":"Pollock","given":"Sir Frederick"}],"id":"ITEM-1","issued":{"date-parts":[[1979]]},"title":"Title One","type":"book"},{"author":[{"family":"Pollock","given":"Sir Frederick"}],"id":"ITEM-2","issued":{"date-parts":[[1980]]},"title":"Title Two","type":"book"}]
+    """
+    When I cite the following items:
+    """
+    [[{"id":"ITEM-1"}],[{"id":"ITEM-2"}]]
+    """
+    Then the results should be:
+      | Pollock, 1979 |
+      | Pollock, 1980 |

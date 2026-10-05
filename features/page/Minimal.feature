@@ -33,23 +33,23 @@ Feature: page
     [[{"id":"ITEM-1"}],[{"id":"ITEM-2"}],[{"id":"ITEM-3"}],[{"id":"ITEM-4"}],[{"id":"ITEM-5"}],[{"id":"ITEM-6"}],[{"id":"ITEM-7"}],[{"id":"ITEM-8"}],[{"id":"ITEM-9"}],[{"id":"ITEM-10"}],[{"id":"ITEM-11"}],[{"id":"ITEM-12"}],[{"id":"ITEM-13"}],[{"id":"ITEM-14"}],[{"id":"ITEM-15"}],[{"id":"ITEM-16"}],[{"id":"ITEM-17"}],[{"id":"ITEM-18"}],[{"id":"ITEM-19"}],[{"id":"ITEM-20"}]]
     """
     Then the results should be:
-      | Example A, at 101–8    |
-      | Example B, at 3–10     |
-      | Example C, at 71–2     |
-      | Example D, at 96–117   |
-      | Example E, at 100–4    |
-      | Example F, at 600–13   |
-      | Example G, at 1100–23  |
-      | Example H, at 107–8    |
-      | Example I, at 505–17   |
-      | Example J, at 1002–6   |
-      | Example K, at 321–5    |
-      | Example L, at 415–532  |
-      | Example M, at 1536–8   |
-      | Example N, at 11564–8  |
-      | Example O, at 11564–78 |
-      | Example P, at 13792–803 |
-      | Example Q, at 1496–504 |
-      | Example R, at 2787–816 |
-      | Example S, at n11564–8 |
-      | Example T, at n11564–8 |
+      | Example A, at 101–8       |
+      | Example B, at 3–10        |
+      | Example C, at 71–2        |
+      | Example D, at 96–117      |
+      | Example E, at 100–4       |
+      | Example F, at 600–13      |
+      | Example G, at 1100–23     |
+      | Example H, at 107–8       |
+      | Example I, at 505–17      |
+      | Example J, at 1002–6      |
+      | Example K, at 321–5       |
+      | Example L, at 415–532     |
+      | Example M, at 1536–8      |
+      | Example N, at 11564–8     |
+      | Example O, at 11564–78    |
+      | Example P, at 13792–803   |
+      | Example Q, at 1496–504    |
+      | Example R, at 2787–816    |
+      | Example S, at n11564–8    |
+      | Example T, at n11564-1568 |

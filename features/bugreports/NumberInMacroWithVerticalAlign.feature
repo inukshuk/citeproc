@@ -32,5 +32,5 @@ Feature: bugreports
     When I cite all items
     Then the result should be:
     """
-    <sup><i>2</i></sup>; <sup><i>3</i>–<i>5</i></sup>
+    <sup><i>2</i></sup>; <sup><i>3–5</i></sup>
     """

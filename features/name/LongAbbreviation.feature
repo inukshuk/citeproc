@@ -26,7 +26,7 @@ Feature: name
     """
     And the following input:
     """
-    [{"author":[{"family":"Tserendorj","given":"TSerendorjiin","static-ordering":false}],"id":"simple-mongolian-name-1","issued":{"date-parts":[["1925","3","4"]]},"title":"An Altogether Unknown History of Soviet-Mongolian Relations","type":"book"}]
+    [{"author":[{"family":"Tserendorj","given":"TSerendorjiin"}],"id":"simple-mongolian-name-1","issued":{"date-parts":[["1925","3","4"]]},"title":"An Altogether Unknown History of Soviet-Mongolian Relations","type":"book"}]
     """
     When I cite all items
     Then the result should be:

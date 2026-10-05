@@ -28,7 +28,7 @@ Feature: disambiguate
     """
     And the following input:
     """
-    [{"author":[{"family":"Roe","given":"Jane","static-ordering":false}],"id":"ITEM-1","type":"book"},{"author":[{"family":"Doe","given":"John","static-ordering":false}],"id":"ITEM-2","type":"book"},{"author":[{"family":"Doe","given":"Aloysius","static-ordering":false}],"id":"ITEM-3","type":"book"},{"author":[{"family":"Smith","given":"Thomas","static-ordering":false}],"id":"ITEM-4","type":"book"},{"author":[{"family":"Smith","given":"Ted","static-ordering":false}],"id":"ITEM-5","type":"book"}]
+    [{"author":[{"family":"Roe","given":"Jane"}],"id":"ITEM-1","type":"book"},{"author":[{"family":"Doe","given":"John"}],"id":"ITEM-2","type":"book"},{"author":[{"family":"Doe","given":"Aloysius"}],"id":"ITEM-3","type":"book"},{"author":[{"family":"Smith","given":"Thomas"}],"id":"ITEM-4","type":"book"},{"author":[{"family":"Smith","given":"Ted"}],"id":"ITEM-5","type":"book"}]
     """
     When I cite the following items:
     """

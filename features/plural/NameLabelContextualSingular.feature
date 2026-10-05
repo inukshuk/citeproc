@@ -27,7 +27,7 @@ Feature: plural
     """
     And the following input:
     """
-    [{"editor":[{"family":"Doe","given":"John","static-ordering":false}],"id":"ITEM-1","type":"book"}]
+    [{"editor":[{"family":"Doe","given":"John"}],"id":"ITEM-1","type":"book"}]
     """
     When I cite all items
     Then the result should be:

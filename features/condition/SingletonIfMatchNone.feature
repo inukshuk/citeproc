@@ -32,10 +32,10 @@ Feature: condition
     """
     And the following input:
     """
-    [{"author":[{"family":"Άγρας","given":"Τέλλος"}],"container-author":[{"family":"Καρυωτάκης ","given":"Κώστας"}],"editor":[{"family":"Σαββίδης","given":"Γ. Π."}],"id":"ITEM-1","type":"chapter"}]
+    [{"author":[{"family":"Άγρας","given":"Τέλλος"}],"container-author":[{"family":"Καρυωτάκης","given":"Κώστας"}],"editor":[{"family":"Σαββίδης","given":"Γ. Π."}],"id":"ITEM-1","type":"chapter"}]
     """
     When I cite all items
     Then the result should be:
     """
-    ed. Γ. Π. Σαββίδης
+    ed. by Γ. Π. Σαββίδης
     """

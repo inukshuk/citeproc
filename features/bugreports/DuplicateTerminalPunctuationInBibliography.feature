@@ -212,11 +212,10 @@ Feature: bugreports
         </layout>
       </bibliography>
     </style>
-
     """
     And the following input:
     """
-    [{"URL":"http://www.test01.com","author":[{"family":"D'Arcus","given":"Bruce","static-ordering":false}],"id":"ITEM-1","issued":{"date-parts":[[2006]]},"publisher":"Routledge","publisher-place":"New York","title":"Boundaries of Dissent: Protest and State Power in the Media Age","type":"book"}]
+    [{"URL":"http://www.test01.com","author":[{"family":"D'Arcus","given":"Bruce"}],"id":"ITEM-1","issued":{"date-parts":[[2006]]},"publisher":"Routledge","publisher-place":"New York","title":"Boundaries of Dissent: Protest and State Power in the Media Age","type":"book"}]
     """
     When I render the entire bibliography
     Then the bibliography should be:

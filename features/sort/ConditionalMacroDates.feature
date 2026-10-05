@@ -17,7 +17,6 @@ Feature: sort
       </info>
       <macro name="issued-date">
         <group prefix="[" suffix="]">
-        <text variable="title"/>
         <choose>
           <if type="book">
             <date variable="issued">

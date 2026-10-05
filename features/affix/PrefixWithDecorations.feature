@@ -31,7 +31,7 @@ Feature: affix
     """
     And the following input:
     """
-    [{"author":[{"family":"Smith","given":"John","static-ordering":false}],"id":"ITEM-1","issued":{"date-parts":[["2000","2","15"]]},"title":"Book C","type":"book"}]
+    [{"author":[{"family":"Smith","given":"John"}],"id":"ITEM-1","issued":{"date-parts":[["2000","2","15"]]},"title":"Book C","type":"book"}]
     """
     When I cite the following items:
     """

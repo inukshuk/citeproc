@@ -1,0 +1,64 @@
+Feature: bugreports
+  As a CSL cite processor hacker
+  I want the test bugreports_SimpleBib to pass
+
+  @bibliography @bugreports
+  Scenario: Simple Bib
+    Given the following style:
+    """
+    <?xml version="1.0" encoding="utf-8"?>
+    <style xmlns="http://purl.org/net/xbiblio/csl" class="note" version="1.0" demote-non-dropping-particle="never" page-range-format="chicago" name-as-sort-order="first" default-locale="en-US-x-sort-ja-alalc97">
+      <info>
+        <title>JM Chicago Manual of Style 16th edition (full note)</title>
+        <id>http://juris-m.github.io/jm-styles/jm-chicago-fullnote-bibliography</id>
+        <link href="http://juris-m.github.io/styles/jm-chicago-fullnote-bibliography" rel="self"/>
+        <link href="http://www.chicagomanualofstyle.org/tools_citationguide.html" rel="documentation"/>
+        <author>
+          <name>Julian Onions</name>
+          <email>julian.onions@gmail.com</email>
+        </author>
+        <contributor>
+          <name>Simon Kornblith</name>
+          <email>simon@simonster.com</email>
+        </contributor>
+        <contributor>
+          <name>Elena Razlogova</name>
+          <email>elena.razlogova@gmail.com</email>
+        </contributor>
+        <contributor>
+          <name>Frank Bennett</name>
+          <email>biercenator@gmail.com</email>
+        </contributor>
+        <contributor>
+          <name>Andrew Dunning</name>
+          <email>andrew.dunning@utoronto.ca</email>
+        </contributor>
+        <category citation-format="note"/>
+        <category field="generic-base"/>
+        <summary>Chicago format with full notes and bibliography</summary>
+        <updated>2015-06-19T22:51:43.905955</updated>
+        <rights license="http://creativecommons.org/licenses/by-sa/3.0/">This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 License</rights>
+      </info>
+      <citation>
+        <layout>
+          <text value="Boo"/>
+        </layout>
+      </citation>
+      <bibliography>
+        <layout>
+          <text value="Bang"/>
+        </layout>
+      </bibliography>
+    </style>
+    """
+    And the following input:
+    """
+    [{"author":[{"family":"Malone","given":"Nolan J."},{"literal":"U.S. Bureau of the Census"}],"id":"ITEM-6","issued":{"date-parts":[[2001,12,5]]},"publisher":"Routledge","title":"Evaluating Components of International Migration: Consistency of 2000 Nativity Data","type":"book"}]
+    """
+    When I render the entire bibliography
+    Then the bibliography should be:
+    """
+    <div class="csl-bib-body">
+      <div class="csl-entry">Bang</div>
+    </div>
+    """

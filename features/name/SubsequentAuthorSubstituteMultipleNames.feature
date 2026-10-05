@@ -2,7 +2,7 @@ Feature: name
   As a CSL cite processor hacker
   I want the test name_SubsequentAuthorSubstituteMultipleNames to pass
 
-  @bibliography @name @citations
+  @bibliography @name @citation-items
   Scenario: Subsequent Author Substitute Multiple Names
     Given the following style:
     """

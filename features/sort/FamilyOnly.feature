@@ -24,9 +24,11 @@ Feature: sort
         <sort>
           <key variable="author"/>
         </sort>
-        <names variable="author">
-          <name/>
-        </names>
+        <layout>
+          <names variable="author">
+            <name/>
+          </names>
+        </layout>
       </bibliography>
     </style>
     """

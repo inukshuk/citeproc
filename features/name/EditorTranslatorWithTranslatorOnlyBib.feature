@@ -184,6 +184,6 @@ Feature: name
     Then the bibliography should be:
     """
     <div class="csl-bib-body">
-      <div class="csl-entry">Noakes, Richard. <i>Hello</i>. Trans. Jane Roe.</div>
+      <div class="csl-entry">Noakes, Richard. <i>Hello</i>. Trans. by Jane Roe.</div>
     </div>
     """

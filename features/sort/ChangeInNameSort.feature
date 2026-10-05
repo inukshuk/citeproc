@@ -2,7 +2,7 @@ Feature: sort
   As a CSL cite processor hacker
   I want the test sort_ChangeInNameSort to pass
 
-  @bibliography @sort @citations
+  @bibliography @sort @citation-items
   Scenario: Change In Name Sort
     Given the following style:
     """
@@ -33,7 +33,7 @@ Feature: sort
         <sort>
           <key variable="author"/>
         </sort>
-        <layout delimiter="; ">
+        <layout>
           <text macro="author" />
         </layout>
       </bibliography>
@@ -48,7 +48,7 @@ Feature: sort
     """
     <div class="csl-bib-body">
       <div class="csl-entry">Carter</div>
-      <div class="csl-entry">Noakes</div>
       <div class="csl-entry">De Quincey</div>
+      <div class="csl-entry">Noakes</div>
     </div>
     """

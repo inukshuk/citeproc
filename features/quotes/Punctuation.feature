@@ -2,7 +2,7 @@ Feature: quotes
   As a CSL cite processor hacker
   I want the test quotes_Punctuation to pass
 
-  @bibliography @quotes @non-standard
+  @bibliography @quotes
   Scenario: Punctuation
     Given the following style:
     """
@@ -32,7 +32,7 @@ Feature: quotes
     """
     And the following input:
     """
-    [{"author":[{"family":"Doe","given":"John","static-ordering":false}],"id":"item-1","issued":{"date-parts":[["2000"]]},"title":"The Book Title","type":"book"}]
+    [{"author":[{"family":"Doe","given":"John"}],"id":"item-1","issued":{"date-parts":[["2000"]]},"title":"The Book Title","type":"book"}]
     """
     When I render the entire bibliography
     Then the bibliography should be:

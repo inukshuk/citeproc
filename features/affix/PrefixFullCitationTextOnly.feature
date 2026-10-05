@@ -31,11 +31,11 @@ Feature: affix
     """
     And the following input:
     """
-    [{"author":[{"family":"Smith","given":"John","static-ordering":false}],"id":"ITEM-1","issued":{"date-parts":[["2000","2","15"]]},"title":"Book C","type":"book"}]
+    [{"author":[{"family":"Smith","given":"John"}],"id":"ITEM-1","issued":{"date-parts":[["2000","2","15"]]},"title":"Book C","type":"book"}]
     """
     When I cite the following items:
     """
-    [[{"id":"ITEM-1","prefix":"As written in"}]]
+    [[{"id":"ITEM-1","prefix":"As written in "}]]
     """
     Then the results should be:
       | (As written in Smith 2000) |

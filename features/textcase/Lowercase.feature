@@ -29,5 +29,5 @@ Feature: textcase
     When I cite all items
     Then the result should be:
     """
-    this is a pen that is a smith pencil
+    this is a pen that is a Smith pencil
     """

@@ -26,10 +26,10 @@ Feature: name
     """
     And the following input:
     """
-    [{"author":[{"family":"Doe","given":"John"}],"id":"ITEM-1","issued":{"date-parts":[["1965","6","1"]]},"title":"His Anonymous Life","type":"book"}]
+    [{"author":[{"family":"Doe","given":"AAhad M."}],"id":"ITEM-1","issued":{"date-parts":[["1965","6","1"]]},"title":"His Anonymous Life","type":"book"}]
     """
     When I cite all items
     Then the result should be:
     """
-    John Doe
+    AAhad M. Doe
     """

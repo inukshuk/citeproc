@@ -73,7 +73,7 @@ Feature: substitute
     """
     <div class="csl-bib-body">
       <div class="csl-entry">“The Title.” The Publisher.</div>
-      <div class="csl-entry">John-boy Doe editor. <i>The Title</i>. The Publisher.</div>
+      <div class="csl-entry">John-boy Doe ed. <i>The Title</i>. The Publisher.</div>
       <div class="csl-entry">Jane-girl Doe editor. <i>The Title</i>. The Organization.</div>
     </div>
     """

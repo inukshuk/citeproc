@@ -29,6 +29,7 @@ Feature: magic
     			 collapse="year-suffix" 
     			 disambiguate-add-names="true">
           <layout prefix="(" suffix=")" delimiter="; ">
+          <!-- layout delimiter="; " -->
             <date variable="issued">
                <date-part name="year"/>
             </date>

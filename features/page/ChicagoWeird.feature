@@ -1,0 +1,38 @@
+Feature: page
+  As a CSL cite processor hacker
+  I want the test page_ChicagoWeird to pass
+
+  @citation @page @citation-items
+  Scenario: Chicago Weird
+    Given the following style:
+    """
+    <style 
+          xmlns="http://purl.org/net/xbiblio/csl"
+          class="note"
+          version="1.0"
+          page-range-format="chicago">
+      <info>
+        <id />
+        <title />
+        <updated>2009-08-10T04:49:00+09:00</updated>
+      </info>
+      <citation>
+        <layout>
+          <text variable="title"/>
+          <text variable="page" prefix=", at "/>
+        </layout>
+      </citation>
+    </style>
+    """
+    And the following input:
+    """
+    [{"id":"ITEM-19","page":"8n11564-8n1568","title":"Example S","type":"book"},{"id":"ITEM-20","page":"n11564-n1568","title":"Example T","type":"book"},{"id":"ITEM-21","page":"n11564-1568","title":"Example U","type":"book"}]
+    """
+    When I cite the following items:
+    """
+    [[{"id":"ITEM-19"}],[{"id":"ITEM-20"}],[{"id":"ITEM-21"}]]
+    """
+    Then the results should be:
+      | Example S, at 8n11564–68  |
+      | Example T, at n11564–68   |
+      | Example U, at n11564-1568 |

@@ -30,10 +30,10 @@ Feature: name
     """
     And the following input:
     """
-    [{"author":[{"family":"la Fontaine","given":"Jean de"}],"id":"ITEM-1","type":"book"}]
+    [{"author":[{"family":"La Fontaine","given":"Jean de"}],"id":"ITEM-1","type":"book"}]
     """
     When I cite all items
     Then the result should be:
     """
-    (<span style="font-variant:small-caps;">la</span> <span style="font-variant:small-caps;">Fontaine</span>) Jean de
+    (<span style="font-variant:small-caps;">La Fontaine</span>) Jean de
     """

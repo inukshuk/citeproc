@@ -112,7 +112,7 @@ Feature: fullstyles
       <macro name="contributors">
         <names variable="author">
           <name and="text" delimiter=", " delimiter-precedes-last="always" name-as-sort-order="first" sort-separator=", " />
-          <label form="verb-short" prefix=", " suffix="." text-case="lowercase" />
+          <label form="short" prefix=", " suffix="." text-case="lowercase" />
           <substitute>
             <text macro="editor" />
             <text macro="translator" />
@@ -379,7 +379,7 @@ Feature: fullstyles
     """
     And the following input:
     """
-    [{"author":[{"family":"Doe","given":"John","static-ordering":false}],"container-title":"New Thinker","id":"ITEM-5","issued":{"date-parts":[["1994"]]},"page":"5","title":"An article is it?","type":"article-journal","volume":"10"}]
+    [{"author":[{"family":"Doe","given":"John"}],"container-title":"New Thinker","id":"ITEM-5","issued":{"date-parts":[["1994"]]},"page":"5","title":"An article is it?","type":"article-journal","volume":"10"}]
     """
     When I render the entire bibliography
     Then the bibliography should be:

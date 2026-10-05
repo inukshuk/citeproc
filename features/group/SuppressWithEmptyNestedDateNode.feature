@@ -187,7 +187,6 @@ Feature: group
         </layout>
       </bibliography>
     </style>
-
     """
     And the following input:
     """

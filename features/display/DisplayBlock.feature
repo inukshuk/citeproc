@@ -40,7 +40,7 @@ Feature: display
     """
     And the following input:
     """
-    [{"abstract":"An interesting book by an interesting author.","author":[{"family":"Smith","given":"John","static-ordering":false}],"id":"ITEM-1","issued":{"date-parts":[["2000"]]},"title":"Book A","type":"book"},{"abstract":"An old contribution to a new field.","author":[{"family":"Jones","given":"Robert","static-ordering":false}],"id":"ITEM-2","issued":{"date-parts":[["2001"]]},"title":"Book B","type":"book"}]
+    [{"abstract":"An interesting book by an interesting author.","author":[{"family":"Smith","given":"John"}],"id":"ITEM-1","issued":{"date-parts":[["2000"]]},"title":"Book A","type":"book"},{"abstract":"An old contribution to a new field.","author":[{"family":"Jones","given":"Robert"}],"id":"ITEM-2","issued":{"date-parts":[["2001"]]},"title":"Book B","type":"book"}]
     """
     When I render the entire bibliography
     Then the bibliography should be:

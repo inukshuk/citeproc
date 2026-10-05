@@ -700,7 +700,6 @@ Feature: bugreports
         </layout>
       </bibliography>
     </style>
-
     """
     And the following input:
     """
@@ -710,6 +709,6 @@ Feature: bugreports
     Then the bibliography should be:
     """
     <div class="csl-bib-body">
-      <div class="csl-entry">Davis, Jennifer J. “Men of Taste: Gender and Authority in the French Culinary Trades, 1730-1830”. Ph.D. diss., Pennsylvania State University, History, 2004.</div>
+      <div class="csl-entry">Davis, Jennifer J. “Men of Taste: Gender and Authority in the French Culinary Trades, 1730-1830.” Ph.D. diss., Pennsylvania State University, History, 2004.</div>
     </div>
     """

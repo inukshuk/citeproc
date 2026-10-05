@@ -29,7 +29,7 @@ Feature: name
     """
     And the following input:
     """
-    [{"author":[{"dropping-particle":"de","family":"Doe","given":"John","non-dropping-particle":"la","static-ordering":false}],"id":"ITEM-1","title":"His Anonymous Life","type":"book"}]
+    [{"author":[{"dropping-particle":"de","family":"Doe","given":"John","non-dropping-particle":"la"}],"id":"ITEM-1","title":"His Anonymous Life","type":"book"}]
     """
     When I cite all items
     Then the result should be:

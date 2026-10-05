@@ -33,7 +33,7 @@ Feature: disambiguate
     """
     And the following input:
     """
-    [{"author":[{"family":"Asthma","given":"Aloysius","static-ordering":false},{"family":"Bronchitis","given":"Bosworth","static-ordering":false}],"id":"ITEM-1","issued":{"date-parts":[["1980"]]},"type":"book"},{"author":[{"family":"Asthma","given":"Artemis","static-ordering":false},{"family":"Bronchitis","given":"Beauregarde","static-ordering":false}],"id":"ITEM-2","issued":{"date-parts":[["1995"]]},"type":"book"}]
+    [{"author":[{"family":"Asthma","given":"Aloysius"},{"family":"Bronchitis","given":"Bosworth"}],"id":"ITEM-1","issued":{"date-parts":[["1980"]]},"type":"book"},{"author":[{"family":"Asthma","given":"Artemis"},{"family":"Bronchitis","given":"Beauregarde"}],"id":"ITEM-2","issued":{"date-parts":[["1995"]]},"type":"book"}]
     """
     When I cite all items
     Then the result should be:

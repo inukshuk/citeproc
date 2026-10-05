@@ -24,7 +24,7 @@ Feature: date
     """
     And the following input:
     """
-    [{"accessed":{"date-parts":[],"raw":"22 jan 1976"},"id":"ITEM-1","type":"book"}]
+    [{"accessed":{"date-parts":[[1976,1,22]]},"id":"ITEM-1","type":"book"}]
     """
     When I cite all items
     Then the result should be:

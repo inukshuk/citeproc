@@ -336,7 +336,6 @@ Feature: bugreports
         </layout>
       </citation>
     </style>
-
     """
     And the following input:
     """

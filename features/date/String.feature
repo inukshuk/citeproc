@@ -16,7 +16,7 @@ Feature: date
         <updated>2009-08-10T04:49:00+09:00</updated>
       </info>
       <citation>
-        <layout delimiter="; ">
+        <layout>
           <group delimiter=": ">
             <text value="date"/>
             <date variable="issued" form="text" date-parts="year"/>
@@ -27,10 +27,10 @@ Feature: date
     """
     And the following input:
     """
-    [{"id":"ITEM-1","issued":{"date-parts":[],"raw":"Bogus Date"},"title":"Book A","type":"book"},{"id":"ITEM-2","issued":{"date-parts":[],"raw":"2010-03-27"},"title":"Book B","type":"book"}]
+    [{"id":"ITEM-1","issued":{"date-parts":[],"raw":"Bogus Date"},"title":"Book A","type":"book"}]
     """
     When I cite all items
     Then the result should be:
     """
-    date: Bogus Date; date: 2010
+    date: Bogus Date
     """

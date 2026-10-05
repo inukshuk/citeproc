@@ -22,7 +22,7 @@ Feature: name
              <name-part name="given" text-case="uppercase"/>
              <name-part name="family" text-case="uppercase"/>
             </name>
-            <et-al prefix=" " font-style="italic"/>
+            <et-al font-style="italic"/>
             <label form="short" prefix=" (" suffix=".)" text-case="uppercase"/>
             <substitute>
               <names variable="editor"/>

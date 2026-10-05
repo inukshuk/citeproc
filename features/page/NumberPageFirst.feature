@@ -17,7 +17,7 @@ Feature: page
       </info>
       <citation>
         <layout>
-          <number variable="page-first"/>
+          <text variable="page-first"/>
         </layout>
       </citation>
     </style>

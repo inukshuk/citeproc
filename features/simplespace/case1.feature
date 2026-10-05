@@ -187,7 +187,6 @@ Feature: simplespace
         </layout>
       </bibliography>
     </style>
-
     """
     And the following input:
     """

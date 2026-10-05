@@ -700,11 +700,10 @@ Feature: fullstyles
         </layout>
       </bibliography>
     </style>
-
     """
     And the following input:
     """
-    [{"author":[{"family":"Doe","given":"John","static-ordering":false}],"id":"ITEM-1","issued":{"date-parts":[["1990"]]},"publisher":"Zardoz Press","publisher-place":"Brobdingnag","title":"Book A","type":"book"},{"author":[{"family":"Roe","given":"Jane","static-ordering":false}],"id":"ITEM-2","issued":{"date-parts":[["1991"]]},"title":"Book B","type":"book"}]
+    [{"author":[{"family":"Doe","given":"John"}],"id":"ITEM-1","issued":{"date-parts":[["1990"]]},"publisher":"Zardoz Press","publisher-place":"Brobdingnag","title":"Book A","type":"book"},{"author":[{"family":"Roe","given":"Jane"}],"id":"ITEM-2","issued":{"date-parts":[["1991"]]},"title":"Book B","type":"book"}]
     """
     When I render the entire bibliography
     Then the bibliography should be:

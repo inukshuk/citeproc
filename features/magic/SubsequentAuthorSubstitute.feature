@@ -42,7 +42,7 @@ Feature: magic
     """
     And the following input:
     """
-    [{"author":[{"family":"Smith","given":"John"},{"family":"Roe","given":"Jane"}],"id":"item-1","issued":{"date-parts":[["2000"]]},"title":"Book A","type":"book"},{"author":[{"family":"Smith","given":"John"},{"family":"Roe","given":"Jane"}],"id":"item-2","issued":{"date-parts":[["2001"]]},"title":"Book B","type":"book"},{"author":[{"family":"Smith","given":"John","static-ordering":false}],"id":"item-3","issued":{"date-parts":[["2002"]]},"title":"Book C","type":"book"}]
+    [{"author":[{"family":"Smith","given":"John"},{"family":"Roe","given":"Jane"}],"id":"item-1","issued":{"date-parts":[["2000"]]},"title":"Book A","type":"book"},{"author":[{"family":"Smith","given":"John"},{"family":"Roe","given":"Jane"}],"id":"item-2","issued":{"date-parts":[["2001"]]},"title":"Book B","type":"book"},{"author":[{"family":"Smith","given":"John"}],"id":"item-3","issued":{"date-parts":[["2002"]]},"title":"Book C","type":"book"}]
     """
     When I render the entire bibliography
     Then the bibliography should be:

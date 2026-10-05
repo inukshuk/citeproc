@@ -27,7 +27,7 @@ Feature: nameorder
     """
     And the following input:
     """
-    [{"author":[{"dropping-particle":"de","family":"Martinière","given":"Gérard","non-dropping-particle":"la","static-ordering":false,"suffix":"III"}],"id":"ITEM-1","type":"book"}]
+    [{"author":[{"dropping-particle":"de","family":"Martinière","given":"Gérard","non-dropping-particle":"la","suffix":"III"}],"id":"ITEM-1","type":"book"}]
     """
     When I cite all items
     Then the result should be:

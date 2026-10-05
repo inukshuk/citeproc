@@ -2,7 +2,7 @@ Feature: sort
   As a CSL cite processor hacker
   I want the test sort_LeadingApostropheOnNameParticle to pass
 
-  @bibliography @sort @citations
+  @bibliography @sort @citation-items
   Scenario: Leading Apostrophe On Name Particle
     Given the following style:
     """
@@ -38,17 +38,18 @@ Feature: sort
     """
     And the following input:
     """
-    [{"author":[{"family":"Horvath","given":"Peter A.A. 't"}],"id":"ITEM-1","type":"book"},{"author":[{"family":"Horvath","given":"Peter A.B. in 't"}],"id":"ITEM-2","type":"book"},{"author":[{"family":"'t Horvath","given":"Peter A.C."}],"id":"ITEM-3","type":"book"},{"author":[{"family":"in 't Horvath","given":"Peter A.D."}],"id":"ITEM-4","type":"book"},{"author":[{"family":"Frinkle","given":"Bevis"}],"id":"ITEM-5","type":"book"},{"author":[{"family":"Klabdaggit","given":"Mizo"}],"id":"ITEM-6","type":"book"},{"author":[{"family":"Vooz","given":"Bablican"}],"id":"ITEM-7","type":"book"}]
+    [{"author":[{"family":"'t Horvath","given":"Peter A.A."}],"id":"ITEM-1","type":"book"},{"author":[{"family":"in 't Horvath","given":"Peter A.B."}],"id":"ITEM-2","type":"book"},{"author":[{"family":"'t Horvath","given":"Peter A.C."}],"id":"ITEM-3","type":"book"},{"author":[{"family":"in 't Horvath","given":"Peter A.D."}],"id":"ITEM-4","type":"book"},{"author":[{"family":"de' Frinkle","given":"Bevis"}],"id":"ITEM-5","type":"book"},{"author":[{"family":"Klabdaggit","given":"Mizo"}],"id":"ITEM-6","type":"book"},{"author":[{"family":"Vooz","given":"Bablican"}],"id":"ITEM-7","type":"book"},{"author":[{"family":"d'Wander","given":"William"}],"id":"ITEM-8","type":"book"}]
     """
     When I render the entire bibliography
     Then the bibliography should be:
     """
     <div class="csl-bib-body">
-      <div class="csl-entry">Frinkle, B</div>
-      <div class="csl-entry">Horvath, P A B in ’t</div>
-      <div class="csl-entry">Horvath, P A A ’t</div>
-      <div class="csl-entry">In ’t Horvath, P A D</div>
+      <div class="csl-entry">d’Wander, W</div>
+      <div class="csl-entry">de’ Frinkle, B</div>
+      <div class="csl-entry">in ’t Horvath, P A B</div>
+      <div class="csl-entry">in ’t Horvath, P A D</div>
       <div class="csl-entry">Klabdaggit, M</div>
+      <div class="csl-entry">’t Horvath, P A A</div>
       <div class="csl-entry">’t Horvath, P A C</div>
       <div class="csl-entry">Vooz, B</div>
     </div>

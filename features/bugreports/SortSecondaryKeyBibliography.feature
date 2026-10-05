@@ -2,7 +2,7 @@ Feature: bugreports
   As a CSL cite processor hacker
   I want the test bugreports_SortSecondaryKeyBibliography to pass
 
-  @bibliography @bugreports @citations
+  @bibliography @bugreports @citation-items
   Scenario: Sort Secondary Key Bibliography
     Given the following style:
     """

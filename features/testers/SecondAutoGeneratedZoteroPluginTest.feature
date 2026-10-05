@@ -700,11 +700,10 @@ Feature: testers
         </layout>
       </bibliography>
     </style>
-
     """
     And the following input:
     """
-    [{"URL":"http://zotero.org/support/quick_start_guide","author":[{"family":"Center <sup>for</sup> History <sub>and</sub> New Media","given":"","isInstitution":1}],"id":1,"multi":{"_keys":{}},"title":"<b>Zotero</b> … \"Quick Start\" & <sc>Guide</sc> 日本語","type":"webpage"},{"author":[{"family":"Smith","given":"John","isInstitution":""}],"id":5,"issued":{"date-parts":[[2000]]},"multi":{"_keys":{}},"title":"Book A","type":"book"},{"author":[{"family":"Smith","given":"Steven","isInstitution":""}],"id":9,"issued":{"date-parts":[[2000]]},"multi":{"_keys":{}},"title":"Book A","type":"book"}]
+    [{"URL":"http://zotero.org/support/quick_start_guide","author":[{"family":"Center <sup>for</sup> History <sub>and</sub> New Media","given":"","isInstitution":1}],"id":1,"title":"<b>Zotero</b> … \"Quick Start\" & <sc>Guide</sc> 日本語","type":"webpage"},{"author":[{"family":"Smith","given":"John"}],"id":5,"issued":{"date-parts":[[2000]]},"title":"Book A","type":"book"},{"author":[{"family":"Smith","given":"Steven"}],"id":9,"issued":{"date-parts":[[2000]]},"title":"Book A","type":"book"}]
     """
     When I render the entire bibliography
     Then the bibliography should be:

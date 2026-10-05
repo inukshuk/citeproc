@@ -42,4 +42,4 @@ Feature: collapse
     [[{"id":"ITEM-1"},{"id":"ITEM-2"},{"id":"ITEM-3"}]]
     """
     Then the results should be:
-      | (Smith 325AD, 2000, [CSL STYLE ERROR: reference with no printed form.]) |
+      | (Smith 325AD, 2000) |

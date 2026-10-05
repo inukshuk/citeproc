@@ -28,10 +28,10 @@ Feature: date
     """
     And the following input:
     """
-    [{"id":"ITEM-1","issued":{"date-parts":[[1965,-1,1]]},"type":"book"},{"id":"ITEM-2","issued":{"date-parts":[[1965,13,1]]},"type":"book"},{"id":"ITEM-3","issued":{"date-parts":[[1965,17,1]]},"type":"book"},{"id":"ITEM-4","issued":{"date-parts":[[1965,60,1]]},"type":"book"}]
+    [{"id":"ITEM-1","issued":{"date-parts":[[1965,-1,1]]},"type":"book"},{"id":"ITEM-2","issued":{"date-parts":[[1965,13,1]]},"type":"book"},{"id":"ITEM-3","issued":{"date-parts":[[1965,17,1]]},"type":"book"},{"id":"ITEM-4","issued":{"date-parts":[[1965,60,1]]},"type":"book"},{"id":"ITEM-5","issued":{"date-parts":[[1965,24,0]]},"type":"book"}]
     """
     When I cite all items
     Then the result should be:
     """
-    Date: (); Date: (Spring); Date: (Spring); Date: ()
+    Date: (); Date: (Spring); Date: (Spring); Date: (); Date: (Winter)
     """

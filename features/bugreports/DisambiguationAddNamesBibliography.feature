@@ -2,7 +2,7 @@ Feature: bugreports
   As a CSL cite processor hacker
   I want the test bugreports_DisambiguationAddNamesBibliography to pass
 
-  @bibliography @bugreports @citations
+  @bibliography @bugreports @citation-items
   Scenario: Disambiguation Add Names Bibliography
     Given the following style:
     """

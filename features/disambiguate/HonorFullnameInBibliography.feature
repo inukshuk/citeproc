@@ -2,7 +2,7 @@ Feature: disambiguate
   As a CSL cite processor hacker
   I want the test disambiguate_HonorFullnameInBibliography to pass
 
-  @bibliography @disambiguate @citations
+  @bibliography @disambiguate @citation-items
   Scenario: Honor Fullname In Bibliography
     Given the following style:
     """

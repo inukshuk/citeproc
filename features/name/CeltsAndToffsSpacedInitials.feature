@@ -26,7 +26,7 @@ Feature: name
     """
     And the following input:
     """
-    [{"id":"item-1","issued":{"date-parts":[["1952"]]},"title":"Leonardo on the Human Body","translator":[{"family":"O’Malley","given":"Charles D.","static-ordering":false},{"family":"Saunders","given":"John Bertrand de Cusance Morant","static-ordering":false}],"type":"book"}]
+    [{"id":"item-1","issued":{"date-parts":[["1952"]]},"title":"Leonardo on the Human Body","translator":[{"family":"O’Malley","given":"Charles D."},{"family":"Saunders","given":"John Bertrand de Cusance Morant"}],"type":"book"}]
     """
     When I cite all items
     Then the result should be:

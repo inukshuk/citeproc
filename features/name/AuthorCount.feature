@@ -30,7 +30,7 @@ Feature: name
     """
     And the following input:
     """
-    [{"author":[{"family":"Doe","given":"John","static-ordering":false},{"family":"Roe","given":"Jane","static-ordering":false},{"family":"Brown","given":"Robert","static-ordering":false},{"family":"Smith","given":"Tom","static-ordering":false}],"id":"item-1","type":"book"},{"author":[{"family":"Doe","given":"John","static-ordering":false},{"family":"Doe","given":"Jake","static-ordering":false},{"family":"Brown","given":"Robert","static-ordering":false}],"id":"item-2","type":"book"},{"author":[{"family":"Doe","given":"John","static-ordering":false},{"family":"Doe","given":"Jake","static-ordering":false}],"id":"item-3","type":"book"},{"author":[{"family":"Doe","given":"John","static-ordering":false}],"id":"item-4","type":"book"},{"editor":[{"family":"Doe","given":"John","static-ordering":false}],"id":"item-5","type":"book"}]
+    [{"author":[{"family":"Doe","given":"John"},{"family":"Roe","given":"Jane"},{"family":"Brown","given":"Robert"},{"family":"Smith","given":"Tom"}],"id":"item-1","type":"book"},{"author":[{"family":"Doe","given":"John"},{"family":"Doe","given":"Jake"},{"family":"Brown","given":"Robert"}],"id":"item-2","type":"book"},{"author":[{"family":"Doe","given":"John"},{"family":"Doe","given":"Jake"}],"id":"item-3","type":"book"},{"author":[{"family":"Doe","given":"John"}],"id":"item-4","type":"book"},{"editor":[{"family":"Doe","given":"John"}],"id":"item-5","type":"book"}]
     """
     When I cite all items
     Then the result should be:

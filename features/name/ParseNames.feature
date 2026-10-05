@@ -30,7 +30,7 @@ Feature: name
     """
     And the following input:
     """
-    [{"author":[{"family":"van der Vlist","given":"Eric"}],"id":"ITEM-3","type":"book"},{"author":[{"family":"van Gogh","given":"Vincent","parse-names":true}],"id":"ITEM-1","type":"book"},{"author":[{"family":"Humboldt","given":"Alexander von","parse-names":true}],"id":"ITEM-2","type":"book"}]
+    [{"author":[{"family":"van der Vlist","given":"Eric"}],"id":"ITEM-3","type":"book"},{"author":[{"family":"van Gogh","given":"Vincent"}],"id":"ITEM-1","type":"book"},{"author":[{"family":"Humboldt","given":"Alexander von"}],"id":"ITEM-2","type":"book"}]
     """
     When I cite all items
     Then the result should be:

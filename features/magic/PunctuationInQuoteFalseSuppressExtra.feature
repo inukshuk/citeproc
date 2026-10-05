@@ -21,7 +21,7 @@ Feature: magic
       <citation>
         <layout>
           <text quotes="true" variable="title" />
-          <text variable="container-title" prefix=". "/>
+          <text variable="container-title" prefix=", "/>
         </layout>
       </citation>
     </style>
@@ -33,5 +33,5 @@ Feature: magic
     When I cite all items
     Then the result should be:
     """
-    “Article A?” Journal B
+    “Article A?”, Journal B
     """

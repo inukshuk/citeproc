@@ -2,7 +2,7 @@ Feature: sort
   As a CSL cite processor hacker
   I want the test sort_CaseInsensitiveCitation to pass
 
-  @citation @sort
+  @citation @sort @citation-items
   Scenario: Case Insensitive Citation
     Given the following style:
     """
@@ -29,8 +29,9 @@ Feature: sort
     """
     [{"id":"ITEM-1","title":"Xyz","type":"book"},{"id":"ITEM-2","title":"ABC","type":"book"},{"id":"ITEM-3","title":"Aaa","type":"book"}]
     """
-    When I cite all items
-    Then the result should be:
+    When I cite the following items:
     """
-    Aaa - ABC - Xyz
+    [[{"id":"ITEM-1"},{"id":"ITEM-2"},{"id":"ITEM-3"}]]
     """
+    Then the results should be:
+      | Aaa - ABC - Xyz |

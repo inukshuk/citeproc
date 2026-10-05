@@ -83,7 +83,7 @@ Feature: fullstyles
                 <name-part name="family" text-case="uppercase"/>
                 <name-part name="given" text-case="uppercase"/>
               </name>
-              <et-al prefix=" " font-style="italic"/>
+              <et-al font-style="italic"/>
               <label form="short" prefix=" (" suffix=".). " text-case="capitalize-first"/>
               <substitute>
                 <names variable="editor"/>
@@ -114,7 +114,7 @@ Feature: fullstyles
             <name-part name="given" text-case="capitalize-first"/>
             <name-part name="family" text-case="capitalize-first"/>
           </name>
-          <et-al prefix=" " font-style="italic"/>
+          <et-al font-style="italic"/>
         </names>
       </macro>
       <!--A macro 'author' e responsavel por mostrar os nomes dos autores na bibliografia, serao no formato SOBRENOME, INICIAIS PRENOMES, tendo 
@@ -126,7 +126,7 @@ Feature: fullstyles
             <name-part name="family" text-case="uppercase"/>
             <name-part name="given" text-case="uppercase"/>
           </name>
-          <et-al prefix=" " font-style="italic"/>
+          <et-al font-style="italic"/>
           <label form="short" prefix=" (" suffix=".)" text-case="uppercase"/>
           <substitute>
             <names variable="editor"/>
@@ -142,7 +142,7 @@ Feature: fullstyles
         <names variable="author">
           <name form="short" name-as-sort-order="all" sort-separator=", " and="text" initialize-with=". " delimiter=", " delimiter-precedes-last="never">
         </name>
-          <et-al prefix=" " font-style="italic"/>
+          <et-al font-style="italic"/>
           <substitute>
             <names variable="editor"/>
             <names variable="translator"/>
@@ -660,7 +660,6 @@ Feature: fullstyles
         </group>
       </macro>
     </style>
-
     """
     And the following input:
     """
@@ -670,6 +669,6 @@ Feature: fullstyles
     Then the bibliography should be:
     """
     <div class="csl-bib-body">
-      <div class="csl-entry">COLE, S. J.; MOORE, R. Hydrological modelling using raingauge- and radar-based estimators of areal rainfall. <b>Journal of Hydrology</b>, v. 358, n. 3-4, p. 159–181, 2008. </div>
+      <div class="csl-entry">COLE, S. J.; MOORE, R. Hydrological modelling using raingauge- and radar-based estimators of areal rainfall. <b>Journal of Hydrology</b>, v. 358, n. 3–4, p. 159–181, 2008. </div>
     </div>
     """

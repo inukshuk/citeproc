@@ -10,7 +10,7 @@ Feature: name
           xmlns="http://purl.org/net/xbiblio/csl"
           class="note"
           version="1.0"
-          demote-non-dropping-particle="always">
+          demote-non-dropping-particle="display-and-sort">
       <info>
         <id />
         <title />
@@ -30,7 +30,7 @@ Feature: name
         <sort>
           <key macro="author" />
         </sort>
-        <layout delimiter="; ">
+        <layout>
           <text macro="author" />
         </layout>
       </bibliography>
@@ -45,7 +45,7 @@ Feature: name
     """
     <div class="csl-bib-body">
       <div class="csl-entry">Marple, Mary</div>
-      <div class="csl-entry">al-One, Alan</div>
+      <div class="csl-entry">One, Alan al-</div>
       <div class="csl-entry">Participle, Paul</div>
     </div>
     """

@@ -2,7 +2,7 @@ Feature: name
   As a CSL cite processor hacker
   I want the test name_ParticleCaps3 to pass
 
-  @bibliography @name @citations @non-standard
+  @bibliography @name @citation-items @non-standard
   Scenario: Particle Caps3
     Given the following style:
     """

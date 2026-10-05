@@ -55,7 +55,7 @@ Feature: sort
     """
     And the following input:
     """
-    [{"author":[{"family":"Doe","given":"John","static-ordering":false}],"id":"item-1","issued":{"date-parts":[["2000"]]},"title":"Book One","type":"book"},{"author":[{"family":"Doe","given":"John","static-ordering":false},{"family":"Doe","given":"Jake","static-ordering":false},{"family":"Jones","given":"Robert","static-ordering":false}],"id":"item-2","issued":{"date-parts":[["2000"]]},"title":"Book Three","type":"book"},{"editor":[{"family":"Doe","given":"John","static-ordering":false},{"family":"Roe","given":"Jane","static-ordering":false}],"id":"item-3","issued":{"date-parts":[["2000"]]},"title":"Book Two","type":"book"}]
+    [{"author":[{"family":"Doe","given":"John"}],"id":"item-1","issued":{"date-parts":[["2000"]]},"title":"Book One","type":"book"},{"author":[{"family":"Doe","given":"John"},{"family":"Doe","given":"Jake"},{"family":"Jones","given":"Robert"}],"id":"item-2","issued":{"date-parts":[["2000"]]},"title":"Book Three","type":"book"},{"editor":[{"family":"Doe","given":"John"},{"family":"Roe","given":"Jane"}],"id":"item-3","issued":{"date-parts":[["2000"]]},"title":"Book Two","type":"book"}]
     """
     When I render the entire bibliography
     Then the bibliography should be:

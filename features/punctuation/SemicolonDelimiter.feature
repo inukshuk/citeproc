@@ -51,7 +51,7 @@ Feature: punctuation
     """
     And the following input:
     """
-    [{"URL":"www.reporturl.com","accessed":{"date-parts":[[2007,12,12]]},"archive_location":"loc archieve","author":[{"family":"Bauthor","given":"One Two","isInstitution":""},{"family":"Cauthor","given":"Two","isInstitution":""},{"family":"Dauthor","given":"Three","isInstitution":""},{"family":"Eauthor","given":"Edward","isInstitution":""},{"family":"Fauthor","given":"Fritz","isInstitution":""},{"family":"Gauthor","given":"Gerd","isInstitution":""}],"event-place":"Reportplace","genre":"Report Type","id":1,"issued":{"date-parts":[[2009,12,12]]},"multi":{"_keys":{}},"number":"17","publisher":"Institution","publisher-place":"Reportplace","title":"Report on something many authors","type":"report"}]
+    [{"URL":"www.reporturl.com","accessed":{"date-parts":[[2007,12,12]]},"archive_location":"loc archieve","author":[{"family":"Bauthor","given":"One Two"},{"family":"Cauthor","given":"Two"},{"family":"Dauthor","given":"Three"},{"family":"Eauthor","given":"Edward"},{"family":"Fauthor","given":"Fritz"},{"family":"Gauthor","given":"Gerd"}],"event-place":"Reportplace","genre":"Report Type","id":1,"issued":{"date-parts":[[2009,12,12]]},"number":"17","publisher":"Institution","publisher-place":"Reportplace","title":"Report on something many authors","type":"report"}]
     """
     When I render the entire bibliography
     Then the bibliography should be:

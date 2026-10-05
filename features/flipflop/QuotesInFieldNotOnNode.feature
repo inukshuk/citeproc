@@ -29,5 +29,5 @@ Feature: flipflop
     When I cite all items
     Then the result should be:
     """
-    Speak, “friend”, and enter.
+    Speak, “friend,” and enter.
     """

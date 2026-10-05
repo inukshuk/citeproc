@@ -31,7 +31,7 @@ Feature: form
     """
     And the following input:
     """
-    [{"id":"ITEM-1","shortTitle":"Book A","type":"book"}]
+    [{"id":"ITEM-1","title-short":"Book A","type":"book"}]
     """
     When I cite all items
     Then the result should be:

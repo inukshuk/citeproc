@@ -31,7 +31,7 @@ Feature: condition
     """
     And the following input:
     """
-    [{"author":[{"family":"Doe","given":"John","static-ordering":false}],"id":"ITEM-1","title":"Work 1","type":"book"},{"author":[{"family":"Doe","given":"John","static-ordering":false}],"id":"ITEM-2","issued":{"date-parts":[[2000]]},"title":"Work 2","type":"book"}]
+    [{"author":[{"family":"Doe","given":"John"}],"id":"ITEM-1","title":"Work 1","type":"book"},{"author":[{"family":"Doe","given":"John"}],"id":"ITEM-2","issued":{"date-parts":[[2000]]},"title":"Work 2","type":"book"}]
     """
     When I cite the following items:
     """

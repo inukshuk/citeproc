@@ -2,7 +2,7 @@ Feature: disambiguate
   As a CSL cite processor hacker
   I want the test disambiguate_ThreeNoAuthorNoTitleEntries to pass
 
-  @bibliography @disambiguate @citations
+  @bibliography @disambiguate @citation-items
   Scenario: Three No Author No Title Entries
     Given the following style:
     """

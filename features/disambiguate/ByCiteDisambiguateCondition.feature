@@ -18,7 +18,6 @@ Feature: disambiguate
       <citation 
              disambiguate-add-givenname="true"
              disambiguate-add-names="true"
-             disambiguate-add-year-suffix="true"
              et-al-min="2"
              et-al-use-first="1"
              givenname-disambiguation-rule="by-cite">
@@ -37,7 +36,6 @@ Feature: disambiguate
             <date variable="issued">
               <date-part name="year" />
             </date>
-            <text variable="year-suffix" />
           </group>
         </layout>
       </citation>
@@ -45,7 +43,7 @@ Feature: disambiguate
     """
     And the following input:
     """
-    [{"author":[{"family":"Doe","given":"John","static-ordering":false},{"family":"Roe","given":"Jane","static-ordering":false}],"id":"ITEM-1","issued":{"date-parts":[["2000"]]},"title":"Book A","type":"book"},{"author":[{"family":"Doe","given":"John","static-ordering":false},{"family":"Roe","given":"Jane","static-ordering":false}],"id":"ITEM-2","issued":{"date-parts":[["2000"]]},"title":"Book B","type":"book"}]
+    [{"author":[{"family":"Doe","given":"John"},{"family":"Roe","given":"Jane"}],"id":"ITEM-1","issued":{"date-parts":[["2000"]]},"title":"Book A","type":"book"},{"author":[{"family":"Doe","given":"John"},{"family":"Roe","given":"Jane"}],"id":"ITEM-2","issued":{"date-parts":[["2000"]]},"title":"Book B","type":"book"}]
     """
     When I cite all items
     Then the result should be:

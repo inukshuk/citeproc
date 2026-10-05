@@ -1055,7 +1055,7 @@ Feature: flipflop
     """
     And the following input:
     """
-    [{"id":"ITEM-1","publisher":"Conseil Suprême des Antiquités de l\\'Égypte [formerly Imprimerie de l\\'Institut français d\\'archéologie orientale]","publisher-place":"Cairo","title":"Supplément aux annales du Service des Antiquités de l\\'Égypte, Cahier","type":""}]
+    [{"id":"ITEM-1","publisher":"Conseil Suprême des Antiquités de l'Égypte [formerly Imprimerie de l'Institut français d'archéologie orientale]","publisher-place":"Cairo","title":"Supplément aux annales du Service des Antiquités de l'Égypte, Cahier","type":""}]
     """
     When I cite all items
     Then the result should be:

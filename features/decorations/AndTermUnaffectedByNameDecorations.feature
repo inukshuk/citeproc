@@ -29,7 +29,7 @@ Feature: decorations
     """
     And the following input:
     """
-    [{"author":[{"family":"Doe","given":"John","static-ordering":false,"suffix":"III"},{"family":"Roe","given":"Jane","non-dropping-particle":"van","static-ordering":false}],"id":"ITEM-1","type":"book"}]
+    [{"author":[{"family":"Doe","given":"John","suffix":"III"},{"family":"Roe","given":"Jane","non-dropping-particle":"van"}],"id":"ITEM-1","type":"book"}]
     """
     When I cite all items
     Then the result should be:

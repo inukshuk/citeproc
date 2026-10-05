@@ -174,7 +174,7 @@ Feature: label
         <names variable="author" suffix=". ">
           <!-- Добавить запятую между фамилией и инициалами автора: sort-separator=",&#160;", иначе sort-separator="&#160;" -->
           <!-- Сделать шрифт фамилий и инициалов авторов наклонным: font-style="italic", иначе font-style="normal" -->
-          <name et-al-min="2" et-al-use-first="1" initialize-with="." font-style="normal" name-as-sort-order="first" sort-separator="&#160;"/> 
+          <name et-al-min="2" et-al-use-first="1" initialize-with="." name-as-sort-order="first" sort-separator="&#160;"/> 
           <et-al term="and others"/>
         </names>
         <text variable="title"/>
@@ -541,16 +541,15 @@ Feature: label
         
       </bibliography>
     </style>
-
     """
     And the following input:
     """
-    [{"archive-place":"Тюмень","author":[{"family":"Иванов","given":"Иван Иванович","isInstitution":"","multi":{"_key":{},"main":false}},{"family":"Петров","given":"П.П.","isInstitution":"","multi":{"_key":{},"main":false}},{"family":"Сидоров","given":"С.С.","isInstitution":"","multi":{"_key":{},"main":false}}],"collection-number":"10","collection-title":"вид издания","edition":"2-е изд. перераб. и доп.","editor":[{"family":"Романов","given":"Р.Р.","isInstitution":"","multi":{"_key":{},"main":false}}],"event-place":"Тюмень","id":"ITEM-1","issued":{"date-parts":[],"raw":"2013"},"multi":{"_keys":{},"main":{}},"note":"Дополнительно","number-of-pages":"100","number-of-volumes":"5","publisher":"Дом","publisher-place":"Тюмень","system_id":"0_6CD2WX2A","title":"Пример оформления книги с редактором и переводчиком в одном лице","translator":[{"family":"Романов","given":"Р.Р.","isInstitution":"","multi":{"_key":{},"main":false}}],"type":"book","volume":"2"}]
+    [{"archive-place":"Тюмень","author":[{"family":"Иванов","given":"Иван Иванович"},{"family":"Петров","given":"П.П."},{"family":"Сидоров","given":"С.С."}],"collection-number":"10","collection-title":"вид издания","edition":"2-е изд. перераб. и доп.","editor":[{"family":"Романов","given":"Р.Р."}],"event-place":"Тюмень","id":"ITEM-1","issued":{"date-parts":[[2013]]},"note":"Дополнительно","number-of-pages":"100","number-of-volumes":"5","publisher":"Дом","publisher-place":"Тюмень","system_id":"0_6CD2WX2A","title":"Пример оформления книги с редактором и переводчиком в одном лице","translator":[{"family":"Романов","given":"Р.Р."}],"type":"book","volume":"2"}]
     """
     When I render the entire bibliography
     Then the bibliography should be:
     """
     <div class="csl-bib-body">
-      <div class="csl-entry">1.	Иванов И.И. Пример оформления книги с редактором и переводчиком в одном лице : вид издания : in 5 vols. Vol. 2 / И.И. Иванов, П.П. Петров, С.С. Сидоров; ed &amp; trans. Р.Р. Романов Дополнительно. – Тюмень: Дом, 2013. – 10. – 100 p.</div>
+      <div class="csl-entry">1.	Иванов И.И. Пример оформления книги с редактором и переводчиком в одном лице : вид издания : in 5 vols. Vol. 2 / И.И. Иванов, П.П. Петров, С.С. Сидоров; ed &amp; trans. Р.Р. Романов Дополнительно. – Тюмень: Дом, 2013. – No. 10. – 100 p.</div>
     </div>
     """

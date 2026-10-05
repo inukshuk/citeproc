@@ -44,7 +44,7 @@ Feature: disambiguate
     """
     And the following input:
     """
-    [{"author":[{"family":"Doe","given":"John","static-ordering":false}],"id":"ITEM-1","issued":{"date-parts":[["1990","5","30"]]},"title":"Book A","type":"book"},{"author":[{"family":"Doe","given":"John","static-ordering":false}],"id":"ITEM-2","issued":{"date-parts":[["1990","5","30"]]},"title":"Book B","type":"book"}]
+    [{"author":[{"family":"Doe","given":"John"}],"id":"ITEM-1","issued":{"date-parts":[["1990","5","30"]]},"title":"Book A","type":"book"},{"author":[{"family":"Doe","given":"John"}],"id":"ITEM-2","issued":{"date-parts":[["1990","5","30"]]},"title":"Book B","type":"book"}]
     """
     When I render the entire bibliography
     Then the bibliography should be:

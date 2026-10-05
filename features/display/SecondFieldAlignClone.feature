@@ -8,7 +8,7 @@ Feature: display
     """
     <style 
           xmlns="http://purl.org/net/xbiblio/csl"
-          class="note"
+          class="in-text"
           version="1.0">
       <info>
         <id />
@@ -26,8 +26,7 @@ Feature: display
         </date>
         <text variable="year-suffix" />
       </macro>
-      <citation 
-             disambiguate-add-year-suffix="true">
+      <citation>
         <layout>
           <text variable="citation-number"/>
         </layout>
@@ -49,7 +48,7 @@ Feature: display
     """
     And the following input:
     """
-    [{"author":[{"family":"Doe","given":"John Aloysius","static-ordering":false}],"id":"ITEM-1","issued":{"date-parts":[[1999]]},"title":"John's Book","type":"book"},{"author":[{"family":"Roe","given":"Jane Henrietta","static-ordering":false}],"id":"ITEM-2","issued":{"date-parts":[[2000]]},"title":"Jane's Book","type":"book"}]
+    [{"author":[{"family":"Doe","given":"John Aloysius"}],"id":"ITEM-1","issued":{"date-parts":[[1999]]},"title":"John's Book","type":"book"},{"author":[{"family":"Roe","given":"Jane Henrietta"}],"id":"ITEM-2","issued":{"date-parts":[[2000]]},"title":"Jane's Book","type":"book"}]
     """
     When I render the entire bibliography
     Then the bibliography should be:

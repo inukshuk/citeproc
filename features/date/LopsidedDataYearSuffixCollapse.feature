@@ -34,7 +34,7 @@ Feature: date
     """
     And the following input:
     """
-    [{"author":[{"family":"Smith","given":"John"}],"id":"ITEM-1","issued":{"date-parts":[],"raw":"Jun 1982"},"type":"book"},{"author":[{"family":"Smith","given":"John"}],"id":"ITEM-2","issued":{"date-parts":[],"raw":"1982-10-1"},"type":"book"}]
+    [{"author":[{"family":"Smith","given":"John"}],"id":"ITEM-1","issued":{"date-parts":[[1982,6]]},"type":"book"},{"author":[{"family":"Smith","given":"John"}],"id":"ITEM-2","issued":{"date-parts":[[1982,10,1]]},"type":"book"}]
     """
     When I cite all items
     Then the result should be:

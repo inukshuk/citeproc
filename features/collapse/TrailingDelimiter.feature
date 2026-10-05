@@ -34,7 +34,7 @@ Feature: collapse
           <group delimiter=" ">
             <names variable="author">
               <name and="symbol" delimiter=", " form="short" />
-              <et-al prefix=" " />
+              <et-al/>
             </names>
             <date variable="issued">
               <date-part name="year" />
@@ -47,7 +47,7 @@ Feature: collapse
     """
     And the following input:
     """
-    [{"author":[{"family":"Condit","given":"John","static-ordering":false},{"family":"Doe","given":"John","static-ordering":false},{"family":"Roe","given":"Jane","static-ordering":false},{"family":"Smith","given":"John","static-ordering":false}],"id":"ITEM-1","issued":{"date-parts":[["2000"]]},"title":"Book A","type":"book"},{"author":[{"family":"Condit","given":"John","static-ordering":false},{"family":"Doe","given":"John","static-ordering":false},{"family":"Roe","given":"Jane","static-ordering":false},{"family":"Smith","given":"John","static-ordering":false}],"id":"ITEM-2","issued":{"date-parts":[["1995"]]},"title":"Book B","type":"book"},{"author":[{"family":"Condit","given":"John","static-ordering":false},{"family":"Doe","given":"John","static-ordering":false},{"family":"Roe","given":"Jane","static-ordering":false},{"family":"Smith","given":"John","static-ordering":false}],"id":"ITEM-3","issued":{"date-parts":[["1998"]]},"title":"Book C","type":"book"},{"author":[{"family":"Connell","given":"John","static-ordering":false}],"id":"ITEM-4","issued":{"date-parts":[["1971"]]},"title":"Book D","type":"book"},{"author":[{"family":"Cortes","given":"John","static-ordering":false},{"family":"Hunziker","given":"John","static-ordering":false}],"id":"ITEM-5","issued":{"date-parts":[["1971"]]},"title":"Book E","type":"book"}]
+    [{"author":[{"family":"Condit","given":"John"},{"family":"Doe","given":"John"},{"family":"Roe","given":"Jane"},{"family":"Smith","given":"John"}],"id":"ITEM-1","issued":{"date-parts":[["2000"]]},"title":"Book A","type":"book"},{"author":[{"family":"Condit","given":"John"},{"family":"Doe","given":"John"},{"family":"Roe","given":"Jane"},{"family":"Smith","given":"John"}],"id":"ITEM-2","issued":{"date-parts":[["1995"]]},"title":"Book B","type":"book"},{"author":[{"family":"Condit","given":"John"},{"family":"Doe","given":"John"},{"family":"Roe","given":"Jane"},{"family":"Smith","given":"John"}],"id":"ITEM-3","issued":{"date-parts":[["1998"]]},"title":"Book C","type":"book"},{"author":[{"family":"Connell","given":"John"}],"id":"ITEM-4","issued":{"date-parts":[["1971"]]},"title":"Book D","type":"book"},{"author":[{"family":"Cortes","given":"John"},{"family":"Hunziker","given":"John"}],"id":"ITEM-5","issued":{"date-parts":[["1971"]]},"title":"Book E","type":"book"}]
     """
     When I cite the following items:
     """

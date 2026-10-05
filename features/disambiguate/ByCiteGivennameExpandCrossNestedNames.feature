@@ -31,7 +31,7 @@ Feature: disambiguate
     """
     And the following input:
     """
-    [{"author":[{"family":"Doe","given":"John","static-ordering":false},{"family":"Roe","given":"Jane","static-ordering":false},{"family":"Jones","given":"Robert","static-ordering":false}],"id":"ambigs-12","issued":{"date-parts":[["1990"]]},"title":"Book C","type":"book"},{"author":[{"family":"Doe","given":"John","static-ordering":false},{"family":"Roe","given":"Josephine","static-ordering":false},{"family":"Jones","given":"Robert","static-ordering":false}],"id":"ambigs-13","issued":{"date-parts":[["1990"]]},"title":"Book B","type":"book"},{"author":[{"family":"Doe","given":"John","static-ordering":false},{"family":"Roe","given":"Jane","static-ordering":false},{"family":"Jones","given":"Richard","static-ordering":false}],"id":"ambigs-14","issued":{"date-parts":[["1990"]]},"title":"Book A","type":"book"}]
+    [{"author":[{"family":"Doe","given":"John"},{"family":"Roe","given":"Jane"},{"family":"Jones","given":"Robert"}],"id":"ambigs-12","issued":{"date-parts":[["1990"]]},"title":"Book C","type":"book"},{"author":[{"family":"Doe","given":"John"},{"family":"Roe","given":"Josephine"},{"family":"Jones","given":"Robert"}],"id":"ambigs-13","issued":{"date-parts":[["1990"]]},"title":"Book B","type":"book"},{"author":[{"family":"Doe","given":"John"},{"family":"Roe","given":"Jane"},{"family":"Jones","given":"Richard"}],"id":"ambigs-14","issued":{"date-parts":[["1990"]]},"title":"Book A","type":"book"}]
     """
     When I cite all items
     Then the result should be:

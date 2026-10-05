@@ -26,7 +26,7 @@ Feature: name
     """
     And the following input:
     """
-    [{"author":[{"family":"Liu","given":"Hui-Xiao Li Yuan","static-ordering":false}],"id":"ITEM-1","type":"book"}]
+    [{"author":[{"family":"Liu","given":"Hui-Xiao Li Yuan"}],"id":"ITEM-1","type":"book"}]
     """
     When I cite all items
     Then the result should be:

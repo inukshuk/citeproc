@@ -55,5 +55,5 @@ Feature: textcase
     When I cite all items
     Then the result should be:
     """
-    SMITH, John: THIS IS A PEN THAT IS A SMITH PENCIL
+    SMITH, John: THIS IS A PEN THAT IS A Smith PENCIL
     """

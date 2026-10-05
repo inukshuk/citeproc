@@ -1,0 +1,34 @@
+Feature: collapse
+  As a CSL cite processor hacker
+  I want the test collapse_NumericDuplicate2 to pass
+
+  @citation @collapse @citation-items
+  Scenario: Numeric Duplicate2
+    Given the following style:
+    """
+    <style 
+          xmlns="http://purl.org/net/xbiblio/csl"
+          class="in-text"
+          version="1.0">
+      <info>
+        <id />
+        <title />
+        <updated>2009-08-10T04:49:00+09:00</updated>
+      </info>
+      <citation collapse="citation-number">
+        <layout prefix="(" suffix=")" delimiter=",">
+          <text variable="citation-number"/>
+        </layout>
+      </citation>
+    </style>
+    """
+    And the following input:
+    """
+    [{"id":"ITEM-1","title":"Book One","type":"book"},{"id":"ITEM-2","title":"Book Two","type":"book"},{"id":"ITEM-3","title":"Book Three","type":"book"},{"id":"ITEM-4","title":"Book Four","type":"book"},{"id":"ITEM-5","title":"Book Five","type":"book"}]
+    """
+    When I cite the following items:
+    """
+    [[{"id":"ITEM-1"},{"id":"ITEM-2"},{"id":"ITEM-3"},{"id":"ITEM-3"},{"id":"ITEM-4"},{"id":"ITEM-5"}]]
+    """
+    Then the results should be:
+      | (1–3,3–5) |

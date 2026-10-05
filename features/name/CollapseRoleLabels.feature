@@ -37,7 +37,7 @@ Feature: name
     """
     And the following input:
     """
-    [{"editor":[{"family":"Asthma","given":"Albert","static-ordering":false},{"family":"Bronchitis","given":"Bosworth","static-ordering":false},{"family":"Cold","given":"Crispin","static-ordering":false}],"id":"editor-translator-1","issued":{"date-parts":[["1990"]]},"title":"Book One","translator":[{"family":"Asthma","given":"Albert","static-ordering":false},{"family":"Bronchitis","given":"Bosworth","static-ordering":false},{"family":"Cold","given":"Crispin","static-ordering":false}],"type":"book"}]
+    [{"editor":[{"family":"Asthma","given":"Albert"},{"family":"Bronchitis","given":"Bosworth"},{"family":"Cold","given":"Crispin"}],"id":"editor-translator-1","issued":{"date-parts":[["1990"]]},"title":"Book One","translator":[{"family":"Asthma","given":"Albert"},{"family":"Bronchitis","given":"Bosworth"},{"family":"Cold","given":"Crispin"}],"type":"book"}]
     """
     When I cite all items
     Then the result should be:

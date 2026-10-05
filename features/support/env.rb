@@ -27,7 +27,7 @@ require 'csl/styles'
 module MimicksCiteProcJS
   def processor
     @processor ||= CiteProc::Processor.new :style => @style,
-      :format => default_format, :locale => default_locale_path
+      :format => default_format, :locale => default_locale
   end
 
   def default_format
@@ -39,12 +39,10 @@ module MimicksCiteProcJS
     @format
   end
 
-  def default_locale_path
-    File.expand_path('../../../spec/fixtures/locales/locales-en-US.xml', __FILE__)
-  end
-
+  # Use the style's default locale, like citeproc-js does;
+  # locales are loaded from the csl-styles gem.
   def default_locale
-    @locale ||= CSL::Locale.load default_locale_path
+    (@style && @style[:'default-locale']) || 'en-US'
   end
 end
 

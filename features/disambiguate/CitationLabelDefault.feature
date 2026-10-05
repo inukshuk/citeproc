@@ -25,7 +25,7 @@ Feature: disambiguate
     """
     And the following input:
     """
-    [{"author":[{"family":"Asthma","given":"Albert","static-ordering":false}],"id":"ITEM-1","issued":{"date-parts":[["1900"]]},"title":"Book A","type":"book"},{"author":[{"family":"Asthma","given":"Zeppo","static-ordering":false}],"id":"ITEM-2","issued":{"date-parts":[["1900"]]},"title":"Book B","type":"book"},{"author":[{"family":"Bronchitis","given":"Buffy","static-ordering":false}],"id":"ITEM-3","issued":{"date-parts":[["2000"]]},"title":"Book C","type":"book"}]
+    [{"author":[{"family":"Asthma","given":"Albert"}],"id":"ITEM-1","issued":{"date-parts":[["1900"]]},"title":"Book A","type":"book"},{"author":[{"family":"Asthma","given":"Zeppo"}],"id":"ITEM-2","issued":{"date-parts":[["1900"]]},"title":"Book B","type":"book"},{"author":[{"family":"Bronchitis","given":"Buffy"}],"id":"ITEM-3","issued":{"date-parts":[["2000"]]},"title":"Book C","type":"book"}]
     """
     When I cite all items
     Then the result should be:

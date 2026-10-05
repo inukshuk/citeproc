@@ -1,0 +1,46 @@
+Feature: name
+  As a CSL cite processor hacker
+  I want the test name_InTextMarkupInitialize to pass
+
+  @bibliography @name
+  Scenario: In Text Markup Initialize
+    Given the following style:
+    """
+    <style 
+          xmlns="http://purl.org/net/xbiblio/csl"
+          class="in-text"
+          version="1.0">
+      <info>
+        <id />
+        <title />
+        <updated>2009-08-10T04:49:00+09:00</updated>
+      </info>
+      <macro name="author">
+         <names variable="author">
+            <name name-as-sort-order="all" and="symbol" sort-separator=", " initialize-with=". " delimiter=", " delimiter-precedes-last="always"/>
+         </names>
+      </macro>
+      <citation>
+        <layout>
+          <text macro="author"/>
+        </layout>
+      </citation>
+      <bibliography>
+        <layout>
+          <text macro="author"/>
+        </layout>
+      </bibliography>
+    </style>
+    """
+    And the following input:
+    """
+    [{"author":[{"family":"<b>Doe</b>","given":"<b>John</b> Quiggly"}],"id":"ITEM-1","type":"book"},{"author":[{"family":"<b>Doe</b>","given":"<b>John</b>-Quiggly"}],"id":"ITEM-2","type":"book"}]
+    """
+    When I render the entire bibliography
+    Then the bibliography should be:
+    """
+    <div class="csl-bib-body">
+      <div class="csl-entry"><b>Doe</b>, <b>J.</b> Q.</div>
+      <div class="csl-entry"><b>Doe</b>, <b>J.</b>-Q.</div>
+    </div>
+    """

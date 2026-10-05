@@ -27,7 +27,7 @@ Feature: locator
             </date>
             <group delimiter=" ">
               <label form="short" strip-periods="false" variable="locator" />
-              <number variable="locator" />
+              <text variable="locator" />
             </group>
           </group>
         </layout>
@@ -36,11 +36,11 @@ Feature: locator
     """
     And the following input:
     """
-    [{"author":[{"family":"Doe","given":"John","static-ordering":false}],"id":"ITEM-1","issued":{"date-parts":[["2000"]]},"title":"Book A","type":"book"},{"author":[{"family":"Roe","given":"Jane"}],"id":"ITEM-2","issued":{"date-parts":[["2001"]]},"title":"Book B","type":"book"}]
+    [{"author":[{"family":"Doe","given":"John"}],"id":"ITEM-1","issued":{"date-parts":[["2000"]]},"title":"Book A","type":"book"},{"author":[{"family":"Roe","given":"Jane"}],"id":"ITEM-2","issued":{"date-parts":[["2001"]]},"title":"Book B","type":"book"}]
     """
     When I cite the following items:
     """
     [[{"id":"ITEM-1","label":"page","locator":"100 - 103"},{"id":"ITEM-2","label":"chapter","locator":"200 - 201"}]]
     """
     Then the results should be:
-      | Doe, Book A, 2000, pp. 100–103; Roe, Book B, 2001, chap. 200–201. |
+      | Doe, Book A, 2000, pp. 100–103; Roe, Book B, 2001, chaps. 200–201. |

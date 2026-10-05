@@ -104,7 +104,7 @@ Feature: condition
     """
     And the following input:
     """
-    [{"author":[{"family":"Doe","given":"John","static-ordering":false}],"id":"ITEM-1","issued":{"date-parts":[["2000"]]},"title":"Work 1","type":"book"},{"author":[{"family":"Doe","given":"John","static-ordering":false}],"id":"ITEM-2","issued":{"date-parts":[["2000"]]},"title":"Work 2","type":"article"},{"author":[{"family":"Doe","given":"John","static-ordering":false}],"id":"ITEM-3","issued":{"date-parts":[["2000"]]},"title":"Work 3","type":"report"},{"author":[{"family":"Doe","given":"John","static-ordering":false}],"id":"ITEM-4","issued":{"date-parts":[["2000"]]},"title":"Work 4","type":"paper-conference"},{"author":[{"family":"Doe","given":"John","static-ordering":false}],"id":"ITEM-5","issued":{"date-parts":[["2000"]]},"title":"Work 5","type":"chapter"}]
+    [{"author":[{"family":"Doe","given":"John"}],"id":"ITEM-1","issued":{"date-parts":[["2000"]]},"title":"Work 1","type":"book"},{"author":[{"family":"Doe","given":"John"}],"id":"ITEM-2","issued":{"date-parts":[["2000"]]},"title":"Work 2","type":"article"},{"author":[{"family":"Doe","given":"John"}],"id":"ITEM-3","issued":{"date-parts":[["2000"]]},"title":"Work 3","type":"report"},{"author":[{"family":"Doe","given":"John"}],"id":"ITEM-4","issued":{"date-parts":[["2000"]]},"title":"Work 4","type":"paper-conference"},{"author":[{"family":"Doe","given":"John"}],"id":"ITEM-5","issued":{"date-parts":[["2000"]]},"title":"Work 5","type":"chapter"}]
     """
     When I render the entire bibliography
     Then the bibliography should be:

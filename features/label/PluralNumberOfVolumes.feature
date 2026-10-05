@@ -15,6 +15,14 @@ Feature: label
         <title />
         <updated>2009-08-10T04:49:00+09:00</updated>
       </info>
+      <locale>
+        <terms>
+          <term name="number-of-volumes">
+            <single>volume</single>
+            <multiple>volumes</multiple>
+          </term>
+        </terms>
+      </locale>
       <citation>
         <layout delimiter="; ">
           <group delimiter=" ">

@@ -122,7 +122,7 @@ Feature: punctuation
               <text value="exclamation" prefix="! "/>
             </group>
             <text value="&#x0A;ENDING IN QUESTION"/>
-            <group>]
+            <group>
               <text quotes="true" value="colon" suffix=":"/>
               <text value="question" prefix="? "/>
             </group>
@@ -147,7 +147,7 @@ Feature: punctuation
               <text value="question" prefix="? "/>
             </group>
             <text value="&#x0A;ENDING IN COMMA"/>
-            <group>]
+            <group>
               <text quotes="true" value="colon" suffix=":"/>
               <text value="comma" prefix=", "/>
             </group>
@@ -184,50 +184,50 @@ Feature: punctuation
     Then the result should be:
     """
     ENDING IN COLON
-    “colon:” colon
-    “period.” colon
+    “colon”: colon
+    “period.”: colon
     “semicolon”; colon
     “exclamation!” colon
     “question?” colon
     “comma,”: colon
     
     ENDING IN PERIOD
-    “colon:” period
+    “colon”: period
     “period.” period
     “semicolon”; period
     “exclamation!” period
     “question?” period
-    “comma,”. period
+    “comma,.” period
     
     ENDING IN SEMICOLON
-    “colon:” semicolon
+    “colon”:; semicolon
     “period.”; semicolon
-    “semicolon”;; semicolon
-    “exclamation!” semicolon
-    “question?” semicolon
+    “semicolon”; semicolon
+    “exclamation!”; semicolon
+    “question?”; semicolon
     “comma,”; semicolon
     
     ENDING IN EXCLAMATION
-    “colon:” exclamation
-    “period.” exclamation
-    “semicolon”; exclamation
+    “colon!” exclamation
+    “period.!” exclamation
+    “semicolon!” exclamation
     “exclamation!” exclamation
-    “question?” exclamation
-    “comma,”! exclamation
+    “question?!” exclamation
+    “comma,!” exclamation
     
     ENDING IN QUESTION
-    “colon:” question
-    “period.” question
-    “semicolon”; question
-    “exclamation!” question
+    “colon?” question
+    “period.?” question
+    “semicolon?” question
+    “exclamation!?” question
     “question?” question
-    “comma,”? question
+    “comma,?” question
     
     ENDING IN COMMA
-    “colon:”, comma
-    “period.”, comma
+    “colon”:, comma
+    “period.,” comma
     “semicolon”;, comma
-    “exclamation!”, comma
-    “question?”, comma
-    “comma,”, comma
+    “exclamation!,” comma
+    “question?,” comma
+    “comma,” comma
     """

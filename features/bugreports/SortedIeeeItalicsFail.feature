@@ -273,7 +273,6 @@ Feature: bugreports
           </layout>
        </bibliography>
     </style>
-
     """
     And the following input:
     """

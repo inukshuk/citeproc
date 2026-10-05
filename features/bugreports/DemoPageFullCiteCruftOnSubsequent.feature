@@ -701,11 +701,11 @@ Feature: bugreports
     """
     And the following input:
     """
-    [{"author":[{"family":"Malone","given":"Nolan J.","static-ordering":false},{"literal":"U.S. Bureau of the Census"}],"id":"ITEM-6","issued":{"date-parts":[[2001,12,5]]},"note":"This cite illustrates the formatting of institutional authors.  Note that there is no \"and\" between the individual author and the institution with which he is affiliated.","publisher":"Routledge","publisher-place":"New York","title":"Evaluating Components of International Migration: Consistency of 2000 Nativity Data","type":"book"}]
+    [{"author":[{"family":"Malone","given":"Nolan J."},{"literal":"U.S. Bureau of the Census"}],"id":"ITEM-6","issued":{"date-parts":[[2001,12,5]]},"note":"This cite illustrates the formatting of institutional authors.  Note that there is no \"and\" between the individual author and the institution with which he is affiliated.","publisher":"Routledge","publisher-place":"New York","title":"Evaluating Components of International Migration: Consistency of 2000 Nativity Data","type":"book"}]
     """
     When I cite the following items:
     """
     [[{"id":"ITEM-6","position":1}]]
     """
     Then the results should be:
-      | Malone, U.S. Bureau of the Census, <i>Evaluating Components of International Migration: Consistency of 2000 Nativity Data</i>. |
+      | Malone and U.S. Bureau of the Census, <i>Evaluating Components of International Migration: Consistency of 2000 Nativity Data</i>. |

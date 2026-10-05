@@ -962,7 +962,6 @@ Feature: quotes
         </layout>
       </bibliography>
     </style>
-
     """
     And the following input:
     """

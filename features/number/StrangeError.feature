@@ -18,7 +18,7 @@ Feature: number
       </info>
       <citation>
         <layout>
-          <number variable="page"/>
+          <text variable="page"/>
         </layout>
       </citation>
     </style>

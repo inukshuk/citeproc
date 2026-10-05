@@ -16,7 +16,7 @@ Feature: number
         <title />
         <updated>2009-08-10T04:49:00+09:00</updated>
       </info>
-      <locale locale="fr-FR">
+      <locale xml:lang="fr-FR">
         <terms>
           <!-- ORDINALS -->
          <term name="ordinal">EE</term>

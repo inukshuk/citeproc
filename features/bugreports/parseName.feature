@@ -9,6 +9,7 @@ Feature: bugreports
     <style 
           xmlns="http://purl.org/net/xbiblio/csl"
           class="note"
+          demote-non-dropping-particle="display-and-sort"
           version="1.0">
       <info>
         <id />
@@ -34,7 +35,7 @@ Feature: bugreports
     """
     And the following input:
     """
-    [{"author":[{"family":"van Happel","given":"Eduard","parse-names":0}],"id":"ITEM-1","issued":{"date-parts":[[2008,1]]},"type":"article-journal"},{"author":[{"family":"von Hoppel","given":"Gustav"}],"id":"ITEM-2","issued":{"date-parts":[[2008,1]]},"type":"article-journal"}]
+    [{"author":[{"family":"\"van Happel\"","given":"Eduard"}],"id":"ITEM-1","issued":{"date-parts":[[2008,1]]},"type":"article-journal"},{"author":[{"family":"von Hoppel","given":"Gustav"}],"id":"ITEM-2","issued":{"date-parts":[[2008,1]]},"type":"article-journal"}]
     """
     When I render the entire bibliography
     Then the bibliography should be:

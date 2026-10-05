@@ -26,7 +26,7 @@ Feature: magic
     """
     And the following input:
     """
-    [{"author":[{"family":"Doe","given":"John,! Jr.","parse-names":true}],"id":"ITEM-1","type":"book"}]
+    [{"author":[{"family":"Doe","given":"John,! Jr."}],"id":"ITEM-1","type":"book"}]
     """
     When I cite all items
     Then the result should be:

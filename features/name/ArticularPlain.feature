@@ -26,7 +26,7 @@ Feature: name
     """
     And the following input:
     """
-    [{"author":[{"family":"Doe","given":"James","static-ordering":false,"suffix":"III"}],"id":"item-1","issued":{"date-parts":[["2001"]]},"title":"My Anonymous Heritage","type":"book"}]
+    [{"author":[{"family":"Doe","given":"James","suffix":"III"}],"id":"item-1","issued":{"date-parts":[["2001"]]},"title":"My Anonymous Heritage","type":"book"}]
     """
     When I cite all items
     Then the result should be:

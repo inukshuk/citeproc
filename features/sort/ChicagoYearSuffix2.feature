@@ -110,7 +110,7 @@ Feature: sort
       <macro name="contributors">
         <names variable="author">
           <name and="text" delimiter=", " delimiter-precedes-last="always" name-as-sort-order="first" sort-separator=", " />
-          <label form="verb-short" prefix=", " suffix="." text-case="lowercase" />
+          <label form="short" prefix=", " suffix="." text-case="lowercase" />
           <substitute>
             <text macro="editor" />
             <text macro="translator" />
@@ -375,7 +375,6 @@ Feature: sort
         </layout>
       </bibliography>
     </style>
-
     """
     And the following input:
     """

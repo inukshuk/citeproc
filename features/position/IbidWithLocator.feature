@@ -41,11 +41,11 @@ Feature: position
     """
     And the following input:
     """
-    [{"author":[{"family":"Appleton","given":"Victor","static-ordering":false}],"id":"ITEM-1","issued":{"date-parts":[["1910"]]},"title":"Tom Swift and His Electric Runabout","type":"book"}]
+    [{"author":[{"family":"Appleton","given":"Victor"}],"id":"ITEM-1","issued":{"date-parts":[["1910"]]},"title":"Tom Swift and His Electric Runabout","type":"book"}]
     """
     When I cite the following items:
     """
-    [[{"id":"ITEM-1"}],[{"id":"ITEM-1","label":"page","locator":"23","position":4}]]
+    [[{"id":"ITEM-1"}],[{"id":"ITEM-1","label":"page","locator":"23","position":3}]]
     """
     Then the results should be:
       | Appleton “Tom Swift and His Electric Runabout” (1910). |

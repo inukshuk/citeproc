@@ -69,7 +69,7 @@ Feature: sort
     	<macro name="author-cit">
     		<names variable="author">
     			<name form="short" and="symbol" delimiter=" " initialize-with=""/>
-    			<et-al font-style="italic" prefix=" "/>
+    			<et-al font-style="italic"/>
     			<substitute>
     				<names variable="editor"/>
     				<names variable="translator"/>
@@ -271,11 +271,10 @@ Feature: sort
     		</layout>
     	</bibliography>
     </style>
-
     """
     And the following input:
     """
-    [{"author":[{"family":"Doe","given":"Jane B.","isInstitution":""},{"family":"Doe","given":"John A.","isInstitution":""}],"container-title":"Test","id":19,"issued":{"date-parts":[[2009]]},"multi":{"_keys":{}},"page":"1-2","title":"Title 1","type":"article-journal","volume":"1"},{"author":[{"family":"Doe","given":"John A.","isInstitution":""},{"family":"Smith","given":"John A.","isInstitution":""}],"container-title":"Test","id":25,"issued":{"date-parts":[[2010]]},"multi":{"_keys":{}},"page":"1-2","title":"Title 2","type":"article-journal","volume":"2"},{"author":[{"family":"Doe","given":"John A.","isInstitution":""},{"family":"Bloggs","given":"Joe A.","isInstitution":""}],"container-title":"Test","id":27,"issued":{"date-parts":[[2011]]},"multi":{"_keys":{}},"page":"3-4","title":"Title 3","type":"article-journal","volume":"3"}]
+    [{"author":[{"family":"Doe","given":"Jane B."},{"family":"Doe","given":"John A."}],"container-title":"Test","id":19,"issued":{"date-parts":[[2009]]},"page":"1-2","title":"Title 1","type":"article-journal","volume":"1"},{"author":[{"family":"Doe","given":"John A."},{"family":"Smith","given":"John A."}],"container-title":"Test","id":25,"issued":{"date-parts":[[2010]]},"page":"1-2","title":"Title 2","type":"article-journal","volume":"2"},{"author":[{"family":"Doe","given":"John A."},{"family":"Bloggs","given":"Joe A."}],"container-title":"Test","id":27,"issued":{"date-parts":[[2011]]},"page":"3-4","title":"Title 3","type":"article-journal","volume":"3"}]
     """
     When I render the entire bibliography
     Then the bibliography should be:

@@ -26,7 +26,7 @@ Feature: group
     """
     And the following input:
     """
-    [{"container-title":"my container title","id":"ITEM-1","shortTitle":"something","type":"manuscript"}]
+    [{"container-title":"my container title","id":"ITEM-1","title-short":"something","type":"manuscript"}]
     """
     When I cite all items
     Then the result should be:

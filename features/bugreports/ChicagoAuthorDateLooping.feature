@@ -375,11 +375,10 @@ Feature: bugreports
         </layout>
       </bibliography>
     </style>
-
     """
     And the following input:
     """
-    [{"author":[{"family":"Manstein","given":"Erich Von"}],"id":"ITEM-0","issued":{"date-parts":[],"raw":" 1982 Sep "},"publisher":"Presidio Pr","title":"Lost Victories","type":"book"},{"URL":"http://www.ja-sig.org/jasigconf/popSpeaker.jsp?id=39e50005&conf_id=jasig12&name=Lennard+Fuller","id":"ITEM-1","title":"JA-SIG Conference Presentation","type":"webpage"},{"URL":"http://www.google.com/","id":"ITEM-2","title":"Google","type":"webpage"}]
+    [{"author":[{"family":"Manstein","given":"Erich Von"}],"id":"ITEM-0","issued":{"date-parts":[[1982,9]]},"publisher":"Presidio Pr","title":"Lost Victories","type":"book"},{"URL":"http://www.ja-sig.org/jasigconf/popSpeaker.jsp?id=39e50005&conf_id=jasig12&name=Lennard+Fuller","id":"ITEM-1","title":"JA-SIG Conference Presentation","type":"webpage"},{"URL":"http://www.google.com/","id":"ITEM-2","title":"Google","type":"webpage"}]
     """
     When I cite all items
     Then the result should be:

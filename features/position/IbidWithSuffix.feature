@@ -2,7 +2,7 @@ Feature: position
   As a CSL cite processor hacker
   I want the test position_IbidWithSuffix to pass
 
-  @bibliography @position @citations
+  @bibliography @position @citation-items
   Scenario: Ibid With Suffix
     Given the following style:
     """

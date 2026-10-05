@@ -35,7 +35,7 @@ Feature: sort
     """
     And the following input:
     """
-    [{"author":[{"family":"Roe","given":"Jane","non-dropping-particle":"van","static-ordering":false}],"id":"ITEM-1","type":"book"},{"author":[{"family":"Noakes","given":"John","non-dropping-particle":"di","static-ordering":false}],"id":"ITEM-2","type":"book"},{"author":[{"family":"Doe","given":"John","non-dropping-particle":"von","static-ordering":false}],"id":"ITEM-3","type":"book"}]
+    [{"author":[{"family":"Roe","given":"Jane","non-dropping-particle":"van"}],"id":"ITEM-1","type":"book"},{"author":[{"family":"Noakes","given":"John","non-dropping-particle":"di"}],"id":"ITEM-2","type":"book"},{"author":[{"family":"Doe","given":"John","non-dropping-particle":"von"}],"id":"ITEM-3","type":"book"}]
     """
     When I render the entire bibliography
     Then the bibliography should be:

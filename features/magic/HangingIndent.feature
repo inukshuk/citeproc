@@ -40,7 +40,7 @@ Feature: magic
     """
     And the following input:
     """
-    [{"author":[{"family":"Smith","given":"John","static-ordering":false}],"id":"ITEM-1","issued":{"date-parts":[["2000"]]},"title":"Book A: being a book with a very long and verbose title with lots of words that takes up excessive space on the page and leaves the reader more confused about the content rather than less","type":"book"},{"author":[{"family":"Jones","given":"Robert","static-ordering":false}],"id":"ITEM-2","issued":{"date-parts":[["2001"]]},"title":"Book B: a work of great eloquence in which every word makes the reader eager for the next which is a good thing because it has a very long and ostensibly boring title","type":"book"}]
+    [{"author":[{"family":"Smith","given":"John"}],"id":"ITEM-1","issued":{"date-parts":[["2000"]]},"title":"Book A: being a book with a very long and verbose title with lots of words that takes up excessive space on the page and leaves the reader more confused about the content rather than less","type":"book"},{"author":[{"family":"Jones","given":"Robert"}],"id":"ITEM-2","issued":{"date-parts":[["2001"]]},"title":"Book B: a work of great eloquence in which every word makes the reader eager for the next which is a good thing because it has a very long and ostensibly boring title","type":"book"}]
     """
     When I render the entire bibliography
     Then the bibliography should be:

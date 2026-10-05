@@ -484,14 +484,14 @@ Feature: magic
     """
     And the following input:
     """
-    [{"id":"ITEM-1","issued":{"date-parts":[["1974"]]},"publisher":"University of Chicago Press","publisher-place":"Chicago","title":"Sir Gawain and the Green Knight","translator":[{"family":"Silverstein","given":"Theodore","static-ordering":false}],"type":"chapter"},{"editor":[{"family":"Soltes","given":"Ori A.","static-ordering":false}],"id":"ITEM-2","issued":{"date-parts":[[1999]]},"publisher":"Philip Wilson","publisher-place":"London","title":"Georgia: Art and Civilization through the Ages","type":"chapter"},{"id":"ITEM-3","issued":{"date-parts":[[1993]]},"publisher":"University of Chicago Press","publisher-place":"Chicago","title":"The Chicago Manual of Style","type":"chapter"}]
+    [{"id":"ITEM-1","issued":{"date-parts":[["1974"]]},"publisher":"University of Chicago Press","publisher-place":"Chicago","title":"Sir Gawain and the Green Knight","translator":[{"family":"Silverstein","given":"Theodore"}],"type":"chapter"},{"editor":[{"family":"Soltes","given":"Ori A."}],"id":"ITEM-2","issued":{"date-parts":[[1999]]},"publisher":"Philip Wilson","publisher-place":"London","title":"Georgia: Art and Civilization through the Ages","type":"chapter"},{"id":"ITEM-3","issued":{"date-parts":[[1993]]},"publisher":"University of Chicago Press","publisher-place":"Chicago","title":"The Chicago Manual of Style","type":"chapter"}]
     """
     When I render the entire bibliography
     Then the bibliography should be:
     """
     <div class="csl-bib-body">
-      <div class="csl-entry">Silverstein, Theodore, tran. “Sir Gawain and the Green Knight”. Chicago: University of Chicago Press, 1974.</div>
-      <div class="csl-entry">Soltes, Ori A., ed. “Georgia: Art and Civilization through the Ages”. London: Philip Wilson, 1999.</div>
-      <div class="csl-entry">“The Chicago Manual of Style”. Chicago: University of Chicago Press, 1993.</div>
+      <div class="csl-entry">Silverstein, Theodore, tran. “Sir Gawain and the Green Knight.” Chicago: University of Chicago Press, 1974.</div>
+      <div class="csl-entry">Soltes, Ori A., ed. “Georgia: Art and Civilization through the Ages.” London: Philip Wilson, 1999.</div>
+      <div class="csl-entry">“The Chicago Manual of Style.” Chicago: University of Chicago Press, 1993.</div>
     </div>
     """

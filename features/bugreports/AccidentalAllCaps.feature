@@ -34,7 +34,7 @@ Feature: bugreports
              <term name="accessed">consulté le </term>
              <term name="at">disponible sur&#160;: </term>
              <term name="et-al">[et al.]</term>
-    	 <term name="sub verbo" form="short">
+    	 <term name="sub-verbo" form="short">
     	    <single></single>
     	    <multiple></multiple>
     	 </term>

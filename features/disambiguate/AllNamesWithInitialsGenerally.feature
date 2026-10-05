@@ -35,7 +35,7 @@ Feature: disambiguate
     """
     And the following input:
     """
-    [{"author":[{"family":"Asthma","given":"Albert","static-ordering":false},{"family":"Bronchitis","given":"Bosworth","static-ordering":false},{"family":"Cold","given":"Crispin","static-ordering":false}],"id":"ITEM-1","issued":{"date-parts":[["1980"]]},"title":"Book A","type":"book"},{"author":[{"family":"Asthma","given":"Albert","static-ordering":false},{"family":"Bronchitis","given":"Beauregarde","static-ordering":false},{"family":"Cold","given":"Odeous","static-ordering":false}],"id":"ITEM-2","issued":{"date-parts":[["1995"]]},"title":"Book B","type":"book"}]
+    [{"author":[{"family":"Asthma","given":"Albert"},{"family":"Bronchitis","given":"Bosworth"},{"family":"Cold","given":"Crispin"}],"id":"ITEM-1","issued":{"date-parts":[["1980"]]},"title":"Book A","type":"book"},{"author":[{"family":"Asthma","given":"Albert"},{"family":"Bronchitis","given":"Beauregarde"},{"family":"Cold","given":"Odeous"}],"id":"ITEM-2","issued":{"date-parts":[["1995"]]},"title":"Book B","type":"book"}]
     """
     When I cite all items
     Then the result should be:

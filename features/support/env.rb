@@ -24,6 +24,9 @@ require 'citeproc'
 require 'citeproc/ruby'
 require 'csl/styles'
 
+# Use the locales the test-suite is based on (see rake test:convert)
+CSL::Locale.root = File.expand_path('../locales', __FILE__)
+
 module MimicksCiteProcJS
   def processor
     @processor ||= CiteProc::Processor.new :style => @style,

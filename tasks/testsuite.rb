@@ -1,9 +1,18 @@
 require 'rake'
 require 'json'
 require 'cucumber'
+require 'csl'
 
 module CSL
   module TestSuite
+
+    # The test expectations are based on the locales used by citeproc-js;
+    # use the version of the locales its 'locale' submodule points to.
+    # Update this together with the test-suite.
+    LOCALES = '195bef843f87fc917be45ab3eca60536e4ef4626'.freeze
+
+    # Only the locales needed by the tests are copied here
+    LOCALES_PATH = 'features/support/locales'.freeze
 
     NON_STANDARD = %{
       quotes_PunctuationWithInnerQuote            # replaces single quotes and apostrophes
@@ -40,6 +49,19 @@ module CSL
       JSON.parse(File.open(file, 'r:UTF-8').read)
     end
 
+    # @param tags [Array<String>] the default locales used by the tests
+    # @return [Array<String>] the locales needed, including fallbacks
+    def locales_for(tags)
+      locales = tags.flat_map do |tag|
+        tag = CSL::Locale.normalize(tag.sub(/-[a-z0-9]-.*\z/i, ''))
+        [tag, CSL::Locale.normalize(tag.split('-')[0]), CSL::Locale.default]
+      rescue ArgumentError
+        [CSL::Locale.default]
+      end
+
+      locales.uniq
+    end
+
     def tags_for(json, feature, name)
       tags = []
 
@@ -61,14 +83,18 @@ end
 
 namespace :test do
 
-  desc 'Fetch the CSL test-suite repository'
+  desc 'Fetch the CSL test-suite repository and locales'
   task :init => [:clean] do
     system "git clone --depth 1 https://github.com/citation-style-language/test-suite.git test"
+
+    system "git init -q test/locales"
+    system "git -C test/locales fetch -q --depth 1 https://github.com/citation-style-language/locales.git #{CSL::TestSuite::LOCALES}"
+    system "git -C test/locales checkout -q FETCH_HEAD"
   end
 
-  desc 'Remove the CSL test-suite repository'
+  desc 'Remove the CSL test-suite repository and locales'
   task :clean do
-    system "rm -rf test"
+    FileUtils.rm_r 'test' if File.directory?('test')
   end
 
   desc 'Delete all generated CSL feature tests'
@@ -90,6 +116,8 @@ namespace :test do
       File.basename(path).split(/_/, 2)[0]
     }
 
+    locales = []
+
     features.each_key do |feature|
       system "mkdir features/#{feature}"
 
@@ -98,6 +126,8 @@ namespace :test do
 
         # Citations and bibentries inputs are not supported
         next if json['citations'] || json['bibentries']
+
+        locales << (json['csl'][/default-locale="([^"]+)"/, 1] || CSL::Locale.default)
 
         tags = CSL::TestSuite.tags_for(json, feature, name)
 
@@ -188,6 +218,15 @@ namespace :test do
           end
         end
       end
+    end
+
+    # Copy the locales needed by the tests
+    FileUtils.mkdir_p CSL::TestSuite::LOCALES_PATH
+    FileUtils.rm Dir["#{CSL::TestSuite::LOCALES_PATH}/locales-*.xml"]
+
+    CSL::TestSuite.locales_for(locales).each do |tag|
+      file = "test/locales/locales-#{tag}.xml"
+      system "cp #{file} #{CSL::TestSuite::LOCALES_PATH}" if File.exist?(file)
     end
   end
 

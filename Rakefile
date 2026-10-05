@@ -15,10 +15,10 @@ require 'citeproc/version'
 
 desc 'Run an IRB session with CiteProc loaded'
 task :console do
-  require 'pry'
+  ARGV.clear
+  require 'irb'
   require 'citeproc'
-
-  Pry.start
+  IRB.start
 end
 
 task :check_warnings do
@@ -37,28 +37,13 @@ end
 require 'cucumber/rake/task'
 Cucumber::Rake::Task.new(:cucumber)
 
-begin
-  require 'coveralls/rake/task'
-  Coveralls::RakeTask.new
-  task :test_with_coveralls => [:spec, 'coveralls:push']
-rescue LoadError => e
-  # ignore
-end
-
 task :release do |t|
   system "gem build citeproc.gemspec"
-  system "git tag #{CiteProc::VERSION}"
+  system "git tag v#{CiteProc::VERSION}"
   system "git push --tags"
   system "gem push citeproc-#{CiteProc::VERSION}.gem"
 end
 
 task :default => :spec
-
-begin
-  require 'yard'
-  YARD::Rake::YardocTask.new
-rescue LoadError => e
-  # ignore
-end
 
 require './tasks/testsuite'

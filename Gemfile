@@ -19,16 +19,10 @@ group :development do
   gem 'rake'
   gem 'cucumber'
   gem 'rspec'
-  gem 'unicode_utils', require: false unless RUBY_VERSION >= '2.4'
   gem 'csl-styles', '~>2.0', require: false
 end
 
 group :coverage do
-  gem 'simplecov', require: false
+  gem 'simplecov', '>= 1.3', require: false
   gem 'simplecov-lcov', require: false
-end
-
-group :extra do
-  gem 'yard'
-  gem 'redcarpet', platform: :mri
 end

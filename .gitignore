@@ -1,5 +1,4 @@
 Gemfile.lock
-.yardoc
 doc
 coverage
 *.rbc
@@ -8,3 +7,4 @@ coverage
 .bundle
 .ruby-version
 test
+*.gem

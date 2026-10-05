@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.licenses     = ['BSD-2-Clause']
   s.date        = Time.now.strftime('%Y-%m-%d')
 
-  s.required_ruby_version = '>= 2.3'
+  s.required_ruby_version = '>= 3.1'
   s.add_dependency('namae', '~>1.0')
   s.add_dependency 'date'
   s.add_dependency 'forwardable'
@@ -25,14 +25,16 @@ Gem::Specification.new do |s|
   s.add_dependency 'open-uri', '< 1.0'
 
   s.files        = `git ls-files`.split("\n") - %w{
-    .coveralls.yml
+    .document
     .gitignore
     .rspec
     .simplecov
-    .travis.yml
+    .yardopts
+    Gemfile
+    Rakefile
     citeproc.gemspec
     cucumber.yml
-  } - `git ls-files -- {tasks,spec,features}/*`.split("\n")
+  } - `git ls-files -- {.github,tasks,spec,features}/*`.split("\n")
 
   s.require_path = 'lib'
 end

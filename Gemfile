@@ -11,8 +11,8 @@ group :optional do
   gem 'chronic', require: false
   gem 'edtf'
   gem 'bibtex-ruby', require: 'bibtex'
-  gem 'citeproc-ruby' #, github: 'inukshuk/citeproc-ruby'
-  #gem 'csl', github: 'inukshuk/csl-ruby'
+  gem 'citeproc-ruby', github: 'inukshuk/citeproc-ruby', branch: 'master'
+  gem 'csl', github: 'inukshuk/csl-ruby', branch: 'master'
 end
 
 group :development do

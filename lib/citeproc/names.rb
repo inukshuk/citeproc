@@ -145,6 +145,11 @@ module CiteProc
       !empty? && !literal?
     end
 
+    # @return [Boolean] whether or not the Name has no given, family, or literal name
+    def empty?
+      [given, family, literal].all? { |part| part.nil? || part.empty? }
+    end
+
     # A name is `romanesque' if it contains only romanesque characters. This
     # should be the case for the majority of names written in latin- or
     # greek-based script. It will be false, for example, for names written
@@ -307,7 +312,7 @@ module CiteProc
     end
 
     def to_s
-      [given, family].compact_join(' ')
+      format
     end
 
     # @return [String] the name formatted according to the current options

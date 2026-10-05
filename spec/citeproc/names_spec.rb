@@ -402,6 +402,36 @@ module CiteProc
 
       end
 
+      describe '#to_s' do
+        it 'returns the formatted name' do
+          expect(poe.to_s).to eq('Edgar Allen Poe')
+          expect(utf.to_s).to eq('Gérard de la Martinière III')
+        end
+
+        it 'returns the literal for literal names' do
+          expect(Name.new(:literal => 'GNU/Linux').to_s).to eq('GNU/Linux')
+        end
+
+        it 'respects the formatting options' do
+          expect(utf.sort_order!.to_s).to eq('la Martinière, Gérard de, III')
+        end
+      end
+
+      describe '#empty?' do
+        it 'is true for names without any parts' do
+          expect(Name.new).to be_empty
+        end
+
+        it 'is false for names with a given or family name' do
+          expect(joe).not_to be_empty
+          expect(Name.new(:family => 'Poe')).not_to be_empty
+        end
+
+        it 'is false for literal names' do
+          expect(Name.new(:literal => 'GNU/Linux')).not_to be_empty
+        end
+      end
+
       describe '#sort_order' do
 
         it 'returns only a single token for literal names' do

@@ -321,11 +321,15 @@ module CiteProc
       when value.is_a?(Hash)
         attributes = value.symbolize_keys
 
-        if attributes.has_key?(:raw)
-          @value = Date.parse(attributes.delete(:raw)).value
+        if attributes.has_key?(:raw) && Array(attributes[:'date-parts']).empty?
+          raw = attributes.delete(:raw)
+          attributes.delete(:'date-parts')
+          date = Date.parse(raw)
+
+          @value = date.nil? ? { :literal => raw } : date.value
           @value.merge!(attributes)
         else
-          @value = attributes.deep_copy
+          @value = attributes.except(:raw).deep_copy
         end
         convert_parts!
 

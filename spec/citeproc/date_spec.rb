@@ -410,6 +410,20 @@ module CiteProc
         expect(Date.new(:raw => '23 May 1955').to_json).to eq('{"date-parts":[[1955,5,23]]}')
       end
 
+      it 'parses raw strings if the date parts are empty' do
+        expect(Date.new(:raw => '23 May 1955', :'date-parts' => []).to_json).to eq('{"date-parts":[[1955,5,23]]}')
+      end
+
+      it 'prefers date parts over raw strings' do
+        expect(Date.new(:raw => '23 May 1955', :'date-parts' => [[2000]]).to_json).to eq('{"date-parts":[[2000]]}')
+        expect(Date.new(:raw => 'Spring 1999 - Summer 2001', :'date-parts' => [[2000]]).to_json).to eq('{"date-parts":[[2000]]}')
+      end
+
+      it 'treats raw strings it cannot parse as literals' do
+        expect(Date.new(:raw => 'Bogus Date').to_json).to eq('{"literal":"Bogus Date"}')
+        expect(Date.new(:raw => 'Bogus Date', :'date-parts' => []).to_json).to eq('{"literal":"Bogus Date"}')
+      end
+
       it 'supports closed ranges' do
         expect(Date.new([[2000,11],[2000,12]]).to_json).to eq('{"date-parts":[[2000,11],[2000,12]]}')
       end

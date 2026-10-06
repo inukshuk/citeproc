@@ -155,11 +155,11 @@ module CiteProc
       end
 
       it 'accepts exclusive date ranges' do
-        expect(Date.new(::Date.new(2009) ... ::Date.new(2011)).end_date.year).to eq(2010)
+        expect(Date.new(::Date.new(2009) ... ::Date.new(2011)).parts[1].year).to eq(2010)
       end
 
       it 'accepts inclusive date ranges' do
-        expect(Date.new(::Date.new(2009) .. ::Date.new(2011)).end_date.year).to eq(2011)
+        expect(Date.new(::Date.new(2009) .. ::Date.new(2011)).parts[1].year).to eq(2011)
       end
 
       it 'accepts EDTF date strings' do
@@ -247,8 +247,21 @@ module CiteProc
         expect(Date.new([[2001, 5]])).not_to be_season
       end
 
-      it 'prefers the season field' do
-        expect(Date.new(:'date-parts' => [[2001, 22]], :season => 'Winter').season).to eq('Winter')
+      it 'converts season numbers and names in the season field' do
+        expect(Date.new(:'date-parts' => [[2001]], :season => 4).season).to eq(4)
+        expect(Date.new(:'date-parts' => [[2001]], :season => '2').season).to eq(2)
+        expect(Date.new(:'date-parts' => [[2001]], :season => 'Summer').season).to eq(2)
+        expect(Date.new(:'date-parts' => [[2001]], :season => ' fall ').season).to eq(3)
+      end
+
+      it 'returns other values of the season field as strings' do
+        expect(Date.new(:'date-parts' => [[2001]], :season => 'Holiday').season).to eq('Holiday')
+        expect(Date.new(:'date-parts' => [[2001]], :season => 7).season).to eq('7')
+      end
+
+      it 'ignores the season field if there is a month' do
+        expect(Date.new(:'date-parts' => [[2013, 1, 30]], :season => '22:56:08')).not_to be_season
+        expect(Date.new(:'date-parts' => [[2001, 22]], :season => 'Winter').season).to eq(2)
       end
 
       describe 'date parts' do
@@ -315,69 +328,6 @@ module CiteProc
           dates = [summer, Date.new([[2001, 5]]), Date.new(:'date-parts' => [[2000]], :season => '4'), spring]
           expect(dates.sort).to eq([dates[2], spring, summer, dates[1]])
         end
-      end
-    end
-
-    describe '#start_date' do
-      it 'returns nil by default' do
-        expect(Date.new.start_date).to be_nil
-      end
-
-      it 'returns the date when date-parts are set' do
-        expect(Date.new(1999).start_date).to be_a(Date)
-        expect(Date.new(1999).start_date.year).to eq(1999)
-      end
-
-      it 'returns the start date of ranges' do
-        date = Date.new(:'date-parts' => [[2003, 5], [2004]], :circa => true)
-
-        expect(date.start_date.to_citeproc).to eq('date-parts' => [[2003, 5]], 'circa' => true)
-        expect(date.start_date).not_to be_range
-      end
-    end
-
-    describe '#end_date' do
-      it 'returns nil by default' do
-        expect(Date.new.end_date).to be_nil
-      end
-
-      it 'returns nil when there is a single date-parts set' do
-        expect(Date.new(1312).end_date).to be_nil
-      end
-
-      it 'returns nil for open ranges' do
-        expect(Date.new([[1987], [0]]).end_date).to be_nil
-      end
-
-      it 'returns the end date of closed ranges' do
-        expect(Date.new(1999..2000).end_date).to be_a(Date)
-        expect(Date.new(1999..2000).end_date.year).to eq(2000)
-        expect(Date.new([[2003, 5], [2004]]).end_date.to_citeproc).to eq('date-parts' => [[2004]])
-      end
-    end
-
-    describe '#to_range' do
-      it 'returns nil for single dates' do
-        expect(Date.new(1999).to_range).to be_nil
-      end
-
-      it 'returns a range of the start and end dates' do
-        range = Date.new([[2003, 5], [2004]]).to_range
-
-        expect(range).to be_a(Range)
-        expect(range.begin.to_citeproc).to eq('date-parts' => [[2003, 5]])
-        expect(range.end.to_citeproc).to eq('date-parts' => [[2004]])
-      end
-
-      it 'returns endless ranges for open ranges' do
-        range = Date.new([[1987], [0]]).to_range
-
-        expect(range.begin.year).to eq(1987)
-        expect(range.end).to be_nil
-      end
-
-      it 'supports seasons' do
-        expect(Date.new([[1999, 22], [2001, 21]]).to_range).to be_a(Range)
       end
     end
 

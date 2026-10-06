@@ -7,8 +7,8 @@ module CiteProc
   #
   # {Date Dates} can be constructed from a wide range of input values,
   # including Ruby date objects, integers, date ranges, ISO 8601 and
-  # CiteProc JSON strings or hashes, and - provided you have the respective
-  # gems installed - EDTF strings all strings supported by Chronic.
+  # CiteProc JSON strings or hashes, and - provided you have the EDTF gem
+  # installed - EDTF strings.
   #
   # @example Initialization
   #   CiteProc::Date.new
@@ -16,9 +16,6 @@ module CiteProc
   #
   #   CiteProc::Date.today
   #   #-> #<CiteProc::Date "[2012, 6, 10]">
-  #
-  #   CiteProc::Date.new('Yesterday')
-  #   #-> #<CiteProc::Date "[[2012, 6, 9]]">
   #
   #   CiteProc::Date.new(1966)
   #   #-> #<CiteProc::Date "[1966]">
@@ -232,13 +229,11 @@ module CiteProc
     # List of date parsers (must respond to #parse)
     @parsers = []
 
-    [%w{ edtf EDTF }, %w{ chronic Chronic }].each do |date_parser, module_id|
-      begin
-        require date_parser
-        @parsers << ::Object.const_get(module_id)
-      rescue LoadError
-        # warn "failed to load `#{date_parser}' gem"
-      end
+    begin
+      require 'edtf'
+      @parsers << ::EDTF
+    rescue LoadError
+      # warn "failed to load `edtf' gem"
     end
 
     @parsers << ::Date
@@ -251,9 +246,8 @@ module CiteProc
       # A list of available date parsers. Each parser must respond to a
       # #parse method that converts a date string into a Ruby date object.
       # By default, the list will include Ruby's date parser from the
-      # standard library, as well as the parsers of the Chronic and EDTF
-      # gems if they are available; to install the latter on your system
-      # make sure to `gem install chronic edtf`.
+      # standard library, as well as the parser of the EDTF gem if it is
+      # available; to install it on your system run `gem install edtf`.
       #
       # @return [Array] the available date parsers
       attr_reader :parsers
@@ -311,14 +305,28 @@ module CiteProc
       write_attribute :season, season
     end
 
-    # @return [String, Integer, nil] the season field or, if the month
-    #   of the (start) date encodes a season, the season (1 to 4)
+    # Season names recognized in the season field
+    SEASONS = {
+      'spring' => 1, 'summer' => 2, 'autumn' => 3, 'fall' => 3, 'winter' => 4
+    }.freeze
+
+    # A season takes the place of the month. If the (start) date has a
+    # month, the season is encoded by the month (21 to 24); otherwise
+    # the season field is used. Season numbers (1 to 4) and names in
+    # the season field are converted to integers.
+    #
+    # @return [Integer, String, nil] the season (1 to 4), the season
+    #   field as a string if it is not a season number or name, or nil
     def season
-      read_attribute(:season) || (parts[0] && parts[0].season)
+      return parts[0].season if month
+
+      value = read_attribute(:season) or return
+      name = value.to_s.strip.downcase
+
+      SEASONS[name] || (name.match?(/\A[1-4]\z/) ? name.to_i : value.to_s)
     end
 
-    # @return [Boolean] whether or not the date has a season field or the
-    #   month of the (start) date encodes a season (see #has_season?)
+    # @return [Boolean] whether or not the date has a season (see #season)
     def season?
       !season.nil?
     end
@@ -441,20 +449,6 @@ module CiteProc
       d
     end
 
-    # @return [Date, nil] the date (the start date if this instance is
-    #   a range); or nil
-    def start_date
-      date_at(0)
-    end
-
-    def start_date=(date)
-      parts[0] = DateParts.new(date.strftime('%Y-%m-%d').split(/-/))
-    end
-
-    def end_date=(date)
-      parts[1] = DateParts.new(date.nil? ? 0 : date.strftime('%Y-%m-%d').split(/-/))
-    end
-
     # @return [::Date, Range, nil] the date as a Ruby date object or as
     #   a Range if this instance is closed range
     def to_ruby
@@ -462,22 +456,6 @@ module CiteProc
         parts[0].to_date..parts[1].to_date
       else
         d = parts[0] and d.to_date
-      end
-    end
-
-    # @return [Date, nil] the end date of a closed range; or nil
-    def end_date
-      date_at(1) if closed_range?
-    end
-
-    # @return [Range<Date>, nil] the start and end date as a Range; an
-    #   endless Range for open ranges; or nil if this is not a range
-    def to_range
-      case
-      when closed_range?
-        start_date..end_date
-      when open_range?
-        start_date..
       end
     end
 
@@ -588,15 +566,6 @@ module CiteProc
     end
 
     private
-
-    # @return [Date, nil] a copy of the date with only the given date parts
-    def date_at(index)
-      return if parts[index].nil? || parts[index].empty?
-
-      date = dup
-      date.parts.replace([date.parts[index]])
-      date
-    end
 
     def convert_parts!
       parts.map! do |part|

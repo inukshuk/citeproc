@@ -8,7 +8,6 @@ end
 
 group :optional do
   gem 'nokogiri'
-  gem 'chronic', require: false
   gem 'edtf'
   gem 'bibtex-ruby', require: 'bibtex'
   gem 'citeproc-ruby', github: 'inukshuk/citeproc-ruby', branch: 'master'

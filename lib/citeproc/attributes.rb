@@ -108,7 +108,7 @@ module CiteProc
       case
       when equal?(other)
         true
-      when self.class != other.class, length != other.length
+      when self.class != other.class, attributes.length != other.attributes.length
         false
       else
         other.attributes.each_pair do |key, value|

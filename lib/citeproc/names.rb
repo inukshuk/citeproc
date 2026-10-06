@@ -92,20 +92,19 @@ module CiteProc
     end
 
     # Names quack sorta like a String
-    def_delegators :to_s, :=~, :===, *String.instance_methods(false).reject { |m|
-      m.to_s =~ /^[\W_]|[!=_]$|^(to_s|inspect|replace|first|last|dup|clone)$/
-    }
+    def_delegators :to_s,
+      :to_str,
+      :=~, :===, :match, :match?, :start_with?, :end_with?, :include?,
+      :upcase, :downcase, :capitalize, :sub, :gsub, :split, :strip
 
-    # Delegate bang! methods to each field's value
-    String.instance_methods(false).each do |m|
-      if m.to_s.end_with?('!')
-        define_method(m) do |*arguments, &block|
-          Name.parts.each do |part|
-            p = attributes[part]
-            p.send(m, *arguments, &block) if p.respond_to?(m)
-          end
-          self
+    # Delegate in-place transformations to each field's value
+    [:gsub!, :sub!, :upcase!, :downcase!, :capitalize!, :strip!].each do |m|
+      define_method(m) do |*arguments, &block|
+        Name.parts.each do |part|
+          p = attributes[part]
+          p.send(m, *arguments, &block) if p.respond_to?(m)
         end
+        self
       end
     end
 
@@ -356,7 +355,7 @@ module CiteProc
 
     # @return [String] the name as a string stripped off all markup
     def strip_markup
-      gsub(Variable.markup, '')
+      to_s.gsub(Variable.markup, '')
     end
 
     # @return [self] the name with all parts stripped off markup

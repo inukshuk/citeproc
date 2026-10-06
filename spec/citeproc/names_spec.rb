@@ -74,6 +74,47 @@ module CiteProc
 
       it { is_expected.not_to be_nil }
 
+      describe 'string-like behaviour' do
+        let(:name) { Name.new(:family => 'Doe', :given => 'John') }
+
+        it 'converts implicitly to strings' do
+          expect('By ' + name).to eq('By John Doe')
+          expect(/Doe/ === name).to be true
+        end
+
+        it 'supports string matching' do
+          expect(name =~ /Doe/).to eq(5)
+          expect(name).to match(/John/)
+          expect(name.start_with?('John')).to be true
+          expect(name.include?('Doe')).to be true
+        end
+
+        it 'supports some string transformations' do
+          expect(name.upcase).to eq('JOHN DOE')
+          expect(name.gsub('o', '0')).to eq('J0hn D0e')
+          expect(name.split).to eq(%w{ John Doe })
+        end
+
+        it 'does not support other string methods' do
+          expect(name).not_to respond_to(:clear)
+          expect(name).not_to respond_to(:encoding)
+        end
+
+        it 'returns the number of attributes as its length' do
+          expect(name.length).to eq(2)
+        end
+
+        it 'compares names by their attributes' do
+          expect([name, Name.new(:family => 'Doe', :given => 'John')].uniq.length).to eq(1)
+          expect(name).not_to eql(Name.new(:family => 'Roe', :given => 'Jane'))
+        end
+
+        it 'can be frozen' do
+          expect(name.freeze).to equal(name)
+          expect(name).to be_frozen
+        end
+      end
+
       describe 'formatting options' do
 
         it 'does not always demote particle by default' do
@@ -238,7 +279,7 @@ module CiteProc
       describe 'in-place manipulation (bang! methods)' do
 
         it 'delegates to string for family name' do
-          expect(plato.swapcase!.format).to eq('pLATO')
+          expect(plato.downcase!.format).to eq('plato')
         end
 
         it 'delegates to string for given name' do
@@ -259,6 +300,11 @@ module CiteProc
 
         it 'returns the name object' do
           expect(poe.upcase!).to be_a(Name)
+        end
+
+        it 'does not support other bang methods' do
+          expect(poe).not_to respond_to(:succ!)
+          expect(poe).not_to respond_to(:reverse!)
         end
 
       end

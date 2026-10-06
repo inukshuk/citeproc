@@ -87,5 +87,19 @@ module CiteProc
         item.attribute?(:issued)
       end
     end
+
+    describe '#eql?' do
+      it 'is true for items with the same data' do
+        a = Item.new(:id => 'x', :title => 'T', :issued => [[2003]])
+        b = Item.new(:id => 'x', :title => 'T', :issued => [[2003]])
+
+        expect(a).to eql(b)
+        expect([a, b].uniq.length).to eq(1)
+      end
+
+      it 'is false for items with different data' do
+        expect(Item.new(:id => 'x', :title => 'T')).not_to eql(Item.new(:id => 'x', :title => 'U'))
+      end
+    end
   end
 end

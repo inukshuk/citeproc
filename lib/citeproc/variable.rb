@@ -131,12 +131,15 @@ module CiteProc
     # @return [Object] the value wrapped by this variable
     attr_accessor :value
 
+    # In-place transformations of the value
     def_delegators :@value, :to_s,
-      *::String.instance_methods(false).select {|m| m.to_s =~ /!$/ }
+      :gsub!, :sub!, :upcase!, :downcase!, :capitalize!, :strip!
 
-    def_delegators :to_s, :=~, :===, *String.instance_methods(false).reject { |m|
-      m.to_s =~ /^[\W_]|[!=_]$|^(to_s|inspect|replace|first|last|dup|clone|to_f|to_i)$/
-    }
+    # Variables quack sorta like a String
+    def_delegators :to_s,
+      :to_str, :empty?,
+      :=~, :===, :match, :match?, :start_with?, :end_with?, :include?,
+      :upcase, :downcase, :capitalize, :sub, :gsub, :split, :strip
 
 
     # Creates new Variable for the passed-in value
@@ -226,7 +229,7 @@ module CiteProc
 		#
     # @return [Boolean] whether or not the variable's value is numeric
     def numeric?
-      !!match(/^[\w\.:;]*\d+[\w\.:;]*(\s*[,&-]\s*[\w\.:;]*\d+[\w\.:;]*)*$/i)
+      !!to_s.match(/^[\w\.:;]*\d+[\w\.:;]*(\s*[,&-]\s*[\w\.:;]*\d+[\w\.:;]*)*$/i)
     end
 
     def date?
@@ -247,7 +250,7 @@ module CiteProc
 
     # @return [String] the variable's value stripped of markup
     def strip_markup
-      gsub(Variable.markup, '')
+      to_s.gsub(Variable.markup, '')
     end
 
     # Strips markup off the variable's value.
@@ -272,6 +275,20 @@ module CiteProc
       else
         nil
       end
+    end
+
+    # Variables are equal (in the sense of eql?) if they are of
+    # the same type and have the same value.
+    #
+    # @param other [Object] the object used for comparison
+    # @return [Boolean]
+    def eql?(other)
+      other.instance_of?(self.class) && value.eql?(other.value)
+    end
+
+    # @return [Integer] a hash value based on the type and value
+    def hash
+      [self.class, value].hash
     end
 
     # @!method to_s

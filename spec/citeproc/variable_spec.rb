@@ -192,5 +192,47 @@ module CiteProc
     describe '#to_json' do
     end
 
+    describe 'string-like behaviour' do
+      let(:title) { Variable.new('His Anonymous Life') }
+
+      it 'converts implicitly to strings' do
+        expect('Title: ' + title).to eq('Title: His Anonymous Life')
+      end
+
+      it 'supports string matching and some transformations' do
+        expect(title).to match(/Anonymous/)
+        expect(title.start_with?('His')).to be true
+        expect(title.upcase).to eq('HIS ANONYMOUS LIFE')
+      end
+
+      it 'supports some in-place transformations of the value' do
+        title.upcase!
+        expect(title.value).to eq('HIS ANONYMOUS LIFE')
+      end
+
+      it 'does not support other string methods' do
+        expect(title).not_to respond_to(:length)
+        expect(title).not_to respond_to(:clear)
+        expect(title).not_to respond_to(:encoding)
+        expect(title).not_to respond_to(:succ!)
+      end
+
+      it 'can be frozen' do
+        expect(title.freeze).to equal(title)
+        expect(title).to be_frozen
+      end
+    end
+
+    describe '#eql?' do
+      it 'is true for variables of the same type and value' do
+        expect(Variable.new('a')).to eql(Variable.new('a'))
+        expect([Variable.new('a'), Variable.new('a')].uniq.length).to eq(1)
+      end
+
+      it 'is false for different values or types' do
+        expect(Variable.new('a')).not_to eql(Variable.new('b'))
+        expect(Text.new('1')).not_to eql(Number.new('1'))
+      end
+    end
   end
 end

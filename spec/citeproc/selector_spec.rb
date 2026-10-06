@@ -78,6 +78,39 @@ module CiteProc
       it 'always matches by default' do
         expect(Selector.new.matches?(nil)).to be_truthy
       end
+
+      describe 'when constructed with a block' do
+        let(:book) { Item.new(:id => 'a', :type => 'book') }
+        let(:article) { Item.new(:id => 'b', :type => 'article') }
+        let(:select_books) { Selector.new { |item| item[:type].to_s == 'book' } }
+
+        it 'is a custom matcher' do
+          expect(select_books).to be_custom_matcher
+          expect(Selector.new).not_to be_custom_matcher
+        end
+
+        it 'uses the block to match items' do
+          expect(select_books.matches?(book)).to be_truthy
+          expect(select_books.matches?(article)).to be_falsey
+        end
+
+        it 'keeps the block when copied' do
+          expect(select_books.dup.matches?(article)).to be_falsey
+          expect(Selector.new.dup).not_to be_custom_matcher
+        end
+      end
+    end
+
+    describe '#type=' do
+      it 'sets the selector type' do
+        selector = Selector.new
+        selector.type = 'any'
+        expect(selector.type).to eq(:any)
+      end
+
+      it 'fails for unknown types' do
+        expect { Selector.new.type = :foo }.to raise_error(TypeError)
+      end
     end
 
     describe '#skip?' do

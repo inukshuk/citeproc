@@ -19,11 +19,12 @@ module CiteProc
 
     attr_reader :type, :conditions, :skip_conditions, :custom_matcher
 
-    def initialize(attributes = nil)
+    def initialize(attributes = nil, &block)
       @conditions, @skip_conditions = {}, {}
 
       if block_given?
         @type = :ruby
+        @custom_matcher = block
 
       else
         unless attributes.nil? || attributes.empty?
@@ -54,12 +55,12 @@ module CiteProc
       @type = other.type
       @conditions = other.conditions.deep_copy
       @skip_conditions = other.skip_conditions.deep_copy
-      @custom_matcher = other
+      @custom_matcher = other.custom_matcher
     end
 
     def type=(type)
       raise TypeError, "failed to set selector type to #{type.inspect}" unless
-        type.respond_to(:to_sym) && Selector.types.include?(type.to_sym)
+        type.respond_to?(:to_sym) && Selector.types.include?(type.to_sym)
 
       @type = type.to_sym
     end
@@ -69,7 +70,7 @@ module CiteProc
     end
 
     def custom_matcher?
-      defined?(@custom_matcher)
+      !custom_matcher.nil?
     end
 
     alias ruby? custom_matcher?

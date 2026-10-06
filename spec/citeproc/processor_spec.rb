@@ -95,27 +95,44 @@ module CiteProc
 
       end
 
-      describe 'when items have been processed' do
+      describe 'when items have been registered' do
+        let(:lolita) { Item.new(:id => 'lolita', :type => :article, :title => 'Lolita') }
 
-        it 'returns a bibliography containing all cited items'
+        before(:each) { p.update(palefire, despair, lolita) }
 
-        # it 'returns a bibliography of all registered items if invoked with :all'
+        it 'returns a bibliography containing all registered items' do
+          expect(p.bibliography.ids).to contain_exactly('palefire', 'despair', 'lolita')
+        end
 
         describe 'when invoked with a block as filter' do
 
-          it 'returns an empty bibliography if the block always returns false'
+          it 'returns an empty bibliography if the block always returns false' do
+            expect(p.bibliography { false }).to be_empty
+          end
 
-          it 'returns the full bibliography if the block always returns true'
+          it 'returns the full bibliography if the block always returns true' do
+            expect(p.bibliography { true }.ids).to eq(p.bibliography.ids)
+          end
 
-          it 'returns a bibliography with all items for which the block returns true'
+          it 'returns a bibliography with all items for which the block returns true' do
+            expect(p.bibliography { |item| item[:type].to_s == 'book' }.ids)
+              .to contain_exactly('palefire', 'despair')
+          end
 
         end
 
         describe 'when passed a hash as argument' do
 
-          it 'fails if the hash is no valid selector'
+          it 'fails if the hash is no valid selector' do
+            expect { p.bibliography(:foo => { :type => :book }) }.to raise_error(TypeError)
+          end
 
-          it 'creates a selector from the hash and returns a bibliography containing all matching items'
+          it 'creates a selector from the hash and returns a bibliography containing all matching items' do
+            expect(p.bibliography(:all => { :type => :book }).ids)
+              .to contain_exactly('palefire', 'despair')
+            expect(p.bibliography(:none => { :type => :book }).ids)
+              .to contain_exactly('lolita')
+          end
 
         end
 

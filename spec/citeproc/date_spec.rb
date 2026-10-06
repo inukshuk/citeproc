@@ -240,6 +240,25 @@ module CiteProc
       it 'is a season if contains a season field' do
         expect(Date.new(:'date-parts' => [[2001]], :season => 'Winter')).to be_season
       end
+
+      it 'is a season if the month is a season (21 to 24)' do
+        expect(Date.new([[2001, 22]])).to be_season
+        expect(Date.new([[2001, 22]]).season).to eq(2)
+        expect(Date.new([[2001, 5]])).not_to be_season
+      end
+
+      it 'prefers the season field' do
+        expect(Date.new(:'date-parts' => [[2001, 22]], :season => 'Winter').season).to eq('Winter')
+      end
+
+      describe 'date parts' do
+        it 'are a season if the month is a season (21 to 24)' do
+          expect(Date::DateParts.new(2001, 21).season).to eq(1)
+          expect(Date::DateParts.new(2001, 24)).to be_season
+          expect(Date::DateParts.new(2001, 5)).not_to be_season
+          expect(Date::DateParts.new(2001)).not_to be_season
+        end
+      end
     end
 
     describe 'uncertain dates' do
@@ -269,6 +288,34 @@ module CiteProc
         expect(ad50).to be < ::Date.new(50,2)
         expect(ad50).to be > ::Date.new(49)
       end
+
+      describe 'seasons' do
+        let(:spring) { Date.new([[2001, 21]]) }
+        let(:summer) { Date.new([[2001, 22]]) }
+
+        it 'are ordered among themselves' do
+          expect(spring).to be < summer
+          expect(Date.new(:'date-parts' => [[2001]], :season => '1')).to be <
+            Date.new(:'date-parts' => [[2001]], :season => '2')
+        end
+
+        it 'are ordered like dates without month otherwise' do
+          expect(spring <=> Date.new([[2001]])).to eq(0)
+          expect(spring).to be < Date.new([[2001, 5]])
+          expect(Date.new(:'date-parts' => [[2001]], :season => '1') <=> Date.new([[2001]])).to eq(0)
+          expect(Date.new(:'date-parts' => [[2001]], :season => '1')).to be < Date.new([[2001, 5]])
+        end
+
+        it 'are ordered by year first' do
+          expect(Date.new([[2000, 24]])).to be < spring
+          expect(Date.new([[2002, 21]])).to be > summer
+        end
+
+        it 'can be sorted with other dates' do
+          dates = [summer, Date.new([[2001, 5]]), Date.new(:'date-parts' => [[2000]], :season => '4'), spring]
+          expect(dates.sort).to eq([dates[2], spring, summer, dates[1]])
+        end
+      end
     end
 
     describe '#start_date' do
@@ -276,8 +323,16 @@ module CiteProc
         expect(Date.new.start_date).to be_nil
       end
 
-      it 'returns a ruby date when date-parts are set' do
+      it 'returns the date when date-parts are set' do
+        expect(Date.new(1999).start_date).to be_a(Date)
         expect(Date.new(1999).start_date.year).to eq(1999)
+      end
+
+      it 'returns the start date of ranges' do
+        date = Date.new(:'date-parts' => [[2003, 5], [2004]], :circa => true)
+
+        expect(date.start_date.to_citeproc).to eq('date-parts' => [[2003, 5]], 'circa' => true)
+        expect(date.start_date).not_to be_range
       end
     end
 
@@ -290,8 +345,76 @@ module CiteProc
         expect(Date.new(1312).end_date).to be_nil
       end
 
-      it 'returns a ruby date when date-parts are a closed range' do
+      it 'returns nil for open ranges' do
+        expect(Date.new([[1987], [0]]).end_date).to be_nil
+      end
+
+      it 'returns the end date of closed ranges' do
+        expect(Date.new(1999..2000).end_date).to be_a(Date)
         expect(Date.new(1999..2000).end_date.year).to eq(2000)
+        expect(Date.new([[2003, 5], [2004]]).end_date.to_citeproc).to eq('date-parts' => [[2004]])
+      end
+    end
+
+    describe '#to_range' do
+      it 'returns nil for single dates' do
+        expect(Date.new(1999).to_range).to be_nil
+      end
+
+      it 'returns a range of the start and end dates' do
+        range = Date.new([[2003, 5], [2004]]).to_range
+
+        expect(range).to be_a(Range)
+        expect(range.begin.to_citeproc).to eq('date-parts' => [[2003, 5]])
+        expect(range.end.to_citeproc).to eq('date-parts' => [[2004]])
+      end
+
+      it 'returns endless ranges for open ranges' do
+        range = Date.new([[1987], [0]]).to_range
+
+        expect(range.begin.year).to eq(1987)
+        expect(range.end).to be_nil
+      end
+
+      it 'supports seasons' do
+        expect(Date.new([[1999, 22], [2001, 21]]).to_range).to be_a(Range)
+      end
+    end
+
+    describe 'ruby date methods' do
+      it 'supports strftime' do
+        expect(Date.new([[1998, 2, 4]]).strftime('%Y-%m-%d')).to eq('1998-02-04')
+      end
+
+      it 'does not support other ruby date methods' do
+        expect(Date.new([[1998, 2, 4]])).not_to respond_to(:yday)
+        expect(Date.new([[1998, 2, 4]])).not_to respond_to(:leap?)
+      end
+    end
+
+    describe '#eql?' do
+      it 'is true for dates with the same date parts and fields' do
+        expect(Date.new([[2003, 5]])).to eql(Date.new([[2003, 5]]))
+        expect([Date.new([[2003, 5]]), Date.new([[2003, 5]])].uniq.length).to eq(1)
+      end
+
+      it 'is false for dates of different precision' do
+        expect(Date.new([[2003, 5]])).not_to eql(Date.new([[2003, 5, 1]]))
+        expect([Date.new([[2003, 5]]), Date.new([[2003, 5, 1]])].uniq.length).to eq(2)
+      end
+
+      it 'is false for dates with different fields' do
+        expect(Date.new([[2003]])).not_to eql(Date.new(:'date-parts' => [[2003]], :circa => true))
+      end
+    end
+
+    describe '#to_ruby' do
+      it 'returns a ruby date' do
+        expect(Date.new([[2003, 5, 1]]).to_ruby).to eq(::Date.new(2003, 5, 1))
+      end
+
+      it 'returns a range of ruby dates for closed ranges' do
+        expect(Date.new([[2003, 5, 1], [2003, 5, 4]]).to_ruby).to eq(::Date.new(2003, 5, 1)..::Date.new(2003, 5, 4))
       end
     end
 

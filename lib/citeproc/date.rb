@@ -129,6 +129,18 @@ module CiteProc
         !bc? && year < 1000
       end
 
+      # Seasons may be encoded as months 21 to 24 (Spring to Winter).
+      # @return [Integer, nil] the season (1 to 4) or nil if the
+      #   month does not encode a season
+      def season
+        month - 20 if month && month.between?(21, 24)
+      end
+
+      # @return [Boolean] whether or not the month encodes a season
+      def season?
+        !season.nil?
+      end
+
       # Formats the date parts according to the passed-in format string.
       # @param format [String] a format string
       # @return [String,nil] the formatted date string; nil if the date
@@ -148,8 +160,10 @@ module CiteProc
       # @return [Fixnum,nil] the result of the comparison (-1, 0, 1 or nil)
       def <=>(other)
         case
+        when other.is_a?(DateParts) && season? && other.season?
+          [year, season] <=> [other.year, other.season]
         when other.is_a?(DateParts)
-          to_citeproc <=> other.to_citeproc
+          comparable <=> other.comparable
         when other.respond_to?(:to_date)
           to_date <=> other.to_date
         else
@@ -191,6 +205,14 @@ module CiteProc
       # @return [String] a human-readable representation of the object
       def inspect
         "#<DateParts #{to_s}>"
+      end
+
+      protected
+
+      # Seasons are compared like dates without month.
+      # @return [Array<Fixnum>] the date parts used for comparison
+      def comparable
+        season? ? to_citeproc.take(1) : to_citeproc
       end
     end
 
@@ -276,12 +298,30 @@ module CiteProc
     end
 
 
-    # Make Date behave like a regular Ruby Date
-    def_delegators :to_ruby, *::Date.instance_methods(false).reject { |m|
-      m.to_s =~ /^[\W_]|[!=_]$|^(to_s|inspect|dup|clone|change)$|^(marshal|season|year|month|day|certain|uncertain)/
-    }
+    def_delegators :to_ruby, :strftime
 
-    attr_predicates :circa, :season, :literal, :'date-parts'
+    attr_predicates :circa, :literal, :'date-parts'
+
+    # @return [Boolean] whether or not the date has a season field
+    def has_season?
+      attribute?(:season)
+    end
+
+    def season=(season)
+      write_attribute :season, season
+    end
+
+    # @return [String, Integer, nil] the season field or, if the month
+    #   of the (start) date encodes a season, the season (1 to 4)
+    def season
+      read_attribute(:season) || (parts[0] && parts[0].season)
+    end
+
+    # @return [Boolean] whether or not the date has a season field or the
+    #   month of the (start) date encodes a season (see #has_season?)
+    def season?
+      !season.nil?
+    end
 
     def initialize(value = {})
       super
@@ -401,9 +441,10 @@ module CiteProc
       d
     end
 
-    # @return [::Date,nil] the date (start date if this instance is a range); or nil
+    # @return [Date, nil] the date (the start date if this instance is
+    #   a range); or nil
     def start_date
-      d = parts[0] and d.to_date
+      date_at(0)
     end
 
     def start_date=(date)
@@ -414,19 +455,30 @@ module CiteProc
       parts[1] = DateParts.new(date.nil? ? 0 : date.strftime('%Y-%m-%d').split(/-/))
     end
 
-    # @return [Date,Range] the date as a Ruby date object or as a Range if
-    #   this instance is closed range
+    # @return [::Date, Range, nil] the date as a Ruby date object or as
+    #   a Range if this instance is closed range
     def to_ruby
       if closed_range?
-        start_date..end_date
+        parts[0].to_date..parts[1].to_date
       else
-        start_date
+        d = parts[0] and d.to_date
       end
     end
 
-    # @return [::Date,nil] the range's end date; or nil
+    # @return [Date, nil] the end date of a closed range; or nil
     def end_date
-      d = parts[1] and d.to_date
+      date_at(1) if closed_range?
+    end
+
+    # @return [Range<Date>, nil] the start and end date as a Range; an
+    #   endless Range for open ranges; or nil if this is not a range
+    def to_range
+      case
+      when closed_range?
+        start_date..end_date
+      when open_range?
+        start_date..
+      end
     end
 
     # @return [Boolean] whether or not the date-parts contain an end date
@@ -510,7 +562,7 @@ module CiteProc
       case
       when literal?
         literal
-      when season?
+      when has_season?
         season
       else
         parts.map(&:to_citeproc).inspect
@@ -520,8 +572,14 @@ module CiteProc
     def <=>(other)
       case other
       when CiteProc::Date
-        return nil if season? || other.season?
-        parts <=> other.parts
+        result = parts <=> other.parts
+
+        # Seasons are ordered among themselves only
+        if result == 0 && season? && other.season?
+          result = season.to_i <=> other.season.to_i
+        end
+
+        result
       when ::Date
         parts <=> [other]
       else
@@ -530,6 +588,15 @@ module CiteProc
     end
 
     private
+
+    # @return [Date, nil] a copy of the date with only the given date parts
+    def date_at(index)
+      return if parts[index].nil? || parts[index].empty?
+
+      date = dup
+      date.parts.replace([date.parts[index]])
+      date
+    end
 
     def convert_parts!
       parts.map! do |part|

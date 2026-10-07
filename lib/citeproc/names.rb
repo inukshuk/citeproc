@@ -235,7 +235,7 @@ module CiteProc
 
     # @return [Boolean] whether or not initials will be used for printing
     def initials?
-      !!options[:'initialize-with'] && personal? && romanesque?
+      !!options[:'initialize-with'] && personal? && family? && romanesque?
     end
 
     def initialize_with
@@ -243,7 +243,7 @@ module CiteProc
     end
 
     def initialize_existing_only?
-      options[:initialize].to_s == 'false'
+      !CiteProc.boolean(options[:initialize], true)
     end
 
     def initialize_without_hyphen?
@@ -258,8 +258,6 @@ module CiteProc
       case
       when !initials?
         given
-      when initialize_existing_only?
-        existing_initials_of given
       else
         initials_of given
       end
@@ -383,35 +381,29 @@ module CiteProc
 
     def initials_of(string)
       return unless string
-      string = string.dup
 
-      string.gsub!(/([[:upper:]])[^[:upper:]\s-]*\s*/, "\\1#{initialize_with}")
+      # Split abbreviations like "M.E" into "M. E"
+      string = string.gsub(/\.(?=[[:alpha:]])/, '. ')
+      string = string.tr('-', ' ') if initialize_without_hyphen?
 
-      initialize_hyphen!(string)
-
-      string.strip!
-      string
+      string.scan(/([^\s-]+)\s*(-)?\s*/).map { |part, hyphen|
+        part = initial_of(part) || " #{part} "
+        hyphen ? "#{part.rstrip}-" : part
+      }.join.gsub(/-\s+/, '-').squeeze(' ').strip
     end
 
-    def initialize_hyphen!(string)
-      if initialize_without_hyphen?
-        string.tr!('-', '')
-      else
-        string.gsub!(/\s*-/, '-')
+    # @return [String, nil] the initial for the given part of a name
+    #   or nil if the part should not be initialized
+    def initial_of(part)
+      case part
+      when /\A([[:upper:]])\z/, /\A(.+)\.\z/
+        "#{$1}#{initialize_with}"
+      when /\A[[:upper:]]{2}[[:lower:]]/
+        # Two letter initials like "Ts" for "TSerendorjiin"
+        "#{part[0, 2].capitalize}#{initialize_with}" unless initialize_existing_only?
+      when /\A[[:upper:]]/
+        "#{part[0]}#{initialize_with}" unless initialize_existing_only?
       end
-    end
-
-    def existing_initials_of(string)
-      return unless string
-      string = string.dup
-
-      string.gsub!(/([[:upper:]])([[:upper:]])/, '\1 \2')
-      string.gsub!(/\b([[:upper:]])\b[^[:alpha:]-]*/, "\\1#{initialize_with}")
-
-      initialize_hyphen!(string)
-
-      string.strip!
-      string
     end
   end
 

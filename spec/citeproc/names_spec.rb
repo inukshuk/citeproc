@@ -161,7 +161,7 @@ module CiteProc
       end
 
       describe '#initials' do
-        let(:name) { Name.new(nil, :'initialize-with' => '. ') }
+        let(:name) { Name.new({ family: 'Doe' }, :'initialize-with' => '. ') }
 
         it 'returns the given name initials' do
           name.given = 'Edgar A'
@@ -171,36 +171,82 @@ module CiteProc
           expect(name.initials).to eq('Edgar A.')
         end
 
-        describe 'private helpers' do
-          it '#initials_of initializes the given string' do
-            expect(name.send(:initials_of, 'James T.')).to eq('J. T.')
-            expect(name.send(:initials_of, 'JT')).to eq('J. T.')
-            expect(name.send(:initials_of, 'James T')).to eq('J. T.')
-            expect(name.send(:initials_of, 'Jean-Luc')).to eq('J.-L.')
-            expect(name.send(:initials_of, 'Vérité Äpfel')).to eq('V. Ä.')
+        it 'initializes words and keeps existing initials' do
+          {
+            'James T.' => 'J. T.',
+            'James T' => 'J. T.',
+            'JT' => 'J.',
+            'M.E' => 'M. E.',
+            'ME.' => 'ME.',
+            'Ph.M.E.' => 'Ph. M. E.',
+            'Jean-Luc' => 'J.-L.',
+            'Vérité Äpfel' => 'V. Ä.',
+            'TSerendorjiin' => 'Ts.'
+          }.each do |given, initials|
+            name.given = given
+            expect(name.initials).to eq(initials)
+          end
+        end
 
-            name.initialize_without_hyphen!
-            expect(name.send(:initials_of, 'Jean-Luc')).to eq('J. L.')
+        it 'initializes only existing initials if initialize is false' do
+          name.options[:initialize] = 'false'
+          {
+            'James T. Kirk' => 'James T. Kirk',
+            'James T.Kirk' => 'James T. Kirk',
+            'James T' => 'James T.',
+            'JT' => 'JT',
+            'Jean-Luc' => 'Jean-Luc',
+            'J.-L.M.' => 'J.-L. M.',
+            'J-L' => 'J.-L.',
+            'Ph. M.E.' => 'Ph. M. E.'
+          }.each do |given, initials|
+            name.given = given
+            expect(name.initials).to eq(initials)
+          end
+        end
 
-            name.options[:'initialize-with'] = '.'
-            expect(name.send(:initials_of, 'James T.')).to eq('J.T.')
-            expect(name.send(:initials_of, 'James T')).to eq('J.T.')
-            expect(name.send(:initials_of, 'Jean-Luc')).to eq('J.L.')
+        it 'accepts xsd:boolean values for initialize' do
+          name.given = 'James T.'
 
-            name.options[:'initialize-with-hyphen'] = true
-            expect(name.send(:initials_of, 'Jean-Luc')).to eq('J.-L.')
+          name.options[:initialize] = '0'
+          expect(name.initials).to eq('James T.')
+
+          name.options[:initialize] = '1'
+          expect(name.initials).to eq('J. T.')
+        end
+
+        it 'joins the initials using the initialize-with string' do
+          name.options[:'initialize-with'] = '.'
+          {
+            'James T.' => 'J.T.',
+            'Jean-Luc' => 'J.-L.',
+            'Ph.M.E.' => 'Ph.M.E.',
+            'John Bertrand de Cusance Morant' => 'J.B. de C.M.'
+          }.each do |given, initials|
+            name.given = given
+            expect(name.initials).to eq(initials)
           end
 
-          it '#initialize_existing_only initializes only current initials' do
-            expect(name.send(:existing_initials_of, 'James T. Kirk')).to eq('James T. Kirk')
-            expect(name.send(:existing_initials_of, 'James T.Kirk')).to eq('James T. Kirk')
-            expect(name.send(:existing_initials_of, 'James T')).to eq('James T.')
-            expect(name.send(:existing_initials_of, 'Jean-Luc')).to eq('Jean-Luc')
-            expect(name.send(:existing_initials_of, 'J.-L.M.')).to eq('J.-L. M.')
-            expect(name.send(:existing_initials_of, 'J-L')).to eq('J.-L.')
-            expect(name.send(:existing_initials_of, 'J-LM')).to eq('J.-L. M.')
-            expect(name.send(:existing_initials_of, 'JT')).to eq('J. T.')
-          end
+          name.options[:'initialize-with'] = ''
+          name.given = 'John M.E.'
+          expect(name.initials).to eq('JME')
+          name.options[:initialize] = 'false'
+          expect(name.initials).to eq('John ME')
+        end
+
+        it 'does not initialize names without a family name' do
+          name.family = nil
+          name.given = 'Banksy'
+          expect(name.initials).to eq('Banksy')
+        end
+
+        it 'drops hyphens if initialize-with-hyphen is false' do
+          name.initialize_without_hyphen!
+          name.given = 'Jean-Luc'
+          expect(name.initials).to eq('J. L.')
+
+          name.options[:'initialize-with'] = '.'
+          expect(name.initials).to eq('J.L.')
         end
       end
 

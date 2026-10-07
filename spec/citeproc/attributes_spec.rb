@@ -75,6 +75,12 @@ module CiteProc
         a[:foo]='never'
         expect(a.attribute?(:foo)).to eq(false)
       end
+      it 'return false for attribute value set to 0' do
+        a = A.new
+        a[:foo] = 0
+        expect(a.attribute?(:foo)).to eq(false)
+      end
+
       it 'return true for attribute with value' do
         a = A.new
         a[:foo]='bar'

@@ -37,7 +37,7 @@ module CiteProc
       return false if value.nil?
       return false if value.respond_to?(:empty?) && value.empty?
 
-      value.to_s !~ /^(false|no|never)$/i
+      value.to_s !~ /^(false|no|never|0)$/i
     end
 
     def filter_key(key)

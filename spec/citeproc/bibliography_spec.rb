@@ -7,6 +7,17 @@ module CiteProc
     it { is_expected.to be_empty }
     it { is_expected.not_to have_errors }
 
+    describe '#hanging_indent?' do
+      it 'returns false by default' do
+        expect(Bibliography.new).not_to be_hanging_indent
+      end
+
+      it 'returns the value of the hanging-indent option' do
+        expect(Bibliography.new(:'hanging-indent' => 'true')).to be_hanging_indent
+        expect(Bibliography.new(:'hanging-indent' => 'false')).not_to be_hanging_indent
+      end
+    end
+
     describe '#to_citeproc conversion' do
 
       it 'returns an array' do

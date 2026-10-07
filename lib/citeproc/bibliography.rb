@@ -193,7 +193,7 @@ module CiteProc
     end
 
     def hanging_indent?
-      options[:'hanging_indent']
+      CiteProc.boolean(options[:'hanging-indent'])
     end
 
     def join()

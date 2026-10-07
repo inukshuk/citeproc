@@ -83,6 +83,20 @@ module CiteProc
         end
       end
 
+      describe '#plural_locator?' do
+        it 'returns whether or not the locator is plural' do
+          expect(CitationItem.new(:locator => '23')).not_to be_plural_locator
+          expect(CitationItem.new(:locator => '23-25')).to be_plural_locator
+          expect(CitationItem.new).not_to be_plural_locator
+        end
+
+        it 'uses only the locator up to the first embedded label' do
+          expect(CitationItem.new(:locator => '1, fol. 186')).not_to be_plural_locator
+          expect(CitationItem.new(:locator => '367-368, fig. 333')).to be_plural_locator
+          expect(CitationItem.new(:locator => '1, Abb. 2').plural_locator?('Abb.' => 'figure')).to be false
+        end
+      end
+
       describe '#parse_locator!' do
         it 'moves labels at the start of the locator into the label' do
           item = CitationItem.new(:locator => 'vol. 1, fol. 186')

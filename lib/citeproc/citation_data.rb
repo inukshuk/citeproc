@@ -132,6 +132,16 @@ module CiteProc
       read_attribute(:label) || ('page' if locator?)
     end
 
+    # Only the locator up to the first embedded label (e.g., "fol."
+    # in "1, fol. 186") determines whether or not it is plural.
+    #
+    # @param abbreviations [Hash<String,String>] label abbreviations
+    # @return [Boolean] whether or not the locator is plural
+    def plural_locator?(abbreviations = CitationItem.locator_abbreviations)
+      pattern = CitationItem.locator_label_pattern(abbreviations)
+      Number.pluralize?(locator.to_s.split(/\s(?:#{pattern})\s/, 2)[0])
+    end
+
     # Moves a label at the start of the locator into the label
     # (e.g., "vol. 1" becomes "1" with the label "volume") unless
     # the item has a label other than "page".

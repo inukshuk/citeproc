@@ -51,7 +51,7 @@ module CiteProc
     @defaults = {
       :form => 'long',
       :'name-as-sort-order' => false,
-      :'demote-non-dropping-particle' => :never,
+      :'demote-non-dropping-particle' => 'display-and-sort',
       :'sort-separator' => ', ',
       :initialize => true,
       :'initialize-with-hyphen' => true,
@@ -126,6 +126,45 @@ module CiteProc
     end
 
 
+    # Parses name particles which are not set explicitly:
+    # leading lowercase words of the family name become the non-dropping particle
+    # and trailing lowercase words of the given name the dropping particle.
+    # Family names in double quotes and names with parse-names set to false are not parsed.
+    #
+    # @return [self]
+    def parse_particles!
+      if family.to_s.match?(/\A".+"\z/)
+        self.family = family[1...-1]
+        return self
+      end
+
+      return self unless CiteProc.boolean(read_attribute(:'parse-names'), true)
+      return self if particle? || !family? || !given?
+
+      particles, name = '', family.to_s
+      while (m = /\A(\S+[-ʻ’' ] *)(.+)\z/.match(name)) && particle_word?(m[1])
+        particles, name = particles + m[1], m[2]
+      end
+
+      unless particles.empty?
+        self.family = name
+        self.particle = particles.match?(/['’] \z/) ? particles.rstrip + ' ' : particles.rstrip
+      end
+
+      particles, name = [], given.to_s
+      while (m = /\A(.+)\s+(\S+)\z/.match(name)) && particle_word?(m[2])
+        particles.unshift(m[2])
+        name = m[1]
+      end
+
+      unless particles.empty?
+        self.given = name
+        self.dropping_particle = particles.join(' ')
+      end
+
+      self
+    end
+
     # Resets the object's options to the default settings.
     # @return [self]
     def reset!
@@ -164,6 +203,12 @@ module CiteProc
     # @return [Boolean] whether or not the name should be printed in static order
     def static_order?
       static_ordering? || !romanesque?
+    end
+
+    # @return [Boolean] whether or not the name can be printed in sort
+    #   order (literal names and names in static order cannot)
+    def invertible?
+      personal? && !static_order?
     end
 
     # Set the name to use static order for printing, i.e., print the family
@@ -263,9 +308,10 @@ module CiteProc
       end
     end
 
+    # @return [Boolean] whether or not the non-dropping particle is demoted
+    #   when the name is printed; "sort-only" demotes it only in sort keys
     def demote_non_dropping_particle?
-      always_demote_non_dropping_particle? ||
-        !!(sort_order? && options[:'demote-non-dropping-particle'] =~ /^sort(-only)?$/i)
+      always_demote_non_dropping_particle?
     end
 
     alias demote_particle? demote_non_dropping_particle?
@@ -313,29 +359,65 @@ module CiteProc
     end
 
     # @return [String] the name formatted according to the current options
-    def format
+    # Formats the name according to the formatting options. The name
+    # parts may be formatted and enclosed in affixes: the formatter is
+    # called with the name part (:given or :family) and its text, and the
+    # affixer with the name part and the text it encloses. The given
+    # formatting applies to the given name and the dropping particle, the
+    # family formatting to the family name and the non-dropping particle.
+    # The family affixes enclose all preceding particles and, for names in
+    # display order, the suffix; the given affixes enclose the particles
+    # following the given name in sort order.
+    #
+    # @param formatter [#call] formats the text of a name part
+    # @param affixer [#call] encloses the text of a name part in affixes
+    # @return [String] the formatted name
+    def format(formatter = nil, affixer = nil)
+      format_part = ->(part, text) { formatter.nil? || text.to_s.empty? ? text : formatter.(part, text) }
+      affix_part = ->(part, text) { affixer.nil? || text.to_s.empty? ? text : affixer.(part, text) }
+
+      return affix_part.(:family, format_part.(:family, literal.to_s)) if literal?
+
+      given = format_part.(:given, initials)
+      dropping = format_part.(:given, dropping_particle)
+      particle = format_part.(:family, self.particle)
+      family = format_part.(:family, self.family)
+      particle_family = [particle, family].compact_join(particle_separator)
+
       case
-      when literal?
-        literal.to_s
       when static_order?
-        [family, initials].compact.join(romanesque? ? ' ' : '')
-      when !short_form?
-        case
-        when !sort_order?
-          [[initials, dropping_particle, particle, family].compact_join(' '),
-            suffix].compact_join(comma_suffix? ? comma : ' ')
+        [affix_part.(:family, family), affix_part.(:given, given)]
+          .compact_join(romanesque? ? ' ' : '')
+      when short_form?
+        affix_part.(:family, particle_family)
+      when !sort_order?
+        given = affix_part.(:given, given)
+        family = [[dropping, particle_family].compact_join(particle_separator(dropping_particle)),
+          suffix].compact_join(comma_suffix? ? comma : ' ')
 
-        when !demote_particle?
-          [[particle, family].compact_join(' '), [initials,
-            dropping_particle].compact_join(' '), suffix].compact_join(comma)
-
-        else
-          [family, [initials, dropping_particle, particle].compact_join(' '),
-            suffix].compact_join(comma)
-        end
+        # Affixes ending in a space (e.g., a no-break space) replace the space
+        [given, affix_part.(:family, family)]
+          .compact_join(given.to_s.match?(/[[:space:]]\z/) ? '' : ' ')
+      when !demote_particle?
+        [affix_part.(:family, particle_family),
+          affix_part.(:given, [given, dropping].compact_join(' ')), suffix].compact_join(comma)
       else
-        [particle, family].compact_join(' ')
+        [affix_part.(:family, family),
+          affix_part.(:given, [given, dropping, particle].compact_join(' ')), suffix].compact_join(comma)
       end
+    end
+
+    # @return [String] the family name preceded by the non-dropping particle
+    def particle_family
+      [particle, family].compact_join(particle_separator)
+    end
+
+    # @param particle [String] the dropping or non-dropping particle
+    # @return [String] the separator following the particle; particles
+    #   ending in a hyphen or apostrophe (e.g., "al-" or "d'") are joined
+    #   without a space
+    def particle_separator(particle = self.particle)
+      particle.to_s.match?(/[-'’ʻ\s]\z/) ? '' : ' '
     end
     alias print format
 
@@ -345,9 +427,9 @@ module CiteProc
       when literal?
         [literal.to_s.sub(sort_prefix, '')]
       when never_demote_particle?
-        [[particle, family].compact_join(' '), dropping_particle, given, suffix].map(&:to_s)
+        [particle_family, dropping_particle, given, suffix].map(&:to_s)
       else
-        [family, [particle, dropping_particle].compact_join(' '), given, suffix].map(&:to_s)
+        [family, [dropping_particle, particle].compact_join(' '), given, suffix].map(&:to_s)
       end
     end
 
@@ -379,6 +461,10 @@ module CiteProc
       super key
     end
 
+    def particle_word?(word)
+      word.sub(/\A[-'ʻ’\s]*/, '').match?(/\A\p{Ll}/)
+    end
+
     def initials_of(string)
       return unless string
 
@@ -386,7 +472,9 @@ module CiteProc
       string = string.gsub(/\.(?=[[:alpha:]])/, '. ')
       string = string.tr('-', ' ') if initialize_without_hyphen?
 
-      string.scan(/([^\s-]+)\s*(-)?\s*/).map { |part, hyphen|
+      # Hyphens followed by a lowercase letter (e.g., "Guo-ping") do not
+      # separate parts of the name
+      string.scan(/((?:[^\s-]|-(?=\p{Ll}))+)\s*(-)?\s*/).map { |part, hyphen|
         part = initial_of(part) || " #{part} "
         hyphen ? "#{part.rstrip}-" : part
       }.join.gsub(/-\s+/, '-').squeeze(' ').strip
@@ -557,7 +645,7 @@ module CiteProc
         when value.is_a?(Name)
           @value << value
         when value.respond_to?(:each_pair), value.respond_to?(:to_hash)
-          @value << Name.new(value)
+          @value << Name.new(value).parse_particles!
         when value.respond_to?(:to_s)
           begin
             @value.concat Namae.parse!(value.to_s).map { |n| Name.new n }

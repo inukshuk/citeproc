@@ -117,19 +117,18 @@ module CiteProc
 
       describe 'formatting options' do
 
-        it 'does not always demote particle by default' do
-          expect(Name.new.always_demote_particle?).to be false
-          expect(Name.new.always_demote_non_dropping_particle?).to be false
+        it 'always demotes particle by default' do
+          expect(Name.new.always_demote_particle?).to be true
+          expect(Name.new.always_demote_non_dropping_particle?).to be true
         end
 
-        it 'does not demote particle by default' do
-          expect(Name.new.demote_particle?).to be false
-          expect(Name.new.demote_non_dropping_particle?).to be false
+        it 'demotes particle by default' do
+          expect(Name.new.demote_particle?).to be true
+          expect(Name.new.demote_non_dropping_particle?).to be true
         end
 
-        it 'does not demote particle in sort order by default' do
-          expect(Name.new.sort_order!.demote_particle?).to be false
-          expect(Name.new.sort_order!.demote_non_dropping_particle?).to be false
+        it 'does not demote particle if option is set to never' do
+          expect(Name.new({}, :'demote-non-dropping-particle' => 'never').sort_order!.demote_particle?).to be false
         end
 
         it 'always demotes particle if option is set' do
@@ -137,13 +136,17 @@ module CiteProc
           expect(Name.new({}, :'demote-non-dropping-particle' => 'display-and-sort').always_demote_non_dropping_particle?).to be true
         end
 
-        it 'demotes particle in sort order if option is set to sort-only' do
+        it 'demotes particle in sort order if option is set to display-and-sort' do
           expect(Name.new({}, :'demote-non-dropping-particle' => 'display-and-sort').sort_order!.demote_particle?).to be true
         end
 
-        it 'never demotes particle by default' do
-          expect(Name.new.never_demote_particle?).to be true
-          expect(Name.new.never_demote_non_dropping_particle?).to be true
+        it 'does not demote particle in sort order if option is set to sort-only' do
+          expect(Name.new({}, :'demote-non-dropping-particle' => 'sort-only').sort_order!.demote_particle?).to be false
+        end
+
+        it 'is not set to never demote particle by default' do
+          expect(Name.new.never_demote_particle?).to be false
+          expect(Name.new.never_demote_non_dropping_particle?).to be false
         end
 
         it 'is not in sort order by default' do
@@ -181,7 +184,8 @@ module CiteProc
             'Ph.M.E.' => 'Ph. M. E.',
             'Jean-Luc' => 'J.-L.',
             'Vérité Äpfel' => 'V. Ä.',
-            'TSerendorjiin' => 'Ts.'
+            'TSerendorjiin' => 'Ts.',
+            'Guo-ping' => 'G.'
           }.each do |given, initials|
             name.given = given
             expect(name.initials).to eq(initials)
@@ -198,7 +202,8 @@ module CiteProc
             'Jean-Luc' => 'Jean-Luc',
             'J.-L.M.' => 'J.-L. M.',
             'J-L' => 'J.-L.',
-            'Ph. M.E.' => 'Ph. M. E.'
+            'Ph. M.E.' => 'Ph. M. E.',
+            'Guo-ping' => 'Guo-ping'
           }.each do |given, initials|
             name.given = given
             expect(name.initials).to eq(initials)
@@ -266,6 +271,59 @@ module CiteProc
 
       end
 
+      describe '#parse_particles!' do
+        def parse(attributes)
+          Name.new(attributes).parse_particles!.to_citeproc
+        end
+
+        it 'parses leading lowercase words of the family name as non-dropping particles' do
+          expect(parse(family: 'van Gogh', given: 'Vincent')).to eq(
+            'family' => 'Gogh', 'given' => 'Vincent', 'non-dropping-particle' => 'van')
+          expect(parse(family: 'van der Vlist', given: 'Eric')).to eq(
+            'family' => 'Vlist', 'given' => 'Eric', 'non-dropping-particle' => 'van der')
+          expect(parse(family: "d'Aubignac", given: 'François')).to eq(
+            'family' => 'Aubignac', 'given' => 'François', 'non-dropping-particle' => "d'")
+          expect(parse(family: 'al-One', given: 'Alan')).to eq(
+            'family' => 'One', 'given' => 'Alan', 'non-dropping-particle' => 'al-')
+          expect(parse(family: "'t Hart", given: 'Jan')).to eq(
+            'family' => 'Hart', 'given' => 'Jan', 'non-dropping-particle' => "'t")
+        end
+
+        it 'parses trailing lowercase words of the given name as dropping particles' do
+          expect(parse(family: 'Humboldt', given: 'Alexander von')).to eq(
+            'family' => 'Humboldt', 'given' => 'Alexander', 'dropping-particle' => 'von')
+          expect(parse(family: 'Familyname', given: 'Givenname von der')).to eq(
+            'family' => 'Familyname', 'given' => 'Givenname', 'dropping-particle' => 'von der')
+          expect(parse(family: 'Aubignac', given: "François Hédelin d'")).to eq(
+            'family' => 'Aubignac', 'given' => 'François Hédelin', 'dropping-particle' => "d'")
+        end
+
+        it 'keeps capitalized words' do
+          expect(parse(family: 'Di Familyname', given: 'Givenname')).to eq(
+            'family' => 'Di Familyname', 'given' => 'Givenname')
+          expect(parse(family: "L'Familyname", given: 'Givenname')).to eq(
+            'family' => "L'Familyname", 'given' => 'Givenname')
+        end
+
+        it 'does not parse names without given name or with explicit particles' do
+          expect(parse(family: 'van Gogh')).to eq('family' => 'van Gogh')
+          expect(parse(family: 'van Gogh', given: 'Vincent', 'non-dropping-particle': 'de')).to eq(
+            'family' => 'van Gogh', 'given' => 'Vincent', 'non-dropping-particle' => 'de')
+        end
+
+        it 'does not parse names if parse-names is false' do
+          expect(parse(family: 'van Gogh', given: 'Vincent', 'parse-names': false)).to include(
+            'family' => 'van Gogh', 'given' => 'Vincent')
+          expect(parse(family: 'van Gogh', given: 'Vincent', 'parse-names': 'false')).to include(
+            'family' => 'van Gogh', 'given' => 'Vincent')
+        end
+
+        it 'does not parse quoted family names but removes the quotes' do
+          expect(parse(family: '"van Gogh"', given: 'Vincent')).to eq(
+            'family' => 'van Gogh', 'given' => 'Vincent')
+        end
+      end
+
       describe '#dup' do
 
         it 'returns a new name copied by value' do
@@ -304,6 +362,17 @@ module CiteProc
           expect(markup).to be_romanesque
         end
 
+      end
+
+      describe '#invertible?' do
+        it 'is true for personal names in romanesque scripts' do
+          expect(poe).to be_invertible
+        end
+
+        it 'is false for literal names and names in static order' do
+          expect(Name.new(:literal => 'GNU/Linux')).not_to be_invertible
+          expect(japanese).not_to be_invertible
+        end
       end
 
       describe 'literals' do
@@ -386,6 +455,46 @@ module CiteProc
           expect(Name.new(:family => 'Doe', :given => 'John').sort_order!.format).to eq('Doe, John')
         end
 
+        describe 'with name-part formatting' do
+          let(:name) do
+            Name.new(:given => 'Jean', :'dropping-particle' => 'de',
+              :'non-dropping-particle' => 'La', :family => 'Fontaine', :suffix => 'III')
+          end
+
+          let(:formatter) { ->(part, text) { part == :family ? text.upcase : text } }
+          let(:affixer) { ->(part, text) { part == :family ? "(#{text})" : "[#{text}]" } }
+
+          it 'formats the parts and encloses particles and suffix in the family affixes' do
+            expect(name.format(formatter, affixer)).to eq('[Jean] (de LA FONTAINE III)')
+          end
+
+          it 'encloses particles in the affixes of the parts they follow in sort order' do
+            expect(name.sort_order!.format(formatter, affixer)).to eq('(FONTAINE), [Jean de LA], III')
+            expect(name.never_demote_particle!.format(formatter, affixer)).to eq('(LA FONTAINE), [Jean de], III')
+          end
+
+          it 'formats the family name and non-dropping particle in short form' do
+            expect(name.short_form!.format(formatter, affixer)).to eq('(LA FONTAINE)')
+          end
+
+          it 'formats literal names like family names' do
+            expect(Name.new(:literal => 'Banksy').format(formatter, affixer)).to eq('(BANKSY)')
+          end
+        end
+
+        it 'joins particles ending in a hyphen or apostrophe without a space' do
+          name = Name.new(:family => 'One', :given => 'Alan', :'non-dropping-particle' => 'al-')
+          expect(name.format).to eq('Alan al-One')
+          expect(name.sort_order!.never_demote_particle!.format).to eq('al-One, Alan')
+          expect(name.short_form!.format).to eq('al-One')
+
+          name = Name.new(:family => 'Aubignac', :'non-dropping-particle' => "d'")
+          expect(name.format).to eq("d'Aubignac")
+
+          name = Name.new(:family => 'Aubignac', :given => 'François', :'dropping-particle' => "d'")
+          expect(name.format).to eq("François d'Aubignac")
+        end
+
         it 'returns the full given name' do
           expect(saunders.format).to eq('John Bertrand de Cusance Morant Saunders')
         end
@@ -459,7 +568,6 @@ module CiteProc
           context 'with accents at the end of the name' do
             it 'prints with precomposed accent as "family, given"' do
               expect(!saer_precomposed.short_form?).to be true
-              expect(!saer_precomposed.demote_particle?).to be true
               expect(!saer_precomposed.romanesque?).to be false
               expect(saer_precomposed.static_order?).to be false
               expect(saer_precomposed.sort_order!.format).to eq('Saer, Juan José')
@@ -467,7 +575,6 @@ module CiteProc
 
             it 'prints with decomposed accent as "family, given"' do
               expect(!saer_decomposed.short_form?).to be true
-              expect(!saer_decomposed.demote_particle?).to be true
               expect(!saer_decomposed.romanesque?).to be false
               expect(saer_decomposed.static_order?).to be false
               expect(saer_decomposed.sort_order!.format).to eq('Saer, Juan José')
@@ -475,7 +582,11 @@ module CiteProc
           end
 
           it 'particles come after given name by default' do
-            expect(van_gogh.sort_order!.format).to eq('van Gogh, Vincent')
+            expect(van_gogh.sort_order!.format).to eq('Gogh, Vincent van')
+          end
+
+          it 'particles come before the family name if never demoted' do
+            expect(van_gogh.sort_order!.never_demote_particle!.format).to eq('van Gogh, Vincent')
           end
 
           it 'particles come after given name if demote option is active' do
@@ -486,8 +597,8 @@ module CiteProc
             expect(humboldt.sort_order!.format).to eq('Humboldt, Alexander von')
           end
 
-          it 'by default if all parts are set they are returned as "particle family, first dropping-particle, suffix"' do
-            expect(utf.sort_order!.format).to eq('la Martinière, Gérard de, III')
+          it 'by default if all parts are set they are returned as "family, first dropping-particle particle, suffix"' do
+            expect(utf.sort_order!.format).to eq('Martinière, Gérard de la, III')
           end
 
         end
@@ -505,7 +616,7 @@ module CiteProc
         end
 
         it 'respects the formatting options' do
-          expect(utf.sort_order!.to_s).to eq('la Martinière, Gérard de, III')
+          expect(utf.sort_order!.to_s).to eq('Martinière, Gérard de la, III')
         end
       end
 
@@ -559,12 +670,12 @@ module CiteProc
           expect(van_gogh.demote_particle!.sort_order).to eq(['Gogh', 'van', 'Vincent', ''])
         end
 
-        it 'does not demote non dropping particles by default' do
-          expect(van_gogh.sort_order).to eq(['van Gogh', '', 'Vincent', ''])
+        it 'demotes non dropping particles by default' do
+          expect(van_gogh.sort_order).to eq(['Gogh', 'van', 'Vincent', ''])
         end
 
-        it 'does not demote non dropping particles by default but dropping particles are demoted' do
-          expect(utf.sort_order).to eq(['la Martinière', 'de', 'Gérard', 'III'])
+        it 'demotes dropping and non dropping particles by default' do
+          expect(utf.sort_order).to eq(['Martinière', 'de la', 'Gérard', 'III'])
         end
 
         it 'demotes dropping particles' do
@@ -613,6 +724,10 @@ module CiteProc
 
         it 'accepts two names as hash' do
           expect(Names.new({:given => 'Jim'}, {:family => 'Jameson'}).names.size).to eq(2)
+        end
+
+        it 'parses particles of names given as hash' do
+          expect(Names.new(:family => 'van Gogh', :given => 'Vincent').first.particle).to eq('van')
         end
 
         it 'accepts an array of names' do

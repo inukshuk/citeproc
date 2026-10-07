@@ -11,12 +11,72 @@ module CiteProc
     include Comparable
 
     @labels = [
-      :book, :chapter, :column, :figure, :folio, :issue, :line, :note, :opus,
-      :page, :paragraph, :part, :section, :'sub-verbo', :verse, :volume
+      :act,
+      :appendix,
+      :'article-locator',
+      :book,
+      :canon,
+      :chapter,
+      :column,
+      :elocation,
+      :equation,
+      :figure,
+      :folio,
+      :issue,
+      :line,
+      :note,
+      :opus,
+      :page,
+      :paragraph,
+      :part,
+      :rule,
+      :scene,
+      :section,
+      :'sub-verbo',
+      :supplement,
+      :table,
+      :timestamp,
+      :'title-locator',
+      :verse,
+      :version,
+      :volume
     ].freeze
 
+    # Abbreviations of locator labels (for extraction)
+    @locator_abbreviations = {
+      'app.' => 'appendix',
+      'art.' => 'article-locator',
+      'bk.' => 'book',
+      'ch.' => 'chapter',
+      'col.' => 'column',
+      'fig.' => 'figure',
+      'fol.' => 'folio',
+      'l.' => 'line',
+      'n.' => 'note',
+      'no.' => 'issue',
+      'op.' => 'opus',
+      'p.' => 'page',
+      'pp.' => 'page',
+      'para.' => 'paragraph',
+      'pt.' => 'part',
+      'r.' => 'rule',
+      'sec.' => 'section',
+      'supp.' => 'supplement',
+      'sv.' => 'sub-verbo',
+      'tbl.' => 'table',
+      'tit.' => 'title-locator',
+      'vol.' => 'volume',
+      'vrs.' => 'verse'
+    }.freeze
+
     class << self
-      attr_reader :labels
+      attr_reader :labels, :locator_abbreviations
+
+      # @param abbreviations [Hash<String,String>] label abbreviations
+      # @return [Regexp] a pattern matching any of the abbreviations
+      def locator_label_pattern(abbreviations = locator_abbreviations)
+        Regexp.union(abbreviations.keys.sort_by { |abbr| -abbr.length })
+      end
     end
 
     # @!attribute id
@@ -66,6 +126,32 @@ module CiteProc
       yield self if block_given?
     end
 
+    # @return [String, nil] the locator label;
+    #   defaults to "page" if there is a locator
+    def label
+      read_attribute(:label) || ('page' if locator?)
+    end
+
+    # Moves a label at the start of the locator into the label
+    # (e.g., "vol. 1" becomes "1" with the label "volume") unless
+    # the item has a label other than "page".
+    #
+    # @param abbreviations [Hash<String,String>] label abbreviations
+    # @return [self]
+    def parse_locator!(abbreviations = CitationItem.locator_abbreviations)
+      return self unless locator? && label.to_s == 'page'
+
+      pattern = CitationItem.locator_label_pattern(abbreviations)
+      match = /\A(#{pattern})\s+(.+)\z/m.match(locator.to_s)
+
+      unless match.nil?
+        self.label = abbreviations[match[1]]
+        self.locator = match[2]
+      end
+
+      self
+    end
+
     def initialize_copy(other)
       @attributes = other.attributes.deep_copy
     end
@@ -81,8 +167,6 @@ module CiteProc
     end
 
   end
-
-
 
 
   class CitationData

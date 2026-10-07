@@ -72,6 +72,59 @@ module CiteProc
 
       end
 
+      describe '#label' do
+        it 'returns nil by default' do
+          expect(CitationItem.new.label).to be_nil
+        end
+
+        it 'defaults to page if there is a locator' do
+          expect(CitationItem.new(:locator => '23').label).to eq('page')
+          expect(CitationItem.new(:locator => '23', :label => 'chapter').label).to eq('chapter')
+        end
+      end
+
+      describe '#parse_locator!' do
+        it 'moves labels at the start of the locator into the label' do
+          item = CitationItem.new(:locator => 'vol. 1, fol. 186')
+          item.parse_locator!
+          expect(item.label).to eq('volume')
+          expect(item.locator).to eq('1, fol. 186')
+        end
+
+        it 'replaces the page label' do
+          item = CitationItem.new(:locator => 'ch. 3', :label => 'page')
+          item.parse_locator!
+          expect(item.label).to eq('chapter')
+          expect(item.locator).to eq('3')
+        end
+
+        it 'keeps other labels' do
+          item = CitationItem.new(:locator => 'vol. 1', :label => 'folio')
+          item.parse_locator!
+          expect(item.label).to eq('folio')
+          expect(item.locator).to eq('vol. 1')
+        end
+
+        it 'keeps locators without labels' do
+          item = CitationItem.new(:locator => '23-25, fig. 3')
+          item.parse_locator!
+          expect(item.label).to eq('page')
+          expect(item.locator).to eq('23-25, fig. 3')
+        end
+
+        it 'accepts additional abbreviations' do
+          item = CitationItem.new(:locator => 'S. 23')
+          item.parse_locator!('S.' => 'page', 'Bd.' => 'volume')
+          expect(item.label).to eq('page')
+          expect(item.locator).to eq('23')
+
+          item = CitationItem.new(:locator => 'Bd. 2')
+          item.parse_locator!('S.' => 'page', 'Bd.' => 'volume')
+          expect(item.label).to eq('volume')
+          expect(item.locator).to eq('2')
+        end
+      end
+
       describe '#to_citeproc' do
 
         it 'returns empty citation data by default' do

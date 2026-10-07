@@ -13,9 +13,15 @@ module CiteProc
       ['i',    1]
     ].freeze
 
+    # Numbers (with optional prefixes and suffixes) or roman numerals
+    RANGE_BOUND = /(?:[[:alnum:]]*\d[[:alnum:]]*|[ivxlcdm]+)/i
+
+    # Ranges between numbers; escaped hyphens are not range delimiters
+    RANGE = /(?<![[:alnum:]])#{RANGE_BOUND}\s*[–-]\s*#{RANGE_BOUND}(?![[:alnum:]])/
+
     class << self
       def pluralize?(string)
-        /\S[\s,&–-]\S|\df/ === string
+        /\S[\s,&]\S|\df/.match?(string) || RANGE.match?(string)
       end
 
       # @param number [#to_i] the number to convert

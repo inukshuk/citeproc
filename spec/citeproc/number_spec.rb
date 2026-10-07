@@ -2,6 +2,20 @@ require 'spec_helper'
 
 module CiteProc
   describe 'CiteProc::Number' do
+    describe '.pluralize?' do
+      it 'returns true for lists and ranges' do
+        ['1-2', '4–6', 'i-ix', 'N110-N115', '213 and 235', '213 & 235', '1, 3', '23f'].each do |value|
+          expect(CiteProc::Number.pluralize?(value)).to be(true), value
+        end
+      end
+
+      it 'returns false for single values and escaped hyphens' do
+        ['23', 'iv', 'Michaelson-Morely', '3\\-B', '327\\-30'].each do |value|
+          expect(CiteProc::Number.pluralize?(value)).to be(false), value
+        end
+      end
+    end
+
     describe '.romanize' do
       it 'converts numbers to roman numerals' do
         expect(Number.romanize(1)).to eq('i')

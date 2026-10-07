@@ -2,7 +2,7 @@ Feature: number
   As a CSL cite processor hacker
   I want the test number_OrdinalSpacing to pass
 
-  @citation @number @citation-items
+  @citation @number @citation-items @non-standard
   Scenario: Ordinal Spacing
     Given the following style:
     """

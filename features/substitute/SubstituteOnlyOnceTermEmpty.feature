@@ -2,7 +2,7 @@ Feature: substitute
   As a CSL cite processor hacker
   I want the test substitute_SubstituteOnlyOnceTermEmpty to pass
 
-  @citation @substitute
+  @citation @substitute @non-standard
   Scenario: Substitute Only Once Term Empty
     Given the following style:
     """

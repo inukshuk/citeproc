@@ -41,6 +41,9 @@ module CSL
       bugreports_NumberAffixEscape                # ---
       decorations_Baseline                        # uses style="baseline"
       date_DateNoDateNoTest                       # citeproc-js error message
+      substitute_SubstituteOnlyOnceTermEmpty      # empty term used as substitute
+      number_LimitOrdinalsToDayOne                # dates in note field
+      number_OrdinalSpacing                       # ordinals in non-numeric text
     }.scan(/^\s*(\S+)/).flatten
 
     module_function

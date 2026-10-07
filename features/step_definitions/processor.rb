@@ -39,7 +39,8 @@ When(/^I cite the following items:$/) do |string|
 end
 
 When(/^I cite all items$/) do
-  @result = processor.process @input.map { |i| { 'id' => i['id'] } }
+  # Items with the same id are registered only once
+  @result = processor.process @input.map { |i| i['id'] }.uniq.map { |id| { 'id' => id } }
 end
 
 Then(/^the bibliography's options should match:$/) do |table|

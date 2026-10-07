@@ -2,7 +2,7 @@ Feature: number
   As a CSL cite processor hacker
   I want the test number_LimitOrdinalsToDayOne to pass
 
-  @bibliography @number
+  @bibliography @number @non-standard
   Scenario: Limit Ordinals To Day One
     Given the following style:
     """

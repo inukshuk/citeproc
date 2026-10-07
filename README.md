@@ -110,6 +110,18 @@ to install all official CSL styles and locales.
 To make the styles and locales available,
 simply `require 'csl/styles'`.
 
+Development
+-----------
+To get started, install the development dependencies and run all tests:
+
+    $ bundle install
+    $ bundle exec rake
+
+The [CSL test-suite](https://github.com/citation-style-language/test-suite)
+runs as Cucumber features using CiteProc-Ruby:
+
+    $ bundle exec cucumber
+
 Credits
 -------
 Thanks to Rintze M. Zelle, Sebastian Karcher, Frank G. Bennett, Jr.,

@@ -1,24 +1,24 @@
 source 'https://rubygems.org'
 gemspec
 
+# gem 'csl', github: 'inukshuk/csl-ruby', branch: 'master'
+# gem 'citeproc-ruby', github: 'inukshuk/citeproc-ruby', branch: 'master'
+
+group :development, :test do
+  gem 'rake'
+  gem 'cucumber'
+  gem 'rspec'
+  gem 'csl-styles', '~>2.0', require: false
+end
+
 group :debug do
-  gem 'debug', '>= 1.0.0', require: false, platforms: :mri
-  gem 'ruby-debug', require: false, platforms: :jruby
+  gem 'debug', require: false, platforms: :mri
 end
 
 group :optional do
   gem 'nokogiri'
   gem 'edtf'
   gem 'bibtex-ruby', require: 'bibtex'
-  gem 'citeproc-ruby', github: 'inukshuk/citeproc-ruby', branch: 'master'
-  gem 'csl', github: 'inukshuk/csl-ruby', branch: 'master'
-end
-
-group :development do
-  gem 'rake'
-  gem 'cucumber'
-  gem 'rspec'
-  gem 'csl-styles', '~>2.0', require: false
 end
 
 group :coverage do

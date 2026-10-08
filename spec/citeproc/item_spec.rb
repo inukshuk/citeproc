@@ -100,6 +100,18 @@ module CiteProc
       end
     end
 
+    describe '#read_attribute' do
+      it 'reports suppressed variables as empty to observers' do
+        obs = Object.new
+        def obs.update(*arguments)
+        end
+        expect(obs).to receive(:update).with(:read, :title, nil)
+        item = Item.new(:title => 'T').suppress!('title')
+        item.add_observer(obs)
+        expect(item[:title]).to be_nil
+      end
+    end
+
     describe '#eql?' do
       it 'is true for items with the same data' do
         a = Item.new(:id => 'x', :title => 'T', :issued => [[2003]])

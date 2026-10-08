@@ -117,9 +117,7 @@ module CiteProc
     end
 
     def observable_read_attribute(key)
-      value = original_read_attribute(key)
-      return if suppressed?(key)
-      value
+      value = original_read_attribute(key) unless suppressed?(key)
     ensure
       changed
       notify_observers :read, key, value

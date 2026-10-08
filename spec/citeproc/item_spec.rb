@@ -112,6 +112,27 @@ module CiteProc
       end
     end
 
+    describe '#deferred_read_attribute' do
+      let(:obs) do
+        Object.new.tap do |o|
+          def o.update(*arguments)
+          end
+        end
+      end
+
+      it 'yields the variable and reports the result of the block to observers' do
+        expect(obs).to receive(:update).with(:read, :title, '').once
+        item = Item.new(:title => 'T')
+        item.add_observer(obs)
+        expect(item.deferred_read_attribute(:title) { |title| title.to_s.downcase.delete('t') }).to eq('')
+      end
+
+      it 'yields suppressed variables as nil' do
+        item = Item.new(:title => 'T').suppress!('title')
+        expect(item.deferred_read_attribute(:title) { |title| title }).to be_nil
+      end
+    end
+
     describe '#eql?' do
       it 'is true for items with the same data' do
         a = Item.new(:id => 'x', :title => 'T', :issued => [[2003]])

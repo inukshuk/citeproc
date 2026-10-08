@@ -123,6 +123,18 @@ module CiteProc
       notify_observers :read, key, value
     end
 
+    # Reads the variable without notifying observers and yields it;
+    # observers are notified of the block's result instead
+    # (e.g., what a renderer made of the variable).
+    # @return the block's result
+    def deferred_read_attribute(key)
+      value = original_read_attribute(key) unless suppressed?(key)
+      result = yield value
+    ensure
+      changed
+      notify_observers :read, key, result
+    end
+
     def simulate_read_attribute(key, value)
       changed
       notify_observers :read, key, value

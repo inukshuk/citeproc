@@ -42,6 +42,15 @@ module CiteProc
     include Attributes
     include Comparable
 
+    # Leading particle of a family name: "van der Vlist", "d'Alembert", "al-Hassan"
+    FAMILY_PARTICLE = /\A(?<particle>\S+[-ʻ’' ] *)(?<name>.+)\z/
+
+    # Trailing particle of a given name: "Alexander von"
+    GIVEN_PARTICLE = /\A(?<name>.+)\s+(?<particle>\S+)\z/
+
+    # Suffix after a comma in a given name: "John, III" or "John,! Jr."
+    SUFFIX = /\A(?<given>.*?)\s*,(?<comma>!?)\s*(?<suffix>.+)\z/
+
     # Class instance variables
 
     @romanesque =
@@ -126,42 +135,27 @@ module CiteProc
     end
 
 
-    # Parses name particles which are not set explicitly:
-    # leading lowercase words of the family name become the non-dropping particle
-    # and trailing lowercase words of the given name the dropping particle.
-    # Family names in double quotes and names with parse-names set to false are not parsed.
+    # Parses name particles and suffixes out of the family and given names
+    # and sets parse-names to false, so the name is not parsed again.
+    # Names with parse-names set to false are not parsed.
+    # Quotes around the family name are removed
+    # and the family name is not parsed.
+    # Names without family or given name, or with any particle or suffix set,
+    # are not parsed.
     #
     # @return [self]
-    def parse_particles!
-      if family.to_s.match?(/\A".+"\z/)
-        self.family = family[1...-1]
-        return self
-      end
-
+    def parse!
       return self unless CiteProc.boolean(read_attribute(:'parse-names'), true)
-      return self if particle? || !family? || !given?
 
-      particles, name = '', family.to_s
-      while (m = /\A(\S+[-ʻ’' ] *)(.+)\z/.match(name)) && particle_word?(m[1])
-        particles, name = particles + m[1], m[2]
+      quoted = family? && family.match?(/\A".+"\z/)
+      self.family = family[1...-1] if quoted
+
+      if family? && given? && !(particle? || dropping_particle? || suffix?)
+        parse_family! unless quoted
+        parse_given!
       end
 
-      unless particles.empty?
-        self.family = name
-        self.particle = particles.match?(/['’] \z/) ? particles.rstrip + ' ' : particles.rstrip
-      end
-
-      particles, name = [], given.to_s
-      while (m = /\A(.+)\s+(\S+)\z/.match(name)) && particle_word?(m[2])
-        particles.unshift(m[2])
-        name = m[1]
-      end
-
-      unless particles.empty?
-        self.given = name
-        self.dropping_particle = particles.join(' ')
-      end
-
+      write_attribute(:'parse-names', false)
       self
     end
 
@@ -461,6 +455,41 @@ module CiteProc
       super key
     end
 
+    # Leading lowercase words of the family name become the non-dropping particle;
+    # particles may be joined by hyphens or apostrophes ("d'Alembert", "al-Hassan").
+    def parse_family!
+      particles, name = '', family.to_s
+      while (m = FAMILY_PARTICLE.match(name)) && particle_word?(m[:particle])
+        particles, name = particles + m[:particle], m[:name]
+      end
+
+      unless particles.empty?
+        self.family = name
+        self.particle = particles.match?(/['’] \z/) ? particles.rstrip + ' ' : particles.rstrip
+      end
+    end
+
+    # Text after a comma in the given name becomes the suffix
+    # ("John, III"; with "John,! Jr." the suffix keeps its comma)
+    # and trailing lowercase words the dropping particle.
+    def parse_given!
+      if (m = SUFFIX.match(given.to_s))
+        self.given, self.suffix = m[:given], m[:suffix]
+        self.comma_suffix = true unless m[:comma].empty?
+      end
+
+      particles, name = [], given.to_s
+      while (m = GIVEN_PARTICLE.match(name)) && particle_word?(m[:particle])
+        particles.unshift(m[:particle])
+        name = m[:name]
+      end
+
+      unless particles.empty?
+        self.given = name
+        self.dropping_particle = particles.join(' ')
+      end
+    end
+
     def particle_word?(word)
       word.sub(/\A[-'ʻ’\s]*/, '').match?(/\A\p{Ll}/)
     end
@@ -645,7 +674,7 @@ module CiteProc
         when value.is_a?(Name)
           @value << value
         when value.respond_to?(:each_pair), value.respond_to?(:to_hash)
-          @value << Name.new(value).parse_particles!
+          @value << Name.new(value).parse!
         when value.respond_to?(:to_s)
           begin
             @value.concat Namae.parse!(value.to_s).map { |n| Name.new n }

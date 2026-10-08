@@ -271,9 +271,9 @@ module CiteProc
 
       end
 
-      describe '#parse_particles!' do
+      describe '#parse!' do
         def parse(attributes)
-          Name.new(attributes).parse_particles!.to_citeproc
+          Name.new(attributes).parse!.to_citeproc.except('parse-names')
         end
 
         it 'parses leading lowercase words of the family name as non-dropping particles' do
@@ -305,10 +305,14 @@ module CiteProc
             'family' => "L'Familyname", 'given' => 'Givenname')
         end
 
-        it 'does not parse names without given name or with explicit particles' do
+        it 'does not parse names without given name or with explicit particles or suffix' do
           expect(parse(family: 'van Gogh')).to eq('family' => 'van Gogh')
           expect(parse(family: 'van Gogh', given: 'Vincent', 'non-dropping-particle': 'de')).to eq(
             'family' => 'van Gogh', 'given' => 'Vincent', 'non-dropping-particle' => 'de')
+          expect(parse(family: 'van Gogh', given: 'Vincent de', 'dropping-particle': 'von')).to eq(
+            'family' => 'van Gogh', 'given' => 'Vincent de', 'dropping-particle' => 'von')
+          expect(parse(family: 'van Gogh', given: 'Vincent, III', suffix: 'Jr.')).to eq(
+            'family' => 'van Gogh', 'given' => 'Vincent, III', 'suffix' => 'Jr.')
         end
 
         it 'does not parse names if parse-names is false' do
@@ -316,11 +320,32 @@ module CiteProc
             'family' => 'van Gogh', 'given' => 'Vincent')
           expect(parse(family: 'van Gogh', given: 'Vincent', 'parse-names': 'false')).to include(
             'family' => 'van Gogh', 'given' => 'Vincent')
+          expect(parse(family: '"van Gogh"', given: 'Vincent', 'parse-names': false)).to include(
+            'family' => '"van Gogh"')
         end
 
-        it 'does not parse quoted family names but removes the quotes' do
-          expect(parse(family: '"van Gogh"', given: 'Vincent')).to eq(
-            'family' => 'van Gogh', 'given' => 'Vincent')
+        it 'parses suffixes of the given name' do
+          expect(parse(family: 'Doe', given: 'John, III')).to eq(
+            'family' => 'Doe', 'given' => 'John', 'suffix' => 'III')
+          name = Name.new(family: 'Doe', given: 'John,! Jr.').parse!
+          expect([name.given, name.suffix]).to eq(['John', 'Jr.'])
+          expect(name).to be_comma_suffix
+        end
+
+        it 'removes quotes and does not parse quoted family names' do
+          expect(parse(family: '"van Gogh"', given: 'Vincent von')).to eq(
+            'family' => 'van Gogh', 'given' => 'Vincent', 'dropping-particle' => 'von')
+          expect(parse(family: '"van Gogh"')).to eq('family' => 'van Gogh')
+          expect(parse(family: '"van Gogh"', given: 'Vincent', suffix: 'Jr.')).to eq(
+            'family' => 'van Gogh', 'given' => 'Vincent', 'suffix' => 'Jr.')
+        end
+
+        it 'sets parse-names to false so names are not parsed again' do
+          name = Name.new(family: '"van Gogh"', given: 'Vincent').parse!
+          expect(name.to_citeproc).to include('parse-names' => 'false')
+          expect(name.parse!.to_citeproc).to include('family' => 'van Gogh', 'given' => 'Vincent')
+          expect(Name.new(name.to_citeproc).parse!.to_citeproc).to include('family' => 'van Gogh')
+          expect(Name.new(family: 'Gogh').parse!.to_citeproc).to include('parse-names' => 'false')
         end
       end
 

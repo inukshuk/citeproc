@@ -74,9 +74,26 @@ module CiteProc
     protected :attributes
 
 
+    # Legacy names of variables in CSL-JSON
+    LEGACY_NAMES = {
+      :journalAbbreviation => :'container-title-short',
+      :shortTitle => :'title-short'
+    }.freeze
+
     def initialize(attributes = nil)
       merge(attributes)
       yield self if block_given?
+    end
+
+    def merge(other)
+      super
+
+      LEGACY_NAMES.each do |legacy, name|
+        value = attributes.delete(legacy)
+        write_attribute(name, value) unless value.nil? || attribute?(name)
+      end
+
+      self
     end
 
     def initialize_copy(other)

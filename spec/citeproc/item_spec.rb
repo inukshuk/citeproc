@@ -11,6 +11,18 @@ module CiteProc
         expect(Item.new(:edition => 23).edition).to be_a(Number)
       end
 
+      it 'maps legacy CSL-JSON names of short forms' do
+        item = Item.new('journalAbbreviation' => 'Anon J', 'shortTitle' => 'Short')
+        expect(item[:'container-title-short'].to_s).to eq('Anon J')
+        expect(item[:'title-short'].to_s).to eq('Short')
+        expect(item[:journalAbbreviation]).to be_nil
+      end
+
+      it 'does not override short forms with legacy names' do
+        item = Item.new('container-title-short' => 'J-1', 'journalAbbreviation' => 'Anon J')
+        expect(item[:'container-title-short'].to_s).to eq('J-1')
+      end
+
       it 'creates text variable for text fields' do
         expect(Item.new(:ISBN => 23).isbn).to be_a(Text)
       end

@@ -77,7 +77,7 @@ module CiteProc
           d = arguments[0]
           super(d.year, d.month, d.day)
         else
-          super(*arguments.map(&:to_i))
+          super(*arguments.map { |value| to_part(value) })
         end
       end
 
@@ -95,11 +95,17 @@ module CiteProc
         end
 
         parts.each_pair do |part, value|
-          self[part] = value.nil? ? nil : value.to_i
+          self[part] = to_part(value)
         end
 
         self
       end
+
+      # @return [Integer, nil] the value as a date part; empty values are unset
+      def to_part(value)
+        value.to_i unless value.to_s.strip.empty?
+      end
+      private :to_part
 
       # @return [Boolean] whether or not the date parts are unset
       def empty?
@@ -126,11 +132,12 @@ module CiteProc
         !bc? && year < 1000
       end
 
-      # Seasons may be encoded as months 21 to 24 (Spring to Winter).
+      # Seasons may be encoded as months 21 to 24 (Spring to Winter)
+      # and, as citeproc-js does, 13 to 20 (Spring to Winter, twice).
       # @return [Integer, nil] the season (1 to 4) or nil if the
       #   month does not encode a season
       def season
-        month - 20 if month && month.between?(21, 24)
+        (month - 13) % 4 + 1 if month && month.between?(13, 24)
       end
 
       # @return [Boolean] whether or not the month encodes a season

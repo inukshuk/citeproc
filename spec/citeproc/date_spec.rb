@@ -58,6 +58,11 @@ module CiteProc
         it 'accepts an array' do
           expect(Date::DateParts.new.update([80,2]).to_a).to eq([80,2,nil])
         end
+
+        it 'ignores empty strings' do
+          expect(Date::DateParts.new.update(['2000', '', '']).to_a).to eq([2000,nil,nil])
+          expect(Date::DateParts.new('2000', '', '').to_a).to eq([2000,nil,nil])
+        end
       end
 
       describe '#strftime' do
@@ -270,6 +275,11 @@ module CiteProc
           expect(Date::DateParts.new(2001, 24)).to be_season
           expect(Date::DateParts.new(2001, 5)).not_to be_season
           expect(Date::DateParts.new(2001)).not_to be_season
+        end
+
+        it 'are a season if the month is 13 to 20 (Spring to Winter, twice)' do
+          expect([13, 16, 17, 20].map { |m| Date::DateParts.new(2001, m).season }).to eq([1, 4, 1, 4])
+          expect(Date::DateParts.new(2001, 25)).not_to be_season
         end
       end
     end

@@ -2,7 +2,7 @@ Feature: fullstyles
   As a CSL cite processor hacker
   I want the test fullstyles_ABdNT to pass
 
-  @bibliography @fullstyles
+  @bibliography @fullstyles @non-standard
   Scenario: ABd NT
     Given the following style:
     """

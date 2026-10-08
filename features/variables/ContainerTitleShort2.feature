@@ -2,7 +2,7 @@ Feature: variables
   As a CSL cite processor hacker
   I want the test variables_ContainerTitleShort2 to pass
 
-  @bibliography @variables @citation-items
+  @bibliography @variables @citation-items @non-standard
   Scenario: Container Title Short2
     Given the following style:
     """

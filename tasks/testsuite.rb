@@ -43,6 +43,8 @@ module CSL
       date_DateNoDateNoTest                       # citeproc-js error message
       substitute_SubstituteOnlyOnceTermEmpty      # empty term used as substitute
       number_LimitOrdinalsToDayOne                # dates in note field
+      variables_ContainerTitleShort2              # variables in note field
+      fullstyles_ABdNT                            # en dash in issue range
       number_OrdinalSpacing                       # ordinals in non-numeric text
     }.scan(/^\s*(\S+)/).flatten
 

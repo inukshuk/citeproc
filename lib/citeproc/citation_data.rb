@@ -142,14 +142,18 @@ module CiteProc
       Number.pluralize?(locator.to_s.split(/\s(?:#{pattern})\s/, 2)[0])
     end
 
-    # Moves a label at the start of the locator into the label
-    # (e.g., "vol. 1" becomes "1" with the label "volume") unless
-    # the item has a label other than "page".
+    # Removes whitespace around the locator and moves a label at the
+    # start of the locator into the label (e.g., "vol. 1" becomes "1"
+    # with the label "volume") unless the item has a label other than
+    # "page".
     #
     # @param abbreviations [Hash<String,String>] label abbreviations
     # @return [self]
     def parse_locator!(abbreviations = CitationItem.locator_abbreviations)
-      return self unless locator? && label.to_s == 'page'
+      return self unless locator?
+
+      self.locator = locator.to_s.strip
+      return self unless label.to_s == 'page'
 
       pattern = CitationItem.locator_label_pattern(abbreviations)
       match = /\A(#{pattern})\s+(.+)\z/m.match(locator.to_s)

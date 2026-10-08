@@ -119,6 +119,12 @@ module CiteProc
           expect(item.locator).to eq('vol. 1')
         end
 
+        it 'removes whitespace around the locator' do
+          item = CitationItem.new(:locator => ' 666 ')
+          item.parse_locator!
+          expect(item.locator).to eq('666')
+        end
+
         it 'keeps locators without labels' do
           item = CitationItem.new(:locator => '23-25, fig. 3')
           item.parse_locator!
